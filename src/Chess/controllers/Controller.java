@@ -1,4 +1,4 @@
-package home.controllers;
+package Chess.controllers;
 
 public class Controller {
 }
