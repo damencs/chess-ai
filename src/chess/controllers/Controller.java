@@ -1,4 +1,4 @@
-package sample;
+package chess.controllers;
 
 public class Controller {
 }
