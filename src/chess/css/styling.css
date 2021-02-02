@@ -8,3 +8,12 @@
     -fx-background-radius: 5 25 5 25;
     -fx-text-fill: #ffc629;
 }
+
+.mainMenuPane{
+    -fx-background-color: #b0b3b2;
+    -fx-background-radius: 20;
+    -fx-border-insets: 0;
+    -fx-border-radius: 8;
+    -fx-border-width: 20;
+    -fx-border-color: #ffc629;
+}

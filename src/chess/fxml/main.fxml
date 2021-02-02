@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #231f20; -fx-background-radius: 20; -fx-border-radius: 20;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.controllers.Controller">
    <children>
-      <Pane layoutX="694.0" prefHeight="600.0" prefWidth="506.0" style="-fx-background-color: #b0b3b2; -fx-background-radius: 20; -fx-border-insets: 0; -fx-border-radius: 8; -fx-border-width: 20; -fx-border-color: #ffc629;">
+      <Pane layoutX="694.0" prefHeight="600.0" prefWidth="506.0" styleClass="mainMenuPane" stylesheets="@../css/styling.css">
          <children>
             <VBox layoutX="21.0" layoutY="227.0" prefHeight="354.0" prefWidth="466.0">
                <children>
