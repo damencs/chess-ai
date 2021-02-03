@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.scene.control.Label;
 
+// Controller for Splash Screen
 public class SplashScreenControl implements Initializable {
     @FXML
     public static Label label; // static label to receive progress of program loading

@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-
+// Runs Splash Screen
 public class SplashScreenMain extends Preloader {
 
     private Stage preloaderStage;
