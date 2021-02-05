@@ -1,12 +1,19 @@
 .button{
-    -fx-background-color: #b0b3b2;
+    -fx-background-color: #3c3c3c;
     -fx-padding: 15;
+    -fx-text-fill: #878a89;
 }
 
 .button:hover{
-    -fx-background-color: #878a89;
+    -fx-background-color: #292828;
     -fx-background-radius: 5 25 5 25;
     -fx-text-fill: #ffc629;
+}
+
+.roundBtn{
+    -fx-background-color: #3c3c3c;
+    -fx-border-radius: 20;
+    -fx-border-color: #ffc629;
 }
 
 .mainMenuPane{
@@ -14,6 +21,51 @@
     -fx-background-radius: 20;
     -fx-border-insets: 0;
     -fx-border-radius: 8;
-    -fx-border-width: 20;
+    -fx-border-width: 5;
     -fx-border-color: #ffc629;
+}
+
+.holderPane{
+    -fx-background-color: #231f20;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 5;
+    -fx-border-color: #ffc629;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane
+{
+    -fx-tab-min-width:80px;
+    -fx-tab-min-height: 50px;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.tab-pane .tab
+{
+    -fx-background-color: #231f20;
+    -fx-font-family: "Montserrat SemiBold";
+
+}
+
+.tab-pane .tab:selected
+{
+    -fx-background-color: #3c3c3c;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #ffc629;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #ffc629;
 }
