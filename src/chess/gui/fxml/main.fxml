@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #231f20; -fx-background-radius: 20; -fx-border-radius: 20;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.controllers.Controller">
+<AnchorPane prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #231f20; -fx-background-radius: 20; -fx-border-radius: 20;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.Controller">
    <children>
       <Pane layoutX="694.0" prefHeight="600.0" prefWidth="506.0" style="-fx-background-color: #b0b3b2; -fx-background-radius: 20; -fx-border-insets: 0; -fx-border-radius: 8; -fx-border-width: 20; -fx-border-color: #ffc629;">
          <children>
@@ -46,7 +46,7 @@
                   </Label>
                   <ImageView fitHeight="53.0" fitWidth="82.0" layoutX="199.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Images/KSU_logo.png" />
+                        <Image url="@../images/KSU_logo.png" />
                      </image>
                   </ImageView>
                </children>
