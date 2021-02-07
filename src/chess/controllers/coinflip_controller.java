@@ -11,6 +11,8 @@ import java.util.Random;
 
 public class coinflip_controller{
 
+    private String sourceID = null;
+
     @FXML
     private ImageView playerWhite;
 
@@ -21,23 +23,27 @@ public class coinflip_controller{
     private ImageView playerRand;
 
     public void imageClicked(MouseEvent event){
-        String sourceID = event.getPickResult().getIntersectedNode().getId();
-        if(sourceID.equals("playerWhite")){
-            System.out.println(sourceID);
+        String source = event.getPickResult().getIntersectedNode().getId();
+        if(source.equals("playerWhite")){
+            sourceID = "playerWhite";
         }
-        if(sourceID.equals("playerBlack")){
-            System.out.println(sourceID);
+        if(source.equals("playerBlack")){
+            sourceID = "playerBlack";
         }
-        if(sourceID.equals("playerRand")){
+        if(source.equals("playerRand")){
             Random randomNum = new Random();
             int playersTeam = randomNum.nextInt(2);
             if(playersTeam == 1){
-                System.out.println("playerWhite");
+                sourceID = "playerWhite";
             }else{
-                System.out.println("playerBlack");
+                sourceID = "playerBlack";
             }
         }
         closeStage(event);
+    }
+
+    public String getVariable(){
+        return sourceID;
     }
 
     private void closeStage(MouseEvent event) {
