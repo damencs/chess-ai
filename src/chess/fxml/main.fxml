@@ -21,7 +21,7 @@
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
-                                    <VBox layoutY="70.0" prefHeight="354.0" prefWidth="399.0" style="-fx-spacing: 15;">
+                                    <VBox layoutY="95.0" prefHeight="354.0" prefWidth="399.0" style="-fx-spacing: 15;">
                                        <children>
                                           <Button fx:id="playNowBtn" mnemonicParsing="false" onAction="#playDefault" prefHeight="62.0" prefWidth="466.0" stylesheets="@../css/styling.css" text="Player vs AI" textAlignment="CENTER">
                                              <font>
