@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1200.0" styleClass="holderPane" stylesheets="@../css/styling.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.controllers.gui_controller">
+<AnchorPane prefHeight="600.0" prefWidth="1200.0" styleClass="holderPane" stylesheets="@../css/styling.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.gui_controller">
    <children>
       <StackPane layoutX="750.0" layoutY="8.0" prefHeight="602.0" prefWidth="439.0">
          <children>

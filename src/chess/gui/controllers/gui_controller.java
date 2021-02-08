@@ -1,4 +1,4 @@
-package chess.controllers;
+package chess.gui.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +46,13 @@ public class gui_controller implements Initializable {
     @FXML
     private StackPane gameboardPane;
 
+    /**
+     * These are temporary place holders Just to get the GUI set up.
+     * Once we get the backend setup we can just reference the game handler
+     * to change/set/check board. So the boardArray, playerBlack, and playerWhite
+     * will be removed once implementation is finished.
+     */
+
     private int[][] boardArray = {
             {0,1,0,1,0,1,0,1},
             {1,0,1,0,1,0,1,0},
@@ -79,23 +86,24 @@ public class gui_controller implements Initializable {
     private GridPane piecesGrid = new GridPane();
     private ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
     private ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
+    private String imagePath = "chess/gui/images/";
 
-    private Image ksuGold = new Image("chess/Images/ffc629.png", 20,20,true, true);
-    private Image ksuGrey = new Image("chess/Images/878a89.png", 20,20,true, true);
-    private Image whitePawn = new Image("chess/Images/PawnW.png", 20,20,true, true);
-    private Image whiteBishop = new Image("chess/Images/BishopWhite.png", 20,20,true, true);
-    private Image whiteRook = new Image("chess/Images/RookW.png", 20,20,true, true);
-    private Image whiteKnight = new Image("chess/Images/knightW.png", 20,20,true, true);
-    private Image whiteKing = new Image("chess/Images/KingW.png", 20,20,true, true);
-    private Image whiteQueen = new Image("chess/Images/QueenW.png", 20,20,true, true);
-    private Image blank = new Image("chess/Images/blank.png", 20,20,true, true);
+    private Image ksuGold = new Image(imagePath + "ffc629.png", 20,20,true, true);
+    private Image ksuGrey = new Image(imagePath + "878a89.png", 20,20,true, true);
+    private Image whitePawn = new Image(imagePath + "PawnW.png", 20,20,true, true);
+    private Image whiteBishop = new Image(imagePath + "BishopWhite.png", 20,20,true, true);
+    private Image whiteRook = new Image(imagePath + "RookW.png", 20,20,true, true);
+    private Image whiteKnight = new Image(imagePath + "knightW.png", 20,20,true, true);
+    private Image whiteKing = new Image(imagePath + "KingW.png", 20,20,true, true);
+    private Image whiteQueen = new Image(imagePath + "QueenW.png", 20,20,true, true);
+    private Image blank = new Image(imagePath + "blank.png", 20,20,true, true);
 
-    private Image blackPawn = new Image("chess/Images/PawnB.png", 20,20,true, true);
-    private Image blackBishop = new Image("chess/Images/BishopBlack.png", 20,20,true, true);
-    private Image blackRook = new Image("chess/Images/RookB.png", 20,20,true, true);
-    private Image blackKnight = new Image("chess/Images/knightB.png", 20,20,true, true);
-    private Image blackKing = new Image("chess/Images/KingB.png", 20,20,true, true);
-    private Image blackQueen = new Image("chess/Images/QueenB.png", 20,20,true, true);
+    private Image blackPawn = new Image(imagePath + "PawnB.png", 20,20,true, true);
+    private Image blackBishop = new Image(imagePath + "BishopBlack.png", 20,20,true, true);
+    private Image blackRook = new Image(imagePath + "RookB.png", 20,20,true, true);
+    private Image blackKnight = new Image(imagePath + "knightB.png", 20,20,true, true);
+    private Image blackKing = new Image(imagePath + "KingB.png", 20,20,true, true);
+    private Image blackQueen = new Image(imagePath + "QueenB.png", 20,20,true, true);
     private String chosenTeam = "";
 
 
@@ -111,7 +119,7 @@ public class gui_controller implements Initializable {
     @FXML
     void onOpenDialog(ActionEvent event) throws IOException {
         FXMLLoader fxmlloader = new FXMLLoader();
-        fxmlloader.setLocation(getClass().getResource("/chess/fxml/coinflip.fxml"));
+        fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/coinflip.fxml"));
         Parent parent = fxmlloader.load();
         coinflip_controller teamController = fxmlloader.getController();
         Scene scene = new Scene(parent, 250, 145);
@@ -139,20 +147,22 @@ public class gui_controller implements Initializable {
             for(int column = 0; column < boardArray[0].length; column++){
                 if(boardArray[row][column] == 0){
                     boardImg[row][column] = new ImageView(ksuGold);
-                    boardImg[row][column].setFitWidth(71.25);
-                    boardImg[row][column].setFitHeight(64.25);
-                    boardGrid.add(boardImg[row][column], row, column);
                 }else{
                     boardImg[row][column] = new ImageView(ksuGrey);
-                    boardImg[row][column].setFitWidth(71.25);
-                    boardImg[row][column].setFitHeight(64.25);
-                    boardGrid.add(boardImg[row][column], row, column);
                 }
+                boardImg[row][column].setFitWidth(71.25);
+                boardImg[row][column].setFitHeight(64.25);
+                boardGrid.add(boardImg[row][column], row, column);
             }
         }
         gameboardPane.getChildren().add(boardGrid);
     }
 
+    /**
+     * Once again a lot of this will be changed once we get the handler
+     * up and running for the piece class
+     *
+     */
     void displayPieces(){
         gameboardPane.getChildren().clear();
         piecesGrid.getChildren().clear();
@@ -170,83 +180,47 @@ public class gui_controller implements Initializable {
                 switch(currentGameSetArray[row][column]){
                     case 1:
                         gamestate[row][column] = new ImageView(whitePawn);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 2:
                         gamestate[row][column] = new ImageView(whiteRook);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 3:
                         gamestate[row][column] = new ImageView(whiteKnight);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 4:
                         gamestate[row][column] = new ImageView(whiteBishop);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 5:
                         gamestate[row][column] = new ImageView(whiteKing);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 6:
                         gamestate[row][column] = new ImageView(whiteQueen);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 7:
                         gamestate[row][column] = new ImageView(blackPawn);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 8:
                         gamestate[row][column] = new ImageView(blackRook);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 9:
                         gamestate[row][column] = new ImageView(blackKnight);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 10:
                         gamestate[row][column] = new ImageView(blackBishop);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 11:
                         gamestate[row][column] = new ImageView(blackKing);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     case 12:
                         gamestate[row][column] = new ImageView(blackQueen);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                     default:
                         gamestate[row][column] = new ImageView(blank);
-                        gamestate[row][column].setFitWidth(71.25);
-                        gamestate[row][column].setFitHeight(64.25);
-                        piecesGrid.add(gamestate[row][column], row, column);
                         break;
                 }
+                gamestate[row][column].setFitWidth(71.25);
+                gamestate[row][column].setFitHeight(64.25);
+                piecesGrid.add(gamestate[row][column], row, column);
             }
         }
         gameboardPane.getChildren().add(piecesGrid);

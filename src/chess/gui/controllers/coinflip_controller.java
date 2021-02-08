@@ -1,4 +1,4 @@
-package chess.controllers;
+package chess.gui.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +24,24 @@ public class coinflip_controller{
 
     public void imageClicked(MouseEvent event){
         String source = event.getPickResult().getIntersectedNode().getId();
+        switch (source){
+            case "playerWhite":
+                sourceID = "playerWhite";
+                break;
+            case "playerBlack":
+                sourceID = "playerBlack";
+                break;
+            case "playerRand":
+                Random randomNum = new Random();
+                int playersTeam = randomNum.nextInt(2);
+                if(playersTeam == 1){
+                    sourceID = "playerWhite";
+                }else{
+                    sourceID = "playerBlack";
+                }
+                break;
+        }
+        /**
         if(source.equals("playerWhite")){
             sourceID = "playerWhite";
         }
@@ -39,6 +57,7 @@ public class coinflip_controller{
                 sourceID = "playerBlack";
             }
         }
+         **/
         closeStage(event);
     }
 
