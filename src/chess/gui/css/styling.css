@@ -1,0 +1,24 @@
+/*
+    Group Names:
+        - Damen DeBerry (@basicDamen)
+        - James Grady (@JaymeAlann)
+        - Tyra Buadoo (@misstj555)
+        - Ashlei Williams (@AshW-2018)
+        - Mahad Farah (@mfarah-ksu)
+        - Mandela Issa-Boube (@aliamaza)
+        - Shivank Rao (@shivankrao)
+    Project: Chess with AI Agent
+    Class: CS4850 - Senior Project
+ */
+.button
+{
+    -fx-background-color: #b0b3b2;
+    -fx-padding: 15;
+}
+
+.button:hover
+{
+    -fx-background-color: #878a89;
+    -fx-background-radius: 5 25 5 25;
+    -fx-text-fill: #ffc629;
+}
