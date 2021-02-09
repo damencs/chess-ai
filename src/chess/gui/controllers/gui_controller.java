@@ -1,5 +1,7 @@
 package chess.gui.controllers;
 
+import chess.game.Board;
+import chess.game.Tile;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,7 +51,7 @@ public class gui_controller implements Initializable {
     /**
      * These are temporary place holders Just to get the GUI set up.
      * Once we get the backend setup we can just reference the game handler
-     * to change/set/check board. So the boardArray, playerBlack, and playerWhite
+     * to change/set/check board. So the boardArray
      * will be removed once implementation is finished.
      */
 
@@ -62,25 +64,6 @@ public class gui_controller implements Initializable {
             {1,0,1,0,1,0,1,0},
             {0,1,0,1,0,1,0,1},
             {1,0,1,0,1,0,1,0}};
-
-    private int[][] playerBlack = {
-            {2,1,0,0,0,0,7,8},
-            {3,1,0,0,0,0,7,9},
-            {4,1,0,0,0,0,7,10},
-            {5,1,0,0,0,0,7,12},
-            {6,1,0,0,0,0,7,11},
-            {4,1,0,0,0,0,7,10},
-            {3,1,0,0,0,0,7,9},
-            {2,1,0,0,0,0,7,8}};
-    private int[][] playerWhite = {
-            {8,7,0,0,0,0,1,2},
-            {9,7,0,0,0,0,1,3},
-            {10,7,0,0,0,0,1,4},
-            {12,7,0,0,0,0,1,5},
-            {11,7,0,0,0,0,1,6},
-            {10,7,0,0,0,0,1,4},
-            {9,7,0,0,0,0,1,3},
-            {8,7,0,0,0,0,1,2}};
 
     private GridPane boardGrid = new GridPane();
     private GridPane piecesGrid = new GridPane();
@@ -104,10 +87,12 @@ public class gui_controller implements Initializable {
     private Image blackKnight = new Image(imagePath + "knightB.png", 20,20,true, true);
     private Image blackKing = new Image(imagePath + "KingB.png", 20,20,true, true);
     private Image blackQueen = new Image(imagePath + "QueenB.png", 20,20,true, true);
-    private String chosenTeam = "";
+    private Board current = new Board();
 
+    /** *************************************************************************************************** **/
 
     public gui_controller() throws Exception {
+
     }
 
     @FXML
@@ -129,8 +114,8 @@ public class gui_controller implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
-        chosenTeam = teamController.getVariable();
-        System.out.println(chosenTeam);
+        current = new Board();
+        current.setupBoard(teamController.getVariable());
         displayPieces();
     }
 
@@ -161,67 +146,74 @@ public class gui_controller implements Initializable {
     /**
      * Once again a lot of this will be changed once we get the handler
      * up and running for the piece class
-     *
      */
     void displayPieces(){
         gameboardPane.getChildren().clear();
         piecesGrid.getChildren().clear();
-        int[][] currentGameSetArray = null;
-        if(chosenTeam.equals("playerWhite")){
-            currentGameSetArray = playerWhite;
-        }else{
-            currentGameSetArray = playerBlack;
-        }
+        Tile[][] currentGameSetArray = current.getBoard();
         displayBoard();
         piecesGrid.setVgap(2);
         piecesGrid.setHgap(2);
         for(int row = 0; row < currentGameSetArray.length; row++){
             for(int column = 0; column < currentGameSetArray[0].length; column++){
-                switch(currentGameSetArray[row][column]){
-                    case 1:
-                        gamestate[row][column] = new ImageView(whitePawn);
-                        break;
-                    case 2:
-                        gamestate[row][column] = new ImageView(whiteRook);
-                        break;
-                    case 3:
-                        gamestate[row][column] = new ImageView(whiteKnight);
-                        break;
-                    case 4:
-                        gamestate[row][column] = new ImageView(whiteBishop);
-                        break;
-                    case 5:
-                        gamestate[row][column] = new ImageView(whiteKing);
-                        break;
-                    case 6:
-                        gamestate[row][column] = new ImageView(whiteQueen);
-                        break;
-                    case 7:
-                        gamestate[row][column] = new ImageView(blackPawn);
-                        break;
-                    case 8:
-                        gamestate[row][column] = new ImageView(blackRook);
-                        break;
-                    case 9:
-                        gamestate[row][column] = new ImageView(blackKnight);
-                        break;
-                    case 10:
-                        gamestate[row][column] = new ImageView(blackBishop);
-                        break;
-                    case 11:
-                        gamestate[row][column] = new ImageView(blackKing);
-                        break;
-                    case 12:
-                        gamestate[row][column] = new ImageView(blackQueen);
-                        break;
-                    default:
-                        gamestate[row][column] = new ImageView(blank);
-                        break;
+                if(currentGameSetArray[row][column] == null){
+                    gamestate[row][column] = new ImageView(blank);
+                }else{
+                    String pieceName = currentGameSetArray[row][column].getPiece().getName();
+                    String pieceColor = currentGameSetArray[row][column].getColor();
+                    switch(pieceName){
+                        case "King":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whiteKing);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackKing);
+                            }
+                            break;
+                        case "Queen":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whiteQueen);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackQueen);
+                            }
+                            break;
+                        case "Rook":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whiteRook);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackRook);
+                            }
+                            break;
+                        case "Bishop":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whiteBishop);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackBishop);
+                            }
+                            break;
+                        case "Knight":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whiteKnight);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackKnight);
+                            }
+                            break;
+                        case "Pawn":
+                            if(pieceColor == "white"){
+                                gamestate[row][column] = new ImageView(whitePawn);
+                            }else{
+                                gamestate[row][column] = new ImageView(blackPawn);
+                            }
+                            break;
+                        default:
+                            gamestate[row][column] = new ImageView(blank);
+                            break;
+                    }
                 }
                 gamestate[row][column].setFitWidth(71.25);
                 gamestate[row][column].setFitHeight(64.25);
-                piecesGrid.add(gamestate[row][column], row, column);
+                piecesGrid.add(gamestate[row][column], column, row);
             }
+            System.out.println();
         }
         gameboardPane.getChildren().add(piecesGrid);
     }

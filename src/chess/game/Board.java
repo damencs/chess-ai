@@ -79,13 +79,9 @@ public class Board
     public void printBoard()
     {
         System.out.println("-- Current Board --");
-
-        for (int row = 0; row < 8; row++)
-        {
-            for (int column = 0; column < 8; column++)
-            {
-                try
-                {
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                try {
                     System.out.print(tiles[row][column].getPiece().getSymbol() + " ");
                 }
                 catch (NullPointerException ex) {}
