@@ -25,18 +25,13 @@ public class coinflip
         /* Decide whether or not the player starts as white (which starts first in Chess). */
         String choice = event.getPickResult().getIntersectedNode().getId();
 
-        switch (choice)
-        {
-            case "playerWhite":
-                isPlayerTurn = true;
-                break;
-            case "playerBlack":
-                isPlayerTurn = false;
-                break;
-            case "playerRand":
+        switch (choice) {
+            case "playerWhite" -> isPlayerTurn = true;
+            case "playerBlack" -> isPlayerTurn = false;
+            case "playerRand" -> {
                 isPlayerTurn = (Math.random() < 0.5 ? true : false);
                 System.out.println("Decided: " + (isPlayerTurn ? "true" : "false"));
-                break;
+            }
         }
 
         closeStage(event);

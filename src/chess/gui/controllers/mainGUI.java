@@ -77,16 +77,16 @@ public class mainGUI implements Initializable
                 {1,0,1,0,1,0,1,0}
             };
 
-    private GridPane boardGrid = new GridPane();
-    private GridPane piecesGrid = new GridPane();
+    private final GridPane boardGrid = new GridPane();
+    private final GridPane piecesGrid = new GridPane();
 
-    private ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
-    private ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
+    private final ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
+    private final ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
 
-    private String imagePath = "chess/gui/images/";
-    private Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
-    private Image GREY = new Image(imagePath + "grey.png", 20,20,true, true);
-    private Image BLANK = new Image(imagePath + "blank.png", 20,20,true, true);
+    private final String imagePath = "chess/gui/images/";
+    private final Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
+    private final Image GREY = new Image(imagePath + "grey.png", 20,20,true, true);
+    private final Image BLANK = new Image(imagePath + "blank.png", 20,20,true, true);
 
     private GameHandler gameHandler = new GameHandler();
 
@@ -118,7 +118,7 @@ public class mainGUI implements Initializable
         stage.setScene(scene);
         stage.showAndWait();
 
-        gameHandler.resetBoard();
+        gameHandler = new GameHandler();
         gameHandler.getBoard().setup(teamController.getPlayerTurnChoice());
 
         displayPieces();

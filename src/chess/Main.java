@@ -26,13 +26,10 @@ public class Main extends Application
     public void start(Stage primaryStage) throws Exception
     {
         Parent root = FXMLLoader.load(getClass().getResource("gui/fxml/main.fxml"));
-
         primaryStage.setTitle("Chess");
         primaryStage.initStyle(StageStyle.TRANSPARENT);
-
         Scene mainScene = new Scene(root);
         mainScene.setFill(Color.TRANSPARENT);
-
         primaryStage.setScene(mainScene);
         primaryStage.show();
     }
