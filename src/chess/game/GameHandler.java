@@ -14,19 +14,23 @@ package chess.game;
 
 public class GameHandler
 {
+    /* TODO: - Track the starting game time and compare it to current to display game time. */
+
     Board board = new Board();
-    boolean isPlayerTurn;
 
     public GameHandler()
     {
-        randomizeStart();
-        board.setupBoard(isPlayerTurn);
-        board.printBoard();
     }
 
-    /* Decide whether or not the player starts as white (which starts first in Chess). */
-    private boolean randomizeStart()
+    /* Returns the tile-array for the board. */
+    public Board getBoard()
     {
-        return isPlayerTurn = (Math.random() < 0.5 ? false : true);
+        return board;
+    }
+
+    /* Resets the board being used within the current game. */
+    public void resetBoard()
+    {
+        board.reset();
     }
 }
