@@ -53,6 +53,6 @@ public enum Piece
      */
     public Image getImage(String color)
     {
-        return new Image("chess/gui/images/" + color + name + ".png", 20, 20, true, true);
+        return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
 }
