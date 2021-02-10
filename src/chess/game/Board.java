@@ -19,7 +19,7 @@ public class Board
     private String bottomColor = "white";
 
     /* Set the board up based on who starts first. */
-    public void setupBoard(boolean isPlayerFirst)
+    public void setup(boolean isPlayerFirst)
     {
         /* Piece Orientation Validator */
         if (!isPlayerFirst)
@@ -61,22 +61,41 @@ public class Board
         tiles[0][4] = new Tile(Piece.QUEEN, topColor);
         tiles[7][4] = new Tile(Piece.KING, bottomColor);
         tiles[7][3] = new Tile(Piece.QUEEN, bottomColor);
+
+        /* COLOR Setters */
+        for (int row = 0; row < 8; row++)
+        {
+            /* Skip all of the rows in-between the top two and bottom two. */
+            if (row > 1 && row < 6)
+            {
+                continue;
+            }
+
+            /* Set the color of the tile based on it's top or bottom color placement. */
+            for (int column = 0; column < 8; column++)
+            {
+                tiles[row][column].setColor(row < 2 ? topColor : bottomColor);
+            }
+        }
+
+        /* Print Confirmation of Board Creation. */
+        print();
     }
 
     /* Resets all board-related data. */
-    public void resetBoard()
+    public void reset()
     {
         tiles = new Tile[8][8];
     }
 
     /* Returns the tile-array for the board. */
-    public Tile[][] getBoard()
+    public Tile[][] getTiles()
     {
         return tiles;
     }
 
     /* Print text-based current tile occupancy into console. */
-    public void printBoard()
+    public void print()
     {
         System.out.println("-- Current Board --");
 
@@ -86,7 +105,7 @@ public class Board
             {
                 try
                 {
-                    System.out.print(tiles[row][column].getPiece().getSymbol() + " ");
+                    System.out.print(tiles[row][column].getColor().substring(0,1) + tiles[row][column].getPiece().getSymbol() + " ");
                 }
                 catch (NullPointerException ex) {}
             }

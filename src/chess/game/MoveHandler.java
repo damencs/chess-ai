@@ -12,6 +12,10 @@
  */
 package chess.game;
 
+/* TODO: - Add Move Logging within the Game Handler after Move Validation is created.
+            -- Easily add a log method within a move function.
+            -- Track Total Moves for each player. */
+
 /* This class will soon handle move validation between each pieces and their respective abilities. */
 public class MoveHandler
 {

@@ -12,28 +12,24 @@
  */
 package chess.game;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import javafx.scene.image.Image;
 
 public enum Piece
 {
-    KING("K", "King", "king.png"),
-    QUEEN("Q", "Queen", "queen.png"),
-    ROOK("R", "Rook", "rook.png"),
-    BISHOP("B", "Bishop", "bishop.png"),
-    KNIGHT("KN", "Knight", "knight.png"),
-    PAWN("P", "Pawn", "pawn.png");
+    KING("K", "King"),
+    QUEEN("Q", "Queen"),
+    ROOK("R", "Rook"),
+    BISHOP("B", "Bishop"),
+    KNIGHT("KN", "Knight"),
+    PAWN("P", "Pawn");
 
     private String symbol;
     private String name;
-    private String fileName;
 
-    Piece(String symbol, String name, String fileName)
+    Piece(String symbol, String name)
     {
         this.symbol = symbol;
         this.name = name;
-        this.fileName = fileName;
     }
 
     /**
@@ -55,8 +51,8 @@ public enum Piece
     /**
      * @return image of piece
      */
-    public Image getImage(String color) throws FileNotFoundException
+    public Image getImage(String color)
     {
-        return new Image(new FileInputStream("gui/images/" + color + fileName));
+        return new Image("chess/gui/images/" + color + name + ".png", 20, 20, true, true);
     }
 }

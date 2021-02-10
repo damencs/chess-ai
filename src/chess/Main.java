@@ -12,7 +12,6 @@
  */
 package chess;
 
-import chess.game.GameHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,20 +26,16 @@ public class Main extends Application
     public void start(Stage primaryStage) throws Exception
     {
         Parent root = FXMLLoader.load(getClass().getResource("gui/fxml/main.fxml"));
-
         primaryStage.setTitle("Chess");
         primaryStage.initStyle(StageStyle.TRANSPARENT);
-
         Scene mainScene = new Scene(root);
         mainScene.setFill(Color.TRANSPARENT);
-
         primaryStage.setScene(mainScene);
         primaryStage.show();
     }
 
     public static void main(String[] args)
     {
-        GameHandler gameHandler = new GameHandler();
         launch(args);
     }
 }

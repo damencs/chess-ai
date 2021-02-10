@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="122.0" prefWidth="250.0" style="-fx-background-color: #292828; -fx-border-radius: 10; -fx-border-width: 2; -fx-border-color: #ffc629; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.coinflip">
+   <children>
+      <ImageView fx:id="playerWhite" fitHeight="53.0" fitWidth="53.0" layoutX="24.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" onMouseReleased="#imageClicked">
+         <image>
+            <Image url="@../images/whitePawn.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerBlack" fitHeight="53.0" fitWidth="53.0" layoutX="174.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" onMouseReleased="#imageClicked">
+         <image>
+            <Image url="@../images/blackPawn.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="playerRand" fitHeight="70.0" fitWidth="82.0" layoutX="88.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" onMouseReleased="#imageClicked">
+         <image>
+            <Image url="@../images/chessrandom.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="35.0" layoutY="14.0" text="Choose Your Side" textFill="WHITE">
+         <font>
+            <Font name="Montserrat Black" size="19.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
