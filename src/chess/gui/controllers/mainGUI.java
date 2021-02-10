@@ -119,7 +119,8 @@ public class mainGUI implements Initializable
         stage.showAndWait();
 
         gameHandler = new GameHandler();
-        gameHandler.getBoard().setup(teamController.getPlayerTurnChoice());
+        gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
+        gameHandler.getBoard().setup(gameHandler.isPlayerTurn());
 
         displayPieces();
     }
