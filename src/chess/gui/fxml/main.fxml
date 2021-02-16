@@ -23,7 +23,7 @@
                <children>
                   <TabPane fx:id="tabs" layoutX="20.0" layoutY="21.0" prefHeight="568.0" prefWidth="399.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab fx:id="newgameTab" styleClass="tab-pane" text="New Game">
+                      <Tab fx:id="newgameTab" styleClass="tab-pane" text="Home">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
@@ -136,7 +136,7 @@
                                           <Font name="Montserrat Black" size="10.0" />
                                        </font>
                                     </TextArea>
-                                    <Label layoutX="12.0" layoutY="18.0" text="Captuing Pieces" textFill="#ffc629">
+                                    <Label layoutX="12.0" layoutY="18.0" text="Capturing Pieces" textFill="#ffc629">
                                        <font>
                                           <Font name="Montserrat Black" size="16.0" />
                                        </font>
