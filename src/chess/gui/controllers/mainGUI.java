@@ -184,6 +184,14 @@ public class mainGUI implements Initializable
         bishopLCCIMG.setImage(bishop);
         bishopRCCIMG.setImage(bishop);
 
+        kingCCIMG.setVisible(true);
+        kingCCStatus.setVisible(true);
+        bishopLCCIMG.setVisible(true);
+        lBishopCCStatus.setVisible(true);
+        bishopRCCIMG.setVisible(true);
+        rBishopCCStatus.setVisible(true);
+
+
         Tile[][] currentGameSetArray = gameHandler.getBoard().getTiles();
         displayBoard();
 
