@@ -52,9 +52,9 @@
                                           </Button>
                                        </children>
                                     </VBox>
-                                    <ImageView fitHeight="203.0" fitWidth="223.0" layoutX="88.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="179.0" fitWidth="234.0" layoutX="83.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
-                                          <Image url="@../images/sturgisGambit%20-%20Copy.png" />
+                                          <Image url="@../images/sturgisGambit.png" />
                                        </image>
                                     </ImageView>
                                  </children>
