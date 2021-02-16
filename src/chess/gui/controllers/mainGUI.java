@@ -22,6 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
@@ -65,6 +66,18 @@ public class mainGUI implements Initializable
     private Tab rulesTab;
     @FXML
     private StackPane gameboardPane;
+    @FXML
+    private ImageView kingCCIMG;
+    @FXML
+    private ImageView bishopLCCIMG;
+    @FXML
+    private ImageView bishopRCCIMG;
+    @FXML
+    private Label kingCCStatus;
+    @FXML
+    private Label lBishopCCStatus;
+    @FXML
+    private Label rBishopCCStatus;
 
     /* Color Evaluation Grid for the Board */
     private int[][] boardArray =
@@ -99,8 +112,8 @@ public class mainGUI implements Initializable
     @FXML
     void playDefault(ActionEvent event) throws IOException
     {
-        tabs.getSelectionModel().select(gameTab);
         onOpenDialog(event);
+        tabs.getSelectionModel().select(gameTab);
     }
 
     @FXML
@@ -165,6 +178,11 @@ public class mainGUI implements Initializable
     {
         gameboardPane.getChildren().clear();
         piecesGrid.getChildren().clear();
+        Image king = (gameHandler.isPlayerTurn()) ? new Image("chess/gui/images/whiteKing.png") : new Image("chess/gui/images/blackKing.png");
+        Image bishop = (gameHandler.isPlayerTurn()) ? new Image("chess/gui/images/whiteBishop.png") : new Image("chess/gui/images/blackBishop.png");
+        kingCCIMG.setImage(king);
+        bishopLCCIMG.setImage(bishop);
+        bishopRCCIMG.setImage(bishop);
 
         Tile[][] currentGameSetArray = gameHandler.getBoard().getTiles();
         displayBoard();
@@ -198,5 +216,29 @@ public class mainGUI implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         displayBoard();
+    }
+
+    public Label getKingCCStatus() {
+        return kingCCStatus;
+    }
+
+    public void setKingCCStatus(Label kingCCStatus) {
+        this.kingCCStatus = kingCCStatus;
+    }
+
+    public Label getlBishopCCStatus() {
+        return lBishopCCStatus;
+    }
+
+    public void setlBishopCCStatus(Label lBishopCCStatus) {
+        this.lBishopCCStatus = lBishopCCStatus;
+    }
+
+    public Label getrBishopCCStatus() {
+        return rBishopCCStatus;
+    }
+
+    public void setrBishopCCStatus(Label rBishopCCStatus) {
+        this.rBishopCCStatus = rBishopCCStatus;
     }
 }
