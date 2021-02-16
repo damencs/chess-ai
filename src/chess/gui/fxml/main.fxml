@@ -75,7 +75,7 @@
                                           <Font name="Montserrat Black" size="20.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="113.0" layoutY="83.0" text="Core Command Status" textFill="#ffc629">
+                                    <Label layoutX="113.0" layoutY="83.0" text="Corp Command Status" textFill="#ffc629">
                                        <font>
                                           <Font name="Montserrat Black" size="14.0" />
                                        </font>
