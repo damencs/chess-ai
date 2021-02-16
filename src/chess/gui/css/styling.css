@@ -10,16 +10,26 @@
     Project: Chess with AI Agent
     Class: CS4850 - Senior Project
  */
+
+
 .button
 {
-    -fx-background-color: #3c3c3c;
+    -fx-background-color: #292828;
     -fx-padding: 15;
-    -fx-text-fill: #878a89;
+    -fx-text-fill: #ffc629;
 }
 
 .button:hover
 {
+    -fx-background-color: #ffc629;
+    -fx-background-radius: 5 5 5 5;
+    -fx-text-fill: #292828;
+}
+
+.endTurnBTN
+{
     -fx-background-color: #292828;
+    -fx-padding: 15;
     -fx-background-radius: 5 5 5 5;
     -fx-text-fill: #ffc629;
 }
@@ -84,6 +94,34 @@
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
+
+.coreCommandStatus .text
+{
+    -fx-stroke: black;
+    -fx-stroke-width: 0.5;
+}
+
+.gameLog
+{
+    -fx-background: #231f20;
+    -fx-border-radius: 5;
+}
+
+.gameLog .content
+{
+    -fx-border-radius: 5;
+}
+
+.rulesTextArea
+{
+    -fx-text-fill: white;
+}
+
+.rulesTextArea .content
+{
+    -fx-background-color: #231f20;
+}
+
 
 .tab:selected .tab-label
 {

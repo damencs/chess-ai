@@ -62,6 +62,8 @@ public class mainGUI implements Initializable
     @FXML
     private Tab helpTab;
     @FXML
+    private Tab rulesTab;
+    @FXML
     private StackPane gameboardPane;
 
     /* Color Evaluation Grid for the Board */
@@ -99,6 +101,12 @@ public class mainGUI implements Initializable
     {
         tabs.getSelectionModel().select(gameTab);
         onOpenDialog(event);
+    }
+
+    @FXML
+    void openRules(ActionEvent event) throws IOException
+    {
+        tabs.getSelectionModel().select(rulesTab);
     }
 
     @FXML
