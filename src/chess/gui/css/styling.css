@@ -95,12 +95,6 @@
     -fx-font-weight: bold;
 }
 
-.coreCommandStatus .text
-{
-    -fx-stroke: black;
-    -fx-stroke-width: 0.5;
-}
-
 .gameLog
 {
     -fx-background: #231f20;
