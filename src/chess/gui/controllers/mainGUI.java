@@ -123,6 +123,12 @@ public class mainGUI implements Initializable
     }
 
     @FXML
+    void openRules(ActionEvent event) throws IOException
+    {
+        tabs.getSelectionModel().select(rulesTab);
+    }
+
+    @FXML
     void onOpenDialog(ActionEvent event) throws IOException
     {
         FXMLLoader fxmlloader = new FXMLLoader();
