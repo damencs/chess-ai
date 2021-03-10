@@ -12,11 +12,38 @@
  */
 package chess.game;
 
-/* TODO: - Add Move Logging within the Game Handler after Move Validation is created.
-            -- Easily add a log method within a move function.
-            -- Track Total Moves for each player. */
-
-/* This class will soon handle move validation between each pieces and their respective abilities. */
-public class MoveHandler
+public abstract class MoveHandler
 {
+    final Board board;
+    final Piece movingPiece;
+    final int destination;
+
+    private MoveHandler(final Board board, final Piece movingPiece, final int destination){
+        this.board = board;
+        this.movingPiece = movingPiece;
+        this.destination = destination;
+    }
+
+    public int getDestination() {return this.destination; }
+
+    public abstract Board executeMove();
+
+    public static final class Move extends MoveHandler
+    {
+        private Move(Board board, Piece movingPiece, int destination) {
+            super(board, movingPiece, destination);
+        }
+
+        @Override
+        public Board executeMove() {
+            Board.SetBoard setBoardMove = new Board.SetBoard();
+            for(Piece piece : this.board.getAlivePieces()){
+                if(!movingPiece.equals(piece)){
+                    setBoardMove.setPiece(piece);
+                }
+            }
+            setBoardMove.setPiece(movingPiece.movePiece(destination));
+            return setBoardMove.build();
+        }
+    }
 }

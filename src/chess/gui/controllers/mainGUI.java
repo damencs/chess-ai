@@ -12,9 +12,7 @@
  */
 package chess.gui.controllers;
 
-import chess.game.GameHandler;
-import chess.game.Piece;
-import chess.game.Tile;
+import chess.game.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +25,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -35,6 +34,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -91,9 +91,10 @@ public class mainGUI implements Initializable
                 {0,1,0,1,0,1,0,1},
                 {1,0,1,0,1,0,1,0}
             };
-
     private final GridPane boardGrid = new GridPane();
     private final GridPane piecesGrid = new GridPane();
+    // Dimesion of each tile so that it can be referenced later
+    private final Dimension tileSize = new Dimension(71, 64);
 
     private final ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
     private final ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
@@ -141,7 +142,7 @@ public class mainGUI implements Initializable
 
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
-        gameHandler.getBoard().setup(gameHandler.isPlayerTurn());
+        gameHandler.setBoard();
 
         displayPieces();
     }
@@ -159,21 +160,18 @@ public class mainGUI implements Initializable
         boardGrid.setHgap(2);
         boardGrid.setVgap(2);
 
-        for (int row = 0; row < boardArray.length; row++)
-        {
-            for (int column = 0; column < boardArray[0].length; column++)
-            {
+        for (int row = 0; row < boardArray.length; row++) {
+            for (int column = 0; column < boardArray[0].length; column++) {
                 boardImg[row][column] = new ImageView(boardArray[row][column] == 0 ? GOLD : GREY);
-                boardImg[row][column].setFitWidth(71.25);
-                boardImg[row][column].setFitHeight(64.25);
+                boardImg[row][column].setFitHeight(tileSize.getHeight());
+                boardImg[row][column].setFitWidth(tileSize.getWidth());
                 boardGrid.add(boardImg[row][column], row, column);
             }
         }
-
         gameboardPane.getChildren().add(boardGrid);
     }
 
-    /* Display Pieces based off current board data. */
+    /* Display Piece based off current board data. */
     void displayPieces()
     {
         gameboardPane.getChildren().clear();
@@ -191,34 +189,67 @@ public class mainGUI implements Initializable
         bishopRCCIMG.setVisible(true);
         rBishopCCStatus.setVisible(true);
 
-
-        Tile[][] currentGameSetArray = gameHandler.getBoard().getTiles();
+        Tile[][] tiles = gameHandler.getBoardTiles();
         displayBoard();
 
         piecesGrid.setVgap(2);
         piecesGrid.setHgap(2);
 
-        for(int row = 0; row < currentGameSetArray.length; row++)
-        {
-            for(int column = 0; column < currentGameSetArray[0].length; column++)
-            {
-                if(currentGameSetArray[row][column] == null)
-                {
+        for(int row = 0; row < tiles.length; row++) {
+            for(int column = 0; column < tiles[0].length; column++) {
+                if(!tiles[row][column].isOccupied()) {
                     gamestate[row][column] = new ImageView(BLANK);
                 }
-                else
-                {
-                    Piece piece = currentGameSetArray[row][column].getPiece();
-                    gamestate[row][column] = new ImageView(piece.getImage(currentGameSetArray[row][column].getColor()));
+                else {
+                    /* Creates a MouseEventListener that allows player interaction with Piece */
+                    int vertical = row;
+                    int horizontal = column;
+                    Piece piece = tiles[row][column].getPiece();
+                    gamestate[row][column] = new ImageView(piece.getImage());
+                    gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
+                    gamestate[row][column].setOnMouseReleased(mouseEvent -> released(piece, gamestate[vertical][horizontal], vertical, horizontal));
                 }
-
-                gamestate[row][column].setFitWidth(71.25);
-                gamestate[row][column].setFitHeight(64.25);
+                gamestate[row][column].setFitWidth(tileSize.getWidth());
+                gamestate[row][column].setFitHeight(tileSize.getHeight());
                 piecesGrid.add(gamestate[row][column], column, row);
+
             }
         }
         gameboardPane.getChildren().add(piecesGrid);
     }
+
+    /** -------- Following classes are for Mouse Event Listeners ----------- **/
+    private void dragged(MouseEvent event , ImageView image)
+    {
+        image.setX(event.getX() - (float)tileSize.width/2);
+        image.setY(event.getY() - (float)tileSize.height/2);
+        draw(image);
+    }
+
+    private void draw(ImageView image)
+    {
+        image.setTranslateX(image.getX());
+        image.setTranslateY(image.getY());
+    }
+
+    private void released(Piece piece, ImageView image, int vertical, int horizontal){
+
+        int moveX = Math.round((float)image.getX() / tileSize.width);
+        int moveY = Math.round((float)image.getY() / tileSize.height);
+
+        int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
+        int originCoordinates = (8 * vertical) + horizontal;
+
+        if(moveX != 0 || moveY != 0)
+        {
+            System.out.println(moveY + ", " + moveX);
+            gameHandler.move(piece, destinationCoordinates, originCoordinates);
+        }
+        displayPieces();
+
+    }
+    /** ---------------------------------------------------------------------- **/
+    /** ---------------------------------------------------------------------- **/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
