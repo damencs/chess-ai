@@ -80,7 +80,7 @@ public class mainGUI implements Initializable
     private Label rBishopCCStatus;
 
     /* Color Evaluation Grid for the Board */
-    private int[][] boardArray =
+    private final int[][] boardArray =
             {
                 {0,1,0,1,0,1,0,1},
                 {1,0,1,0,1,0,1,0},
@@ -207,7 +207,13 @@ public class mainGUI implements Initializable
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
                     gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
-                    gamestate[row][column].setOnMouseReleased(mouseEvent -> released(piece, gamestate[vertical][horizontal], vertical, horizontal));
+                    gamestate[row][column].setOnMouseReleased(mouseEvent -> {
+                        try {
+                            released(piece, gamestate[vertical][horizontal], vertical, horizontal);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 }
                 gamestate[row][column].setFitWidth(tileSize.getWidth());
                 gamestate[row][column].setFitHeight(tileSize.getHeight());
@@ -232,18 +238,18 @@ public class mainGUI implements Initializable
         image.setTranslateY(image.getY());
     }
 
-    private void released(Piece piece, ImageView image, int vertical, int horizontal){
+    private void released(Piece piece, ImageView image, int vertical, int horizontal) throws IOException {
 
         int moveX = Math.round((float)image.getX() / tileSize.width);
         int moveY = Math.round((float)image.getY() / tileSize.height);
 
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
-        int originCoordinates = (8 * vertical) + horizontal;
 
         if(moveX != 0 || moveY != 0)
         {
-            System.out.println(moveY + ", " + moveX);
-            gameHandler.move(piece, destinationCoordinates, originCoordinates);
+            //gameHandler.move(piece, destinationCoordinates, originCoordinates);
+            MoveHandler.Move moveHandler = new MoveHandler.Move(gameHandler.getBoard(), piece, destinationCoordinates);
+            gameHandler.setBoard(moveHandler.executeMove());
         }
         displayPieces();
 
