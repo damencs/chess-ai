@@ -1,3 +1,15 @@
+/*
+    Group Names:
+        - Damen DeBerry (@basicDamen)
+        - James Grady (@JaymeAlann)
+        - Tyra Buadoo (@misstj555)
+        - Ashlei Williams (@AshW-2018)
+        - Mahad Farah (@mfarah-ksu)
+        - Mandela Issa-Boube (@aliamaza)
+        - Shivank Rao (@shivankrao)
+    Project: Chess with AI Agent
+    Class: CS4850 - Senior Project
+ */
 package chess.game;
 
 import javafx.scene.image.Image;
@@ -19,9 +31,20 @@ public abstract class Piece
         this.name = name;
     }
 
-    public int getCoordinates(){ return this.coordinates; }
-    public String getColor(){ return this.color; }
-    public String getName(){ return this.name; }
+    public int getCoordinates()
+    {
+        return this.coordinates;
+    }
+
+    public String getColor()
+    {
+        return this.color;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
 
     public Image getImage()
     {
@@ -46,17 +69,20 @@ public abstract class Piece
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new Knight(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             return null;
         }
     }
@@ -75,17 +101,20 @@ public abstract class Piece
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new King(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             return null;
         }
     }
@@ -104,17 +133,20 @@ public abstract class Piece
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new Bishop(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             return null;
         }
     }
@@ -133,17 +165,20 @@ public abstract class Piece
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new Queen(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             return null;
         }
     }
@@ -156,62 +191,74 @@ public abstract class Piece
         private final static int[] rookMoveOffset = {-1,-7,-8,-9, 1, 7, 8, 9};
         private final static int[] rookAttackOffset = {-27,-24,-21,-18,-16,-14,-9,-8,-7,-3,-2,-1,1,2,3,7,8,9,14,16,18,21,24,27};
 
-
         Rook(final int coordinates, final String color, final String pieceCorp, String name)
         {
             super(coordinates, color, pieceCorp, name);
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new Rook(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
-
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             final ArrayList<MoveHandler> moves = new ArrayList<>();
-
-            /*for(final int destinationOffset : rookMoveOffset){
+            /*
+            for (final int destinationOffset : rookMoveOffset)
+            {
                 int destination = this.coordinates + destinationOffset;
-                if(true ){
+                if (true)
+                {
                     final Tile destinationTile = board.getTile(destination);
 
-                    if(!destinationTile.isOccupied()){
+                    if (!destinationTile.isOccupied())
+                    {
                         moves.add(new MoveHandler());
                     }
-                    else{
+                    else
+                    {
                         final Piece destinationPiece = destinationTile.getPiece();
                         final String destinationPieceColor = destinationPiece.getColor();
 
-                        if(this.color.equals(destinationPieceColor)){
+                        if (this.color.equals(destinationPieceColor))
+                        {
                             moves.add(new MoveHandler());
                         }
                     }
                 }
-            }*/
+            }
+             */
             return moves;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
-
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             final ArrayList<MoveHandler> attacks = new ArrayList<>();
-            /*or(final int attackDestinationOffset : rookAttackOffset){
+            /*
+            for (final int attackDestinationOffset : rookAttackOffset)
+            {
                 int attackDestination = this.coordinates + attackDestinationOffset;
-                if(true *//* Valid tile Coordinates *//*){
+                if (true)
+                {
                     final Tile destinationTile = board.getTile(attackDestination);
 
-                    if(destinationTile.isOccupied()){
+                    if (destinationTile.isOccupied())
+                    {
                         final Piece destinationPiece = destinationTile.getPiece();
                         final PieceColor destinationPieceColor = destinationPiece.getColor();
 
-                        if(this.color != destinationPieceColor){
+                        if (this.color != destinationPieceColor)
+                        {
                             attacks.add(new MoveHandler());
                         }
                     }
                 }
-            }*/
+            }
+            */
             return attacks;
         }
     }
@@ -230,21 +277,22 @@ public abstract class Piece
         }
 
         @Override
-        public Piece movePiece(int newCoordinates) {
+        public Piece movePiece(int newCoordinates)
+        {
             return new Pawn(newCoordinates, this.color, this.pieceCorp, this.name);
         }
 
 
         @Override
-        public ArrayList<MoveHandler> determineMoves(Board board) {
+        public ArrayList<MoveHandler> determineMoves(Board board)
+        {
             return null;
         }
 
         @Override
-        public ArrayList<MoveHandler> determineAttacks(Board board) {
+        public ArrayList<MoveHandler> determineAttacks(Board board)
+        {
             return null;
         }
     }
-
-
 }

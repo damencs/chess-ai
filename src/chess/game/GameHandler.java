@@ -12,35 +12,39 @@
  */
 package chess.game;
 
-import chess.gui.controllers.DiceRoll;
-import chess.gui.controllers.coinflip;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
-
 public class GameHandler
 {
-    /* TODO: - Track the starting game time and compare it to current to display game time. */
+    /* TODO: - Track the starting game time and compare it to current to display game time.
+       TODO: - Implement AI That will make its moves as soon as player ends turn. */
 
     private Board board;
     private boolean isPlayerTurn;
 
-    public void setBoard(){ board = Board.createInitialBoard(isPlayerTurn()); }
-    public void setBoard(Board board){ this.board = board;}
-    /* Return instance of board*/
-    public Board getBoard() { return board; }
+    public void setBoard()
+    {
+        board = Board.createInitialBoard(isPlayerTurn());
+    }
 
-    public Tile[][] getBoardTiles(){
+    public void setBoard(Board board)
+    {
+        this.board = board;
+    }
+
+    /* Return instance of board. */
+    public Board getBoard()
+    {
+        return board;
+    }
+
+    public Tile[][] getBoardTiles()
+    {
         Tile[][] tiles = new Tile[8][8];
         int index = 0;
-        for(int row = 0; row < tiles.length; row++){
-            for(int column = 0; column < tiles[row].length; column++){
+
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for(int column = 0; column < tiles[row].length; column++)
+            {
                 tiles[row][column] = board.getTile(index);
                 index++;
             }
@@ -59,7 +63,4 @@ public class GameHandler
     {
         isPlayerTurn = update;
     }
-
-    /* TODO: - Implement AI That will make its moves as soon as player ends turn */
-
 }
