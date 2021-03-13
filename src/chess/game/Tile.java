@@ -12,39 +12,92 @@
  */
 package chess.game;
 
-public class Tile
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class Tile
 {
-    private Piece piece;
-    private String occupyingColor;
+    protected final int coordinates;
 
-    Tile(Piece piece, String occupyingColor)
+    private Tile(int coordinates)
     {
-        this.piece = piece;
-        this.occupyingColor = occupyingColor;
+        this.coordinates = coordinates;
+    }
+
+    private static final Map<Integer, EmptyTile> EMPTY_TILE_MAP = createEmptyTiles();
+
+    public abstract boolean isOccupied();
+    public abstract Piece getPiece();
+
+    /* TODO: Add immutability for java flow */
+    private static Map<Integer, EmptyTile> createEmptyTiles()
+    {
+        final Map<Integer, EmptyTile> emptyTileMap = new HashMap<>();
+        for (int tileNumber = 0; tileNumber < 64; tileNumber++)
+        {
+            emptyTileMap.put(tileNumber, new EmptyTile(tileNumber));
+        }
+        return Collections.unmodifiableMap(emptyTileMap);
     }
 
     /**
-     * @return the piece within a tile
+     *
+     * @param coordinates for the tiles location
+     * @param piece if the tile is occupied (otherwise null)
+     * @return the Tile being created.
      */
-    public Piece getPiece()
+    public static Tile createTiles(final int coordinates, final Piece piece)
     {
-        return piece;
+        return piece != null ? new OccupiedTile(coordinates, piece) : EMPTY_TILE_MAP.get(coordinates);
     }
 
     /**
-     * @return the color occupying the tile
-     */
-    public String getColor()
+     *  Create a Empty Tile Object
+     *  */
+    public static final class EmptyTile extends Tile
     {
-        return occupyingColor;
+        EmptyTile(final int coordinate)
+        {
+            super(coordinate);
+        }
+
+        @Override
+        public boolean isOccupied()
+        {
+            return false;
+        }
+
+        @Override
+        public Piece getPiece()
+        {
+            return null;
+        }
     }
 
     /**
-     * @setter - set the color of the tile
-     * Used if a piece consumes another
-     */
-    public void setColor(String color)
+     *  Create an Occupied tile object
+     *  */
+    public static final class OccupiedTile extends Tile
     {
-        this.occupyingColor = color;
+        private final Piece occupyingPiece;
+
+        OccupiedTile(final int coordinate, Piece occupyingPiece)
+        {
+            super(coordinate);
+            this.occupyingPiece = occupyingPiece;
+        }
+
+        @Override
+        public boolean isOccupied()
+        {
+            return true;
+        }
+
+        @Override
+        public Piece getPiece()
+        {
+            return occupyingPiece;
+        }
     }
 }
