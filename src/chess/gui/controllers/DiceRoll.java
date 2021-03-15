@@ -39,7 +39,7 @@ public class DiceRoll {
     }
 
     private void tossDice() {
-        RotateTransition rollTransition = new RotateTransition(Duration.seconds(5), diceCube);
+        RotateTransition rollTransition = new RotateTransition(Duration.seconds(2), diceCube);
         rollTransition.setByAngle(3240);
         diceRoll = (int)(Math.random()*6+1);
         rollTransition.play();

@@ -23,6 +23,8 @@ public class Board
     private final List<Piece> whiteTeam;
     private final List<Piece> blackTeam;
     public ArrayList<Tile> chessBoard;
+    private static String top = "black";
+    private static String bottom = "white";
 
     private Board(SetBoard setter){
         this.chessBoard = createBoard(setter);
@@ -37,6 +39,8 @@ public class Board
     public List<Piece> getWhitePieces() {
         return this.whiteTeam;
     }
+
+    //TODO Make corp lists
 
     public List<Piece> getAlivePieces(){
         return Stream.concat(this.whiteTeam.stream(), this.blackTeam.stream()).collect(Collectors.toList());
@@ -66,46 +70,60 @@ public class Board
         return listTiles;
     }
 
+    /**
+     * @param isPlayerTurn determines if player is white or black
+     * @return the initial board state
+     *
+     * set Piece paramenters needed are as follows:
+     *  1: Original Starting Coordinates
+     *  2: Final Color of each piece
+     *  3: Corp that individual piece is associated with
+     *  3: Name of individual piece
+     *  4: Offset Multiplier for single directional moves (1 is down : -1 is up)
+     */
     public static Board createInitialBoard(boolean isPlayerTurn){
         final SetBoard setter = new SetBoard();
-        String top = "black";
-        String bottom = "white";
+        //String top = "black";
+        //String bottom = "white";
         if (!isPlayerTurn) {top = "white"; bottom = "black";}
-        setter.setPiece( new Piece.Rook(0, top, "king", "Rook"));
-        setter.setPiece( new Piece.Knight(1, top, "kingsBishop", "Knight"));
-        setter.setPiece( new Piece.Bishop(2, top, "kingsBishop", "Bishop"));
-        setter.setPiece( new Piece.King(3, top, "king", "King"));
-        setter.setPiece( new Piece.Queen(4, top, "king", "Queen"));
-        setter.setPiece( new Piece.Rook(7, top, "queensBishop", "Rook"));
-        setter.setPiece( new Piece.Knight(6, top, "queensBishop", "Knight"));
-        setter.setPiece( new Piece.Bishop(5, top, "king", "Bishop"));
 
-        setter.setPiece(new Piece.Pawn(8, top, "kingsBishop", "Pawn"));
-        setter.setPiece(new Piece.Pawn(9, top, "kingsBishop", "Pawn"));
-        setter.setPiece(new Piece.Pawn(10, top, "kingsBishop", "Pawn"));
-        setter.setPiece(new Piece.Pawn(11, top, "king", "Pawn"));
-        setter.setPiece(new Piece.Pawn(12, top, "king", "Pawn"));
-        setter.setPiece( new Piece.Pawn(13, top, "queensBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(14, top, "queensBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(15, top, "queensBishop", "Pawn"));
+        /* AI Pieces on the top of the board */
+        setter.setPiece( new Piece.Rook(0, top, "king", "Rook", 1));
+        setter.setPiece( new Piece.Knight(1, top, "kingsBishop", "Knight", 1));
+        setter.setPiece( new Piece.Bishop(2, top, "kingsBishop", "Bishop", 1));
+        setter.setPiece( new Piece.King(3, top, "king", "King", 1));
+        setter.setPiece( new Piece.Queen(4, top, "king", "Queen", 1));
+        setter.setPiece( new Piece.Rook(7, top, "queensBishop", "Rook", 1));
+        setter.setPiece( new Piece.Knight(6, top, "queensBishop", "Knight", 1));
+        setter.setPiece( new Piece.Bishop(5, top, "king", "Bishop", 1));
 
-        setter.setPiece( new Piece.Pawn(48, bottom, "queensBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(49, bottom, "queensBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(50, bottom, "queensBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(51, bottom, "king", "Pawn"));
-        setter.setPiece( new Piece.Pawn(52, bottom, "king", "Pawn"));
-        setter.setPiece( new Piece.Pawn(53, bottom, "kingsBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(54, bottom, "kingsBishop", "Pawn"));
-        setter.setPiece( new Piece.Pawn(55, bottom, "kingsBishop", "Pawn"));
+        setter.setPiece(new Piece.Pawn(8, top, "kingsBishop", "Pawn", 1));
+        setter.setPiece(new Piece.Pawn(9, top, "kingsBishop", "Pawn", 1));
+        setter.setPiece(new Piece.Pawn(10, top, "kingsBishop", "Pawn", 1));
+        setter.setPiece(new Piece.Pawn(11, top, "king", "Pawn", 1));
+        setter.setPiece(new Piece.Pawn(12, top, "king", "Pawn", 1));
+        setter.setPiece( new Piece.Pawn(13, top, "queensBishop", "Pawn", 1));
+        setter.setPiece( new Piece.Pawn(14, top, "queensBishop", "Pawn", 1));
+        setter.setPiece( new Piece.Pawn(15, top, "queensBishop", "Pawn", 1));
 
-        setter.setPiece( new Piece.Rook(56, bottom, "king", "Rook"));
-        setter.setPiece( new Piece.Knight(57, bottom, "kingsBishop", "Knight"));
-        setter.setPiece( new Piece.Bishop(58, bottom, "kingsBishop", "Bishop"));
-        setter.setPiece( new Piece.King(59, bottom, "king", "King"));
-        setter.setPiece( new Piece.Queen(60, bottom, "king", "Queen"));
-        setter.setPiece( new Piece.Rook(63, bottom, "queensBishop", "Rook"));
-        setter.setPiece( new Piece.Knight(62, bottom, "queensBishop", "Knight"));
-        setter.setPiece( new Piece.Bishop(61, bottom, "king", "Bishop"));
+        /* Player Pieces on the bottom of the board */
+        setter.setPiece( new Piece.Pawn(48, bottom, "queensBishop", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(49, bottom, "queensBishop", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(50, bottom, "queensBishop", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(51, bottom, "king", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(52, bottom, "king", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(53, bottom, "kingsBishop", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(54, bottom, "kingsBishop", "Pawn", -1));
+        setter.setPiece( new Piece.Pawn(55, bottom, "kingsBishop", "Pawn", -1));
+
+        setter.setPiece( new Piece.Rook(56, bottom, "king", "Rook", -1));
+        setter.setPiece( new Piece.Knight(57, bottom, "kingsBishop", "Knight", -1));
+        setter.setPiece( new Piece.Bishop(58, bottom, "kingsBishop", "Bishop", -1));
+        setter.setPiece( new Piece.King(59, bottom, "king", "King", -1));
+        setter.setPiece( new Piece.Queen(60, bottom, "king", "Queen", -1));
+        setter.setPiece( new Piece.Rook(63, bottom, "queensBishop", "Rook", -1));
+        setter.setPiece( new Piece.Knight(62, bottom, "queensBishop", "Knight", -1));
+        setter.setPiece( new Piece.Bishop(61, bottom, "king", "Bishop", -1));
 
         setter.setIsPlayerTurn(isPlayerTurn);
         return setter.build();

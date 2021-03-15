@@ -41,6 +41,8 @@ public abstract class MoveHandler
 
     public static final class Move extends MoveHandler
     {
+        private final Board.SetBoard setBoardMove = new Board.SetBoard();
+
         public Move(Board board, Piece movingPiece, int destination) {
             super(board, movingPiece, destination);
         }
@@ -50,7 +52,7 @@ public abstract class MoveHandler
             Tile destinationTile = this.board.getTile(destination);
 
             if(!destinationTile.isOccupied()){
-                Board.SetBoard setBoardMove = new Board.SetBoard();
+                //Board.SetBoard setBoardMove = new Board.SetBoard();
                 for(Piece piece : this.board.getAlivePieces()){
                     if(!movingPiece.equals(piece)){
                         setBoardMove.setPiece(piece);
@@ -85,7 +87,7 @@ public abstract class MoveHandler
                         board.getBlackPieces().remove(destinationTile.getPiece());
                     }
 
-                    Board.SetBoard setBoardMove = new Board.SetBoard();
+                    //Board.SetBoard setBoardMove = new Board.SetBoard();
                     for(Piece piece : this.board.getAlivePieces()){
                         if(!movingPiece.equals(piece)){
                             setBoardMove.setPiece(piece);
