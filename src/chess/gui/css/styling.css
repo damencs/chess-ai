@@ -108,14 +108,50 @@
 
 .rulesTextArea
 {
-    -fx-text-fill: white;
+    -fx-text-fill: #aba9a9;
+    -fx-font-size: 12;
 }
 
 .rulesTextArea .content
 {
-    -fx-background-color: #231f20;
+    -fx-background-color: #303030;
 }
 
+.rulesTextArea .scroll-pane
+{
+    -fx-background-color: black;
+}
+
+.rulesTitlePane
+{
+    -fx-color: #231f20;
+}
+
+.rulesTitlePane .arrow
+{
+    -fx-background-color: #b2b500;
+}
+
+.rulesTitlePane .content
+{
+    -fx-background-color: #303030;
+}
+
+.rulesScrollPane
+{
+    -fx-background-color:#231f20;
+}
+
+.rulesScrollPane .scroll-bar:horizontal, .scroll-bar:vertical
+{
+    -fx-background-color:#231f20;
+}
+
+.rulesScrollPane .scroll-bar:horizontal .thumb,
+                 .scroll-bar:vertical .thumb
+{
+    -fx-background-color: #363636;
+}
 
 .tab:selected .tab-label
 {
