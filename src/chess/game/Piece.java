@@ -37,7 +37,10 @@ public abstract class Piece
      */
     public static class Knight extends Piece
     {
-        private final static int[] KNIGHT_OFFSET = {};
+        private final static int[] KNIGHT_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
+        private Stack<Tile> queueStack = new Stack<>();
+        private ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         Knight(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
         {
@@ -51,7 +54,56 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
-            return null;
+            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
+            int row = (int) Math.floor(this.coordinates/8);
+            int column = this.coordinates % 8;
+            findValidTiles(board, this.coordinates, row, column);
+
+            for(int destinationCoord : validMovesCoordinates){
+                moves.add(new MoveHandler.Move(board, this, destinationCoord));
+            }
+            return moves;
+        }
+
+        /**
+         * TODO: Need to fix minor issue of allowed tiles
+         * @param board needed for location of all current pieces
+         * @param tileCoordinates location of tile being passed through recursive
+         * @param initRow initial row of the knight
+         * @param initCol initial column of the knight
+         */
+        private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
+
+            if(valid(tileCoordinates)){
+                for(int offset : KNIGHT_OFFSET){
+                    if(valid(tileCoordinates + offset)){
+                        if(!board.getTile(tileCoordinates + offset).isOccupied()){
+                            if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                queueStack.add(board.getTile(tileCoordinates + offset));
+                            }
+                        }else if(board.getTile(tileCoordinates+offset).isOccupied()){
+                            if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
+                                if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+            }
+
+            while(!queueStack.isEmpty()){
+                Tile temp = queueStack.pop();
+                visitedTiles.add(temp);
+                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destColumn = temp.getCoordinates() % 8;
+                if((initRow - destRow > 5 || initRow - destRow < -5) || (initCol - destColumn > 5 || initCol - destColumn < -5)){return;}
+                else if(!validMovesCoordinates.contains(temp.getCoordinates())){
+                    validMovesCoordinates.add(temp.getCoordinates());
+                    findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63){
+                safe = true;
+            }
+            return safe;
         }
 
     }
@@ -64,7 +116,10 @@ public abstract class Piece
      */
     public static class King extends Piece
     {
-        private final static int[] KING_OFFSET = {};
+        private final static int[] KING_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
+        private final Stack<Tile> queueStack = new Stack<>();
+        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         King(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
         {
@@ -78,8 +133,55 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
-            ArrayList<MoveHandler> moves = new ArrayList<>();
+            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
+            int row = (int) Math.floor(this.coordinates/8);
+            int column = this.coordinates % 8;
+            findValidTiles(board, this.coordinates, row, column);
+
+            for(int destinationCoord : validMovesCoordinates){
+                moves.add(new MoveHandler.Move(board, this, destinationCoord));
+            }
             return moves;
+        }
+
+        /**
+         * TODO: Need to fix minor issue of allowed tiles
+         * @param board needed for location of all current pieces
+         * @param tileCoordinates location of tile being passed through recursive
+         * @param initRow initial row of the knight
+         * @param initCol initial column of the knight
+         */
+        private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
+
+            if(valid(tileCoordinates)){
+                for(int offset : KING_OFFSET){
+                    if(valid(tileCoordinates + offset)){
+                        if(!board.getTile(tileCoordinates + offset).isOccupied()){
+                            if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                queueStack.add(board.getTile(tileCoordinates + offset)); }}
+                        else if(board.getTile(tileCoordinates+offset).isOccupied()){
+                            if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
+                                if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+            }
+
+            while(!queueStack.isEmpty()){
+                Tile temp = queueStack.pop();
+                visitedTiles.add(temp);
+                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destColumn = temp.getCoordinates() % 8;
+                if((initRow - destRow > 3 || initRow - destRow < -3) || (initCol - destColumn > 3 || initCol - destColumn < -3)){return;}
+                else if(!validMovesCoordinates.contains(temp.getCoordinates())){
+                    validMovesCoordinates.add(temp.getCoordinates());
+                    findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63){
+                safe = true;
+            }
+            return safe;
         }
 
     }
@@ -118,10 +220,16 @@ public abstract class Piece
 
     /**
      * Queen Class
+     * : Can move any direction
+     * : Does not have to move in a straight line
+     * : Cannot jump or pass through occupied tiles
      */
     public static class Queen extends Piece
     {
-        private final static int[] queenMoveOffset = {};
+        private final static int[] QUEEN_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
+        private final Stack<Tile> queueStack = new Stack<>();
+        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         Queen(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
         {
@@ -135,7 +243,55 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
-            return null;
+            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
+            int row = (int) Math.floor(this.coordinates/8);
+            int column = this.coordinates % 8;
+            findValidTiles(board, this.coordinates, row, column);
+
+            for(int destinationCoord : validMovesCoordinates){
+                moves.add(new MoveHandler.Move(board, this, destinationCoord));
+            }
+            return moves;
+        }
+
+        /**
+         * TODO: Need to fix minor issue of allowed tiles
+         * @param board needed for location of all current pieces
+         * @param tileCoordinates location of tile being passed through recursive
+         * @param initRow initial row of the knight
+         * @param initCol initial column of the knight
+         */
+        private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
+
+            if(valid(tileCoordinates)){
+                for(int offset : QUEEN_OFFSET){
+                    if(valid(tileCoordinates + offset)){
+                        if(!board.getTile(tileCoordinates + offset).isOccupied()){
+                            if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                queueStack.add(board.getTile(tileCoordinates + offset)); }}
+                        else if(board.getTile(tileCoordinates+offset).isOccupied()){
+                            if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
+                                if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
+                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+            }
+
+            while(!queueStack.isEmpty()){
+                Tile temp = queueStack.pop();
+                visitedTiles.add(temp);
+                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destColumn = temp.getCoordinates() % 8;
+                if((initRow - destRow > 3 || initRow - destRow < -3) || (initCol - destColumn > 3 || initCol - destColumn < -3)){return;}
+                else if(!validMovesCoordinates.contains(temp.getCoordinates())){
+                    validMovesCoordinates.add(temp.getCoordinates());
+                    findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63){
+                safe = true;
+            }
+            return safe;
         }
 
     }
@@ -146,7 +302,7 @@ public abstract class Piece
     public static class Rook extends Piece
     {
         private final static int[] ROOK_OFFSET = {-1,-7,-8,-9, 1, 7, 8, 9};
-        private final static int[] ROOK_ATK_OFFSET = {-27,-24,-21,-18,-16,-14,-9,-8,-7,-3,-2,-1,1,2,3,7,8,9,14,16,18,21,24,27};
+        private final static int[] ROOK_ATK_OFFSET = {-27,-24,-21,-18,-16,-14,-3,-2,2,3,14,16,18,21,24,27};
 
 
         Rook(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
