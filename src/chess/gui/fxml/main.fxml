@@ -166,7 +166,7 @@
                                                    </font>
                                                 </Label>
                                                 <TextArea layoutX="5.0" layoutY="575.0" prefHeight="286.0" prefWidth="365.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="     • There are three commanding corps or armies&#10;     • The King and Bishops are corp commanders, each with one command authority that can be used in each turn.&#10;     • Up to three actions may be taken in each turn, one by each corp. Corp command actions ARE NOT required in any turn, so zero to three actions may be taken in a turn.&#10;     • The &quot;left&quot; side Bishop commands the three left pawns and the left-side Knight.&#10;     • The &quot;right&quot; side Bishop commands the three right pawns and the right-side Knight.&#10;     • The King commands the Queen, the two rooks (archers), and the remaining two center pawns &#10;     • When a Bishop is captured, his commanded pieces revert to the command of the King, but his command authority is lost&#10;     • The game ends when the King is captured&#10;" wrapText="true" />
-                                                <Label layoutX="5.0" layoutY="528.0" prefHeight="47.0" prefWidth="114.0" text="Corps" textFill="#ffc629">
+                                                <Label layoutX="5.0" layoutY="528.0" prefHeight="47.0" prefWidth="175.0" text="Commanding Corps" textFill="#ffc629">
                                                    <font>
                                                       <Font size="16.0" />
                                                    </font>
@@ -177,7 +177,7 @@
                                                    </image>
                                                 </ImageView>
                                                 <Label layoutX="14.0" layoutY="34.0" prefHeight="46.0" prefWidth="367.0" text="     The folowing table illustrates the die roll needed for an attacking piece to capture a defending piece." textFill="#aba9a9" wrapText="true" />
-                                                <Label layoutX="14.0" layoutY="275.0" prefHeight="31.0" prefWidth="147.0" text="Piece movement" textFill="#ffc629">
+                                                <Label layoutX="14.0" layoutY="275.0" prefHeight="31.0" prefWidth="147.0" text="Piece Movement" textFill="#ffc629">
                                                    <font>
                                                       <Font size="16.0" />
                                                    </font>
