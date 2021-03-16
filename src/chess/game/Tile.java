@@ -14,6 +14,8 @@ public abstract class Tile {
     public abstract boolean isOccupied();
     public abstract Piece getPiece();
 
+    public int getCoordinates(){return coordinates;}
+
     /* TODO: Add immutability for java flow */
     private static Map<Integer, EmptyTile> createEmptyTiles()
     {
