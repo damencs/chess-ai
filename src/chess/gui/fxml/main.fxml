@@ -151,11 +151,6 @@
                               </AnchorPane>
                            </content>
                         </Tab>
-                       <Tab fx:id="helpTab" styleClass="tab-pane" text="Help">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;" />
-                          </content>
-                        </Tab>
                     </tabs>
                      <opaqueInsets>
                         <Insets />
