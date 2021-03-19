@@ -29,44 +29,38 @@ public abstract class MoveHandler
     protected final Piece movingPiece;
     protected final int destination;
 
-    private MoveHandler(final Board board, final Piece movingPiece, final int destination)
-    {
+    private MoveHandler(final Board board, final Piece movingPiece, final int destination){
         this.board = board;
         this.movingPiece = movingPiece;
         this.destination = destination;
     }
 
-    public int getDestination()
-    {
-        return this.destination;
-    }
+    public int getDestination() {return this.destination; }
 
     public abstract Board executeMove() throws IOException;
 
     public static final class Move extends MoveHandler
     {
-        public Move(Board board, Piece movingPiece, int destination)
-        {
+        private final Board.SetBoard setBoardMove = new Board.SetBoard();
+
+        public Move(Board board, Piece movingPiece, int destination) {
             super(board, movingPiece, destination);
         }
 
         @Override
-        public Board executeMove() throws IOException
-        {
+        public Board executeMove() throws IOException {
             Tile destinationTile = this.board.getTile(destination);
 
-            if (!destinationTile.isOccupied()) {
-                Board.SetBoard setBoardMove = new Board.SetBoard();
-                for (Piece piece : this.board.getAlivePieces()) {
-                    if (!movingPiece.equals(piece)) {
+            if(!destinationTile.isOccupied()){
+                //Board.SetBoard setBoardMove = new Board.SetBoard();
+                for(Piece piece : this.board.getAlivePieces()){
+                    if(!movingPiece.equals(piece)){
                         setBoardMove.setPiece(piece);
                     }
                 }
                 setBoardMove.setPiece(movingPiece.movePiece(destination));
-                return setBoardMove.build();
-            }
-            else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor()))
-            {
+                return(setBoardMove.build());
+            }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
                 FXMLLoader fxmlloader = new FXMLLoader();
                 fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/diceroll.fxml"));
                 Parent parent = fxmlloader.load();
@@ -84,32 +78,25 @@ public abstract class MoveHandler
                 ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
                 int diceRoll = diceDecision.getDiceNumber();
                 System.out.println(diceRoll + " ? " + conquerSet.getConquerSet());
+                if(diceRoll > conquerSet.getConquerSet()){
 
-                if(diceRoll > conquerSet.getConquerSet())
-                {
-                    if(destinationTile.getPiece().getColor().equals("white"))
-                    {
+                    if(destinationTile.getPiece().getColor().equals("white")){
                         board.getWhitePieces().remove(destinationTile.getPiece());
-                    }
-                    else
-                    {
+                    }else{
                         board.getBlackPieces().remove(destinationTile.getPiece());
                     }
 
-                    Board.SetBoard setBoardMove = new Board.SetBoard();
-                    for (Piece piece : this.board.getAlivePieces())
-                    {
-                        if(!movingPiece.equals(piece))
-                        {
+                    //Board.SetBoard setBoardMove = new Board.SetBoard();
+                    for(Piece piece : this.board.getAlivePieces()){
+                        if(!movingPiece.equals(piece)){
                             setBoardMove.setPiece(piece);
                         }
                     }
-
                     setBoardMove.setPiece(movingPiece.movePiece(destination));
-                    return setBoardMove.build();
+                    return(setBoardMove.build());
                 }
             }
-            return board;
+            return(board);
         }
     }
 }

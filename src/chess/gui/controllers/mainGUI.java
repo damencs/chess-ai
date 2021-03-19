@@ -37,6 +37,7 @@ import javafx.stage.StageStyle;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class mainGUI implements Initializable
@@ -52,6 +53,8 @@ public class mainGUI implements Initializable
     private Button watchGameBtn;
     @FXML
     private Button howToPlayBtn;
+    @FXML
+    private Label currentGameTime;
     @FXML
     private Button quitBtn;
     @FXML
@@ -143,7 +146,7 @@ public class mainGUI implements Initializable
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
-
+        // PUT TIMER HERE
         displayPieces();
     }
 
@@ -239,18 +242,22 @@ public class mainGUI implements Initializable
     }
 
     private void released(Piece piece, ImageView image, int vertical, int horizontal) throws IOException {
-
+        ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
         int moveX = Math.round((float)image.getX() / tileSize.width);
         int moveY = Math.round((float)image.getY() / tileSize.height);
 
+        /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
-
-        if(moveX != 0 || moveY != 0)
+        for(MoveHandler move : moves){
+            if(move.getDestination() ==  destinationCoordinates){
+                gameHandler.setBoard(move.executeMove());
+            }
+        }
+        /*if(moveX != 0 || moveY != 0)
         {
-            //gameHandler.move(piece, destinationCoordinates, originCoordinates);
             MoveHandler.Move moveHandler = new MoveHandler.Move(gameHandler.getBoard(), piece, destinationCoordinates);
             gameHandler.setBoard(moveHandler.executeMove());
-        }
+        }*/
         displayPieces();
 
     }

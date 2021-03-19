@@ -1,40 +1,26 @@
-/*
-    Group Names:
-        - Damen DeBerry (@basicDamen)
-        - James Grady (@JaymeAlann)
-        - Tyra Buadoo (@misstj555)
-        - Ashlei Williams (@AshW-2018)
-        - Mahad Farah (@mfarah-ksu)
-        - Mandela Issa-Boube (@aliamaza)
-        - Shivank Rao (@shivankrao)
-    Project: Chess with AI Agent
-    Class: CS4850 - Senior Project
- */
 package chess.game;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Tile
-{
+public abstract class Tile {
     protected final int coordinates;
 
-    private Tile(int coordinates)
-    {
-        this.coordinates = coordinates;
-    }
+    private Tile(int coordinates){ this.coordinates = coordinates; }
 
     private static final Map<Integer, EmptyTile> EMPTY_TILE_MAP = createEmptyTiles();
 
     public abstract boolean isOccupied();
     public abstract Piece getPiece();
 
+    public int getCoordinates(){return coordinates;}
+
     /* TODO: Add immutability for java flow */
     private static Map<Integer, EmptyTile> createEmptyTiles()
     {
         final Map<Integer, EmptyTile> emptyTileMap = new HashMap<>();
-        for (int tileNumber = 0; tileNumber < 64; tileNumber++)
+        for(int tileNumber = 0; tileNumber < 64; tileNumber++)
         {
             emptyTileMap.put(tileNumber, new EmptyTile(tileNumber));
         }
@@ -57,20 +43,15 @@ public abstract class Tile
      *  */
     public static final class EmptyTile extends Tile
     {
-        EmptyTile(final int coordinate)
-        {
-            super(coordinate);
-        }
+        EmptyTile(final int coordinate){ super(coordinate); }
 
         @Override
-        public boolean isOccupied()
-        {
+        public boolean isOccupied() {
             return false;
         }
 
         @Override
-        public Piece getPiece()
-        {
+        public Piece getPiece() {
             return null;
         }
     }
@@ -89,14 +70,12 @@ public abstract class Tile
         }
 
         @Override
-        public boolean isOccupied()
-        {
+        public boolean isOccupied() {
             return true;
         }
 
         @Override
-        public Piece getPiece()
-        {
+        public Piece getPiece() {
             return occupyingPiece;
         }
     }
