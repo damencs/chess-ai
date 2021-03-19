@@ -30,6 +30,7 @@ public class GameHandler
 
     private Board board;
     private boolean isPlayerTurn;
+    private boolean gameOver;
 
     public void setBoard(){ board = Board.createInitialBoard(isPlayerTurn()); }
     public void setBoard(Board board){ this.board = board;}

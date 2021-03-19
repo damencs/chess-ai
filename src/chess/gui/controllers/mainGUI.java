@@ -106,6 +106,9 @@ public class mainGUI implements Initializable
     private final Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
     private final Image GREY = new Image(imagePath + "grey.png", 20,20,true, true);
     private final Image BLANK = new Image(imagePath + "blank.png", 20,20,true, true);
+    private final Color availableColor = Color.rgb(123,255,123);
+    private final Color unavailableColor = Color.rgb(255,97,97);
+    private final Color capturedColor = Color.rgb(48,48,48);
 
     private GameHandler gameHandler = new GameHandler();
 
@@ -118,6 +121,20 @@ public class mainGUI implements Initializable
     {
         onOpenDialog(event);
         tabs.getSelectionModel().select(gameTab);
+    }
+
+    @FXML
+    void endTurn(){
+        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
+            piece.getCorp().setCorpCommandAvailability(true);
+        }
+        kingCCStatus.setText("Available");
+        kingCCStatus.setTextFill(availableColor);
+        rBishopCCStatus.setText("Available");
+        rBishopCCStatus.setTextFill(availableColor);
+        lBishopCCStatus.setText("Available");
+        lBishopCCStatus.setTextFill(availableColor);
+        displayPieces();
     }
 
     @FXML
@@ -211,14 +228,16 @@ public class mainGUI implements Initializable
                     int horizontal = column;
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
-                    gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
-                    gamestate[row][column].setOnMouseReleased(mouseEvent -> {
-                        try {
-                            released(piece, gamestate[vertical][horizontal], vertical, horizontal);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    if(piece.getCorp().isCommandAvailable()){
+                        gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
+                        gamestate[row][column].setOnMouseReleased(mouseEvent -> {
+                            try {
+                                released(piece, gamestate[vertical][horizontal], vertical, horizontal);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
                 }
                 gamestate[row][column].setFitWidth(tileSize.getWidth());
                 gamestate[row][column].setFitHeight(tileSize.getHeight());
@@ -253,13 +272,24 @@ public class mainGUI implements Initializable
         for(MoveHandler move : moves){
             if(move.getDestination() ==  destinationCoordinates){
                 gameHandler.setBoard(move.executeMove());
+
+                piece.getCorp().switchCorpCommandAvailablity();
+                switch (piece.getCorp().getCorpName()) {
+                    case "king" -> {
+                        kingCCStatus.setText("Unavailable");
+                        kingCCStatus.setTextFill(unavailableColor);
+                    }
+                    case "kingsBishop" -> {
+                        rBishopCCStatus.setText("Unavailable");
+                        rBishopCCStatus.setTextFill(unavailableColor);
+                    }
+                    case "queensBishop" -> {
+                        lBishopCCStatus.setText("Unavailable");
+                        lBishopCCStatus.setTextFill(unavailableColor);
+                    }
+                }
             }
         }
-        /*if(moveX != 0 || moveY != 0)
-        {
-            MoveHandler.Move moveHandler = new MoveHandler.Move(gameHandler.getBoard(), piece, destinationCoordinates);
-            gameHandler.setBoard(moveHandler.executeMove());
-        }*/
         displayPieces();
 
     }
@@ -270,29 +300,5 @@ public class mainGUI implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         displayBoard();
-    }
-
-    public Label getKingCCStatus() {
-        return kingCCStatus;
-    }
-
-    public void setKingCCStatus(Label kingCCStatus) {
-        this.kingCCStatus = kingCCStatus;
-    }
-
-    public Label getlBishopCCStatus() {
-        return lBishopCCStatus;
-    }
-
-    public void setlBishopCCStatus(Label lBishopCCStatus) {
-        this.lBishopCCStatus = lBishopCCStatus;
-    }
-
-    public Label getrBishopCCStatus() {
-        return rBishopCCStatus;
-    }
-
-    public void setrBishopCCStatus(Label rBishopCCStatus) {
-        this.rBishopCCStatus = rBishopCCStatus;
     }
 }

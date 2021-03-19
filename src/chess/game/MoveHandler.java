@@ -78,7 +78,6 @@ public abstract class MoveHandler
 
                 ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
                 int diceRoll = diceDecision.getDiceNumber();
-                System.out.println(diceRoll + " ? " + conquerSet.getConquerSet());
                 if(diceRoll > conquerSet.getConquerSet()){
 
                     if(destinationTile.getPiece().getColor().equals("white")){

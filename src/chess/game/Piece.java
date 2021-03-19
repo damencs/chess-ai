@@ -8,11 +8,11 @@ public abstract class Piece
 {
     protected final int coordinates;
     protected final String color;
-    protected final String pieceCorp;
+    protected final Corp pieceCorp;
     protected final String name;
     protected final int offsetMultiplier;
 
-    Piece(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+    Piece(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
     {
         this.coordinates = coordinates;
         this.color = color;
@@ -24,13 +24,13 @@ public abstract class Piece
     public int getCoordinates(){ return this.coordinates; }
     public String getColor(){ return this.color; }
     public String getName(){ return this.name; }
+    public Corp getCorp(){ return this.pieceCorp; }
+    public abstract Piece movePiece(int newCoordinates);
+    public abstract ArrayList<MoveHandler> determineMoves(final Board board);
     public Image getImage()
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
-
-    public abstract Piece movePiece(int newCoordinates);
-    public abstract ArrayList<MoveHandler> determineMoves(final Board board);
 
     /**
      * Knight Class
@@ -38,11 +38,11 @@ public abstract class Piece
     public static class Knight extends Piece
     {
         private final static int[] KNIGHT_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
-        private Stack<Tile> queueStack = new Stack<>();
-        private ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
-        private ArrayList<Tile> visitedTiles = new ArrayList<>();
+        private final Stack<Tile> queueStack = new Stack<>();
+        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Knight(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Knight(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }
@@ -121,7 +121,7 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        King(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        King(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }
@@ -193,7 +193,7 @@ public abstract class Piece
     {
         private final static int[] BISHOP_OFFSET = {7,8,9};
 
-        Bishop(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Bishop(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }
@@ -231,7 +231,7 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Queen(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Queen(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }
@@ -305,7 +305,7 @@ public abstract class Piece
         private final static int[] ROOK_ATK_OFFSET = {-27,-24,-21,-18,-16,-14,-3,-2,2,3,14,16,18,21,24,27};
 
 
-        Rook(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Rook(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }
@@ -344,7 +344,7 @@ public abstract class Piece
     {
         private final static int[] PAWN_OFFSET = {7,8,9};
 
-        Pawn(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Pawn(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier)
         {
             super(coordinates, color, pieceCorp, name, offsetMultiplier);
         }

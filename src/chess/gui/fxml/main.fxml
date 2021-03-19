@@ -95,7 +95,7 @@
                                           <Image url="@../images/whiteBishop.png" />
                                        </image>
                                     </ImageView>
-                                    <Label fx:id="kingCCStatus" layoutX="171.0" layoutY="119.0" prefHeight="15.0" prefWidth="86.0" styleClass="coreCommandStatus" stylesheets="@../css/styling.css" text="Unavailable" textFill="#ff6161" visible="false">
+                                    <Label fx:id="kingCCStatus" layoutX="171.0" layoutY="119.0" prefHeight="15.0" prefWidth="86.0" styleClass="coreCommandStatus" stylesheets="@../css/styling.css" text="Available" textFill="#7bff7b" visible="false">
                                        <font>
                                           <Font name="Montserrat Black" size="12.0" />
                                        </font>
@@ -105,7 +105,7 @@
                                           <Font name="Montserrat Black" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="rBishopCCStatus" layoutX="290.0" layoutY="119.0" prefHeight="15.0" prefWidth="87.0" styleClass="coreCommandStatus" stylesheets="@../css/styling.css" text="Captured" textFill="#868686" visible="false">
+                                    <Label fx:id="rBishopCCStatus" layoutX="290.0" layoutY="119.0" prefHeight="15.0" prefWidth="87.0" styleClass="coreCommandStatus" stylesheets="@../css/styling.css" text="Available" textFill="#7bff7b" visible="false">
                                        <font>
                                           <Font name="Montserrat Black" size="12.0" />
                                        </font>
@@ -116,7 +116,7 @@
                                           <Font name="Montserrat Black" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Button layoutX="151.0" layoutY="459.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="93.0" styleClass="endTurnBTN" stylesheets="@../css/styling.css" text="End Turn" textAlignment="CENTER" />
+                                    <Button layoutX="151.0" layoutY="459.0" mnemonicParsing="false" onAction="#endTurn" prefHeight="47.0" prefWidth="93.0" styleClass="endTurnBTN" stylesheets="@../css/styling.css" text="End Turn" textAlignment="CENTER" />
                                  </children></AnchorPane>
                         </content>
                       </Tab>
