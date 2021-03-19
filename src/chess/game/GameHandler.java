@@ -26,7 +26,8 @@ import java.io.IOException;
 
 public class GameHandler
 {
-    /* TODO: - Track the starting game time and compare it to current to display game time. */
+    /* TODO: - Track the starting game time and compare it to current to display game time.
+       TODO: - Implement AI That will make its moves as soon as player ends turn. */
 
     private Board board;
     private boolean isPlayerTurn;
@@ -41,6 +42,22 @@ public class GameHandler
         int index = 0;
         for(int row = 0; row < tiles.length; row++){
             for(int column = 0; column < tiles[row].length; column++){
+                tiles[row][column] = board.getTile(index);
+                index++;
+            }
+        }
+        return tiles;
+    }
+
+    public Tile[][] getBoardTiles()
+    {
+        Tile[][] tiles = new Tile[8][8];
+        int index = 0;
+
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for(int column = 0; column < tiles[row].length; column++)
+            {
                 tiles[row][column] = board.getTile(index);
                 index++;
             }

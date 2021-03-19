@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -47,7 +48,7 @@
                                           </Button>
                                           <Button fx:id="quitBtn" mnemonicParsing="false" onAction="#quit" prefHeight="62.0" prefWidth="466.0" stylesheets="@../css/styling.css" text="Quit" textAlignment="CENTER">
                                              <font>
-                                                <Font name="Montserrat Bold" size="23.0" />
+                                                <Font name="C" size="23.0" />
                                              </font>
                                           </Button>
                                        </children>
@@ -122,7 +123,7 @@
                       </Tab>
                         <Tab fx:id="rulesTab" styleClass="tab-pane" text="Rules">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="461.0" prefWidth="357.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
                                     <TextArea editable="false" layoutX="11.0" layoutY="192.0" prefHeight="300.0" prefWidth="378.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="The &quot;armies&quot; of chess piece for command are divided into three &quot;corp&quot;:&#10;• The King and Bishops are corp commanders, each with one command authority that can be used in each turn.&#10;• Up to three actions may be taken in each turn, one by each corp. Corp command  actions ARE NOT required in any turn, so zero to three actions may be taken in a turn.&#10;• Command authority may not be transferred from one commander to another.&#10;• The &quot;left&quot; side Bishop commands the three left pawns and the left-side Knight.&#10;• The &quot;right&quot; side Bishop commands the three right pawns and the right-side Knight.&#10;• The King commands the Queen, the two rooks (archers), and the remaining two center pawns&#10;• The King may delegate any of its piece to be commanded by either Bishop&#10;• Each commander (King and Bishops) may command one action (move or capture) per turn, only for their commanded piece.&#10;• When a Bishop is captured, his commanded piece revert to the command of the King, but his command authority is lost (the army may make one fewer action per turn, a serious disadvantage).&#10;• The game ends when the King is captured &#10;" wrapText="true">
                                        <font>

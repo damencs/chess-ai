@@ -24,6 +24,7 @@ public abstract class Piece
     public int getCoordinates(){ return this.coordinates; }
     public String getColor(){ return this.color; }
     public String getName(){ return this.name; }
+  
     public Image getImage()
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
@@ -31,6 +32,7 @@ public abstract class Piece
 
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
+    public abstract ArrayList<MoveHandler> determineAttacks(final Board board);
 
     /**
      * Knight Class
@@ -105,7 +107,6 @@ public abstract class Piece
             }
             return safe;
         }
-
     }
 
     /**
@@ -183,7 +184,6 @@ public abstract class Piece
             }
             return safe;
         }
-
     }
 
     /**
@@ -368,6 +368,4 @@ public abstract class Piece
             return moves;
         }
     }
-
-
 }

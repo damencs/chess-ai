@@ -61,7 +61,6 @@ public abstract class MoveHandler
                 setBoardMove.setPiece(movingPiece.movePiece(destination));
                 return(setBoardMove.build());
             }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
-
                 FXMLLoader fxmlloader = new FXMLLoader();
                 fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/diceroll.fxml"));
                 Parent parent = fxmlloader.load();

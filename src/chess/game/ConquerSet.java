@@ -1,10 +1,21 @@
+/*
+    Group Names:
+        - Damen DeBerry (@basicDamen)
+        - James Grady (@JaymeAlann)
+        - Tyra Buadoo (@misstj555)
+        - Ashlei Williams (@AshW-2018)
+        - Mahad Farah (@mfarah-ksu)
+        - Mandela Issa-Boube (@aliamaza)
+        - Shivank Rao (@shivankrao)
+    Project: Chess with AI Agent
+    Class: CS4850 - Senior Project
+ */
 package chess.game;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConquerSet {
-
     /* Creates a Hashmap that hold table data needed for dice roll capturing */
     private final Map<String, Integer> conquerSet = new HashMap<String, Integer>();
     private final Piece defendingPiece;

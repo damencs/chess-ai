@@ -163,10 +163,8 @@ public class mainGUI implements Initializable
         boardGrid.setHgap(2);
         boardGrid.setVgap(2);
 
-        for (int row = 0; row < boardArray.length; row++)
-        {
-            for (int column = 0; column < boardArray[0].length; column++)
-            {
+        for (int row = 0; row < boardArray.length; row++) {
+            for (int column = 0; column < boardArray[0].length; column++) {
                 boardImg[row][column] = new ImageView(boardArray[row][column] == 0 ? GOLD : GREY);
                 boardImg[row][column].setFitHeight(tileSize.getHeight());
                 boardImg[row][column].setFitWidth(tileSize.getWidth());

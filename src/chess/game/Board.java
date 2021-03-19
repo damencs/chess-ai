@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 public class Board
 {
-
     private final Tile[][] tile = new Tile[8][8];
     private final List<Piece> whiteTeam;
     private final List<Piece> blackTeam;
@@ -143,25 +142,28 @@ public class Board
      * and after each move. Minimizes error and maximizes immutability
      */
     public static class SetBoard {
-
         /* Map a Tile Coordinate to Given Piece */
         Map<Integer, Piece> setConfigure;
         /* Keeps Track of whoes turn it is */
         Boolean isPlayerTurn;
 
-        public SetBoard(){
+        public SetBoard()
+        {
             this.setConfigure = new HashMap<>();
         }
 
-        public void setIsPlayerTurn(Boolean playerTurn){
+        public void setIsPlayerTurn(Boolean playerTurn)
+        {
             this.isPlayerTurn = playerTurn;
         }
 
-        public void setPiece(final Piece piece){
+        public void setPiece(final Piece piece)
+        {
             this.setConfigure.put(piece.getCoordinates(), piece);
         }
 
-        public Board build(){
+        public Board build()
+        {
             return new Board(this);
         }
     }

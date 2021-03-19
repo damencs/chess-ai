@@ -54,7 +54,6 @@ public abstract class Tile {
         public Piece getPiece() {
             return null;
         }
-
     }
 
     /**
@@ -79,6 +78,5 @@ public abstract class Tile {
         public Piece getPiece() {
             return occupyingPiece;
         }
-
     }
 }
