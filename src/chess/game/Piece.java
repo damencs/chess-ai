@@ -69,7 +69,6 @@ public abstract class Piece
 
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
-    public abstract ArrayList<MoveHandler> determineAttacks(final Board board);
 
     /**
      * Knight Class

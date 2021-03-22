@@ -146,8 +146,13 @@ public class mainGUI implements Initializable
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
-        // PUT TIMER HERE
+
+        ClockTimer time = new ClockTimer();
+        time.start();
+        currentGameTime.setText(time.toString());
+
         displayPieces();
+
     }
 
     @FXML
