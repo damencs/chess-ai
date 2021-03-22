@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -47,7 +48,7 @@
                                           </Button>
                                           <Button fx:id="quitBtn" mnemonicParsing="false" onAction="#quit" prefHeight="62.0" prefWidth="466.0" stylesheets="@../css/styling.css" text="Quit" textAlignment="CENTER">
                                              <font>
-                                                <Font name="Montserrat Bold" size="23.0" />
+                                                <Font name="C" size="23.0" />
                                              </font>
                                           </Button>
                                        </children>
@@ -122,31 +123,69 @@
                       </Tab>
                         <Tab fx:id="rulesTab" styleClass="tab-pane" text="Rules">
                            <content>
-                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="461.0" prefWidth="357.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
-                                    <TextArea editable="false" layoutX="11.0" layoutY="192.0" prefHeight="300.0" prefWidth="378.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="The &quot;armies&quot; of chess piece for command are divided into three &quot;corp&quot;:&#10;• The King and Bishops are corp commanders, each with one command authority that can be used in each turn.&#10;• Up to three actions may be taken in each turn, one by each corp. Corp command  actions ARE NOT required in any turn, so zero to three actions may be taken in a turn.&#10;• Command authority may not be transferred from one commander to another.&#10;• The &quot;left&quot; side Bishop commands the three left pawns and the left-side Knight.&#10;• The &quot;right&quot; side Bishop commands the three right pawns and the right-side Knight.&#10;• The King commands the Queen, the two rooks (archers), and the remaining two center pawns&#10;• The King may delegate any of its piece to be commanded by either Bishop&#10;• Each commander (King and Bishops) may command one action (move or capture) per turn, only for their commanded piece.&#10;• When a Bishop is captured, his commanded piece revert to the command of the King, but his command authority is lost (the army may make one fewer action per turn, a serious disadvantage).&#10;• The game ends when the King is captured &#10;" wrapText="true">
-                                       <font>
-                                          <Font name="Montserrat Black" size="10.0" />
-                                       </font>
-                                       <effect>
-                                          <Blend />
-                                       </effect>
-                                    </TextArea>
-                                    <TextArea layoutX="12.0" layoutY="42.0" prefHeight="112.0" prefWidth="376.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="The attacking player rolls a die to determine if a capture is successful. The die roll needed to capture a piece depends on the combination of the attacking piece and the defending piece.&#10;&#10;• When an attack is successful, the attacking piece moves into the square of the captured piece.&#10;&#10;• When an attack is unsuccessful, the attacking piece remains in the square it attacked from. " wrapText="true">
-                                       <font>
-                                          <Font name="Montserrat Black" size="10.0" />
-                                       </font>
-                                    </TextArea>
-                                    <Label layoutX="12.0" layoutY="18.0" text="Capturing Pieces" textFill="#ffc629">
-                                       <font>
-                                          <Font name="Montserrat Black" size="16.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="13.0" layoutY="170.0" text="Game Process" textFill="#ffc629">
-                                       <font>
-                                          <Font name="Montserrat Black" size="16.0" />
-                                       </font>
-                                    </Label>
+                                    <ScrollPane hbarPolicy="NEVER" layoutY="-2.0" pannable="true" prefHeight="514.0" prefWidth="399.0" styleClass="rulesScrollPane" stylesheets="@../css/styling.css" vbarPolicy="ALWAYS">
+                                       <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="875.0" prefWidth="385.0" style="-fx-background-color: #3c3c3c;">
+                                             <children>
+                                                <Accordion layoutX="5.0" layoutY="306.0" prefHeight="212.0" prefWidth="375.0" stylesheets="@../css/styling.css">
+                                                  <panes>
+                                                    <TitledPane animated="false" styleClass="rulesTitlePane" stylesheets="@../css/styling.css" text="Royalty and Knights" textFill="#ffc629">
+                                                      <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <TextArea editable="false" layoutX="-2.0" layoutY="-3.0" prefHeight="143.0" prefWidth="377.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="     • Kings, Queens, and Knights may move in any direction and do not have to move in a straight line. &#10;     • Kings and Queens may move 3 squares at a time, while Knights may move 5 squares. Knights cannot jump over preoccupied squares. &#10;     • Knights and Royalty may capture an opposing piece in any direction (left, right, up, down, diagonal). &#10;      • Knights (only) may combine movement with a capture in the same action, attacking any adjacent enemy piece after their movement, but subtract one from the die roll if they do so.&#10;" wrapText="true" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                      </content>
+                                                    </TitledPane>
+                                                    <TitledPane animated="false" styleClass="rulesTitlePane" text="Archers" textFill="#ffc629">
+                                                      <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <TextArea layoutX="-2.0" layoutY="-4.0" prefHeight="145.0" prefWidth="380.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="     • Archers (Rooks) may move one square in any direction. &#10;     • Archers can attack by shooting over two squares (not including the square the defending piece is occupying) in any direction. The attack does not have to be in a straight line" wrapText="true" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                      </content>
+                                                    </TitledPane>
+                                                    <TitledPane animated="false" styleClass="rulesTitlePane" text="Infantry" textFill="#ffc629" wrapText="true">
+                                                      <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <TextArea layoutX="-2.0" layoutY="-4.0" prefHeight="138.0" prefWidth="378.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="     • Pawns and Bishops may move one square and attack in a forward direction only, moving or attacking either directly ahead or to either forward diagonal toward the opposing player.&#10;     • Pawns are never promoted after reaching the eighth rank (the opponent’s home row).&#10;     • Pawns may not move two squares forward when they have not yet moved in the game" wrapText="true" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                      </content>
+                                                    </TitledPane>
+                                                  </panes>
+                                                </Accordion>
+                                                <Label layoutX="14.0" prefHeight="47.0" prefWidth="114.0" text="Capturing" textFill="#ffc629">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea layoutX="5.0" layoutY="575.0" prefHeight="286.0" prefWidth="365.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="     • There are three commanding corps or armies&#10;     • The King and Bishops are corp commanders, each with one command authority that can be used in each turn.&#10;     • Up to three actions may be taken in each turn, one by each corp. Corp command actions ARE NOT required in any turn, so zero to three actions may be taken in a turn.&#10;     • The &quot;left&quot; side Bishop commands the three left pawns and the left-side Knight.&#10;     • The &quot;right&quot; side Bishop commands the three right pawns and the right-side Knight.&#10;     • The King commands the Queen, the two rooks (archers), and the remaining two center pawns &#10;     • When a Bishop is captured, his commanded pieces revert to the command of the King, but his command authority is lost&#10;     • The game ends when the King is captured&#10;" wrapText="true" />
+                                                <Label layoutX="5.0" layoutY="528.0" prefHeight="47.0" prefWidth="175.0" text="Commanding Corps" textFill="#ffc629">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <ImageView fitHeight="212.0" fitWidth="321.0" layoutX="32.0" layoutY="80.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../images/CaptureTable.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <Label layoutX="14.0" layoutY="34.0" prefHeight="46.0" prefWidth="367.0" text="     The folowing table illustrates the die roll needed for an attacking piece to capture a defending piece." textFill="#aba9a9" wrapText="true" />
+                                                <Label layoutX="14.0" layoutY="275.0" prefHeight="31.0" prefWidth="147.0" text="Piece Movement" textFill="#ffc629">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </ScrollPane>
                                  </children>
                               </AnchorPane>
                            </content>
