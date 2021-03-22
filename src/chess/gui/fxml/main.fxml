@@ -65,7 +65,7 @@
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
-                                    <Label layoutX="121.0" layoutY="14.0" prefHeight="20.0" prefWidth="157.0" text="Total Game Time" textFill="#ffc629">
+                                    <Label layoutX="127.0" layoutY="14.0" prefHeight="20.0" prefWidth="157.0" text="Total Game Time" textFill="#ffc629">
                                        <font>
                                           <Font name="Montserrat Black" size="16.0" />
                                        </font>

@@ -28,6 +28,7 @@ public abstract class MoveHandler
     protected final Board board;
     protected final Piece movingPiece;
     protected final int destination;
+    private double moveRiskPercentage;
 
     private MoveHandler(final Board board, final Piece movingPiece, final int destination){
         this.board = board;
@@ -35,22 +36,38 @@ public abstract class MoveHandler
         this.destination = destination;
     }
 
+    public double getMoveRiskPercentage(){return moveRiskPercentage;}
     public int getDestination() {return this.destination; }
-
+    public abstract void calculateMoveRisk();
     public abstract Board executeMove() throws IOException;
 
     public static final class Move extends MoveHandler
     {
         private final Board.SetBoard setBoardMove = new Board.SetBoard();
+        private double kingRiskPercent;
+        private double kingsRookRP;
+        private double queensRookRP;
+        private ConquerSet conquerSet;
 
         public Move(Board board, Piece movingPiece, int destination) {
             super(board, movingPiece, destination);
         }
 
         @Override
+        public void calculateMoveRisk() {
+            /**
+             * 1: Kings Risk Value change (Will it go up or down with this move) up = bad
+             * 2: If piece destination is in enemy capture radius (between 0-1)
+             * 3: Core Commander risk value
+             */
+            super.moveRiskPercentage =  0.0;
+        }
+
+
+        @Override
         public Board executeMove() throws IOException {
             Tile destinationTile = this.board.getTile(destination);
-
+            calculateMoveRisk();
             if(!destinationTile.isOccupied()){
                 //Board.SetBoard setBoardMove = new Board.SetBoard();
                 for(Piece piece : this.board.getAlivePieces()){
@@ -62,6 +79,7 @@ public abstract class MoveHandler
                 return(setBoardMove.build());
             }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
 
+                /* DICE ROLL */
                 FXMLLoader fxmlloader = new FXMLLoader();
                 fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/diceroll.fxml"));
                 Parent parent = fxmlloader.load();
@@ -76,7 +94,9 @@ public abstract class MoveHandler
                 stage.setScene(scene);
                 stage.showAndWait();
 
-                ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
+                /* ****************************************************** */
+
+                conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
                 int diceRoll = diceDecision.getDiceNumber();
                 if(diceRoll > conquerSet.getConquerSet()){
 

@@ -125,16 +125,9 @@ public class mainGUI implements Initializable
 
     @FXML
     void endTurn(){
-        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
-            piece.getCorp().setCorpCommandAvailability(true);
-        }
-        kingCCStatus.setText("Available");
-        kingCCStatus.setTextFill(availableColor);
-        rBishopCCStatus.setText("Available");
-        rBishopCCStatus.setTextFill(availableColor);
-        lBishopCCStatus.setText("Available");
-        lBishopCCStatus.setTextFill(availableColor);
+        gameHandler.updatePlayerTurn(false);
         displayPieces();
+        AI_turn();
     }
 
     @FXML
@@ -165,6 +158,11 @@ public class mainGUI implements Initializable
         gameHandler.setBoard();
         // PUT TIMER HERE
         displayPieces();
+
+        if(!gameHandler.isPlayerTurn()){
+            AI_turn();
+        }
+
     }
 
     @FXML
@@ -172,6 +170,22 @@ public class mainGUI implements Initializable
     {
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
+    }
+
+    void AI_turn(){
+        gameHandler.AI_makeMove();
+        gameHandler.updatePlayerTurn(true);
+        displayPieces();
+
+        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
+            piece.getCorp().setCorpCommandAvailability(true);
+        }
+        kingCCStatus.setText("Available");
+        kingCCStatus.setTextFill(availableColor);
+        rBishopCCStatus.setText("Available");
+        rBishopCCStatus.setTextFill(availableColor);
+        lBishopCCStatus.setText("Available");
+        lBishopCCStatus.setTextFill(availableColor);
     }
 
     /* Display the grid of the board. */
@@ -228,7 +242,8 @@ public class mainGUI implements Initializable
                     int horizontal = column;
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
-                    if(piece.getCorp().isCommandAvailable()){
+                    // TODO: once ai is working, make listener for only player pieces
+                    if(piece.getCorp().isCommandAvailable() && gameHandler.isPlayerTurn()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
                             try {
@@ -263,6 +278,7 @@ public class mainGUI implements Initializable
     }
 
     private void released(Piece piece, ImageView image, int vertical, int horizontal) throws IOException {
+
         ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
         int moveX = Math.round((float)image.getX() / tileSize.width);
         int moveY = Math.round((float)image.getY() / tileSize.height);
