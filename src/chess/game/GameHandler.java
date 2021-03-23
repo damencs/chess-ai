@@ -31,15 +31,9 @@ public class GameHandler
     private Board board;
     private boolean isPlayerTurn;
     private boolean gameOver;
-    private static AI.KingCorp kingCorp_AI;
-    private static AI.KingBishopCorp kingBishopCorp_AI;
-    private static AI.QueensBishopCorp queensBishopCorp_AI;
 
     public void setBoard(){
         board = Board.createInitialBoard(isPlayerTurn());
-        kingCorp_AI = new AI.KingCorp(getBoard().getTile(3).getPiece(), board);
-        kingBishopCorp_AI = new AI.KingBishopCorp(getBoard().getTile(2).getPiece(), board);
-        queensBishopCorp_AI = new AI.QueensBishopCorp(getBoard().getTile(5).getPiece(), board);
     }
     public void setBoard(Board board){ this.board = board;}
     /* Return instance of board*/
@@ -55,10 +49,6 @@ public class GameHandler
             }
         }
         return tiles;
-    }
-
-    public void AI_makeMove(){
-        MoveHandler move = kingCorp_AI.calculateBestMove();
     }
 
 

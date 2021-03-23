@@ -13,6 +13,7 @@
 package chess.gui.controllers;
 
 import chess.game.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +40,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class mainGUI implements Initializable
 {
@@ -111,6 +114,9 @@ public class mainGUI implements Initializable
     private final Color capturedColor = Color.rgb(48,48,48);
 
     private GameHandler gameHandler = new GameHandler();
+    private AI.KingCorp AI_kingCorp;
+    private AI.KingBishopCorp AI_kingBishopCorp;
+    private AI.QueensBishopCorp AI_queensBishopCorp;
 
     public mainGUI()
     {
@@ -124,10 +130,49 @@ public class mainGUI implements Initializable
     }
 
     @FXML
-    void endTurn(){
+    void endTurn() throws IOException {
         gameHandler.updatePlayerTurn(false);
+        AI_Turn();
+    }
+
+    void AI_Turn() throws IOException {
+
+        MoveHandler ai_KingCorpMove = AI_kingCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingCorpMove);
+        MoveHandler ai_KingBishopCorpMove = AI_kingBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingBishopCorpMove);
+        MoveHandler ai_QueensBishopCorpMove = AI_queensBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_QueensBishopCorpMove);
+
+
         displayPieces();
-        AI_turn();
+        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
+            piece.getCorp().setCorpCommandAvailability(true);
+        }
+        kingCCStatus.setText("Available");
+        kingCCStatus.setTextFill(availableColor);
+        rBishopCCStatus.setText("Available");
+        rBishopCCStatus.setTextFill(availableColor);
+        lBishopCCStatus.setText("Available");
+        lBishopCCStatus.setTextFill(availableColor);
+        gameHandler.updatePlayerTurn(true);
+        displayPieces();
+    }
+
+    void executeAIMove(MoveHandler aiMoves) throws IOException {
+
+        ArrayList<Piece> ai_pieces = (AI_kingCorp.getColor().equals("white"))
+                ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
+
+        for(Piece ai_piece : ai_pieces){
+            ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
+            for(MoveHandler move : moves){
+                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())){
+                    gameHandler.setBoard(move.executeMove());
+                    System.out.println(aiMoves.getMovingPiece().getName() + " " + aiMoves.getDestination());
+                }
+            }
+        }
     }
 
     @FXML
@@ -156,11 +201,14 @@ public class mainGUI implements Initializable
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
+        AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         // PUT TIMER HERE
-        displayPieces();
 
+        displayPieces();
         if(!gameHandler.isPlayerTurn()){
-            AI_turn();
+            AI_Turn();
         }
 
     }
@@ -170,22 +218,6 @@ public class mainGUI implements Initializable
     {
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
-    }
-
-    void AI_turn(){
-        gameHandler.AI_makeMove();
-        gameHandler.updatePlayerTurn(true);
-        displayPieces();
-
-        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
-            piece.getCorp().setCorpCommandAvailability(true);
-        }
-        kingCCStatus.setText("Available");
-        kingCCStatus.setTextFill(availableColor);
-        rBishopCCStatus.setText("Available");
-        rBishopCCStatus.setTextFill(availableColor);
-        lBishopCCStatus.setText("Available");
-        lBishopCCStatus.setTextFill(availableColor);
     }
 
     /* Display the grid of the board. */
@@ -243,7 +275,7 @@ public class mainGUI implements Initializable
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
                     // TODO: once ai is working, make listener for only player pieces
-                    if(piece.getCorp().isCommandAvailable() && gameHandler.isPlayerTurn()){
+                    if(piece.getCorp().isCommandAvailable()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
                             try {
