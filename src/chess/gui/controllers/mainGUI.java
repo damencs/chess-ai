@@ -13,6 +13,7 @@
 package chess.gui.controllers;
 
 import chess.game.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,12 +34,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.control.TextArea;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class mainGUI implements Initializable
 {
@@ -81,6 +85,8 @@ public class mainGUI implements Initializable
     private Label lBishopCCStatus;
     @FXML
     private Label rBishopCCStatus;
+    @FXML
+    private TextArea gameLog;
 
     /* Color Evaluation Grid for the Board */
     private final int[][] boardArray =
@@ -110,7 +116,21 @@ public class mainGUI implements Initializable
     private final Color unavailableColor = Color.rgb(255,97,97);
     private final Color capturedColor = Color.rgb(48,48,48);
 
+    private final char[] rowLetter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+
     private GameHandler gameHandler = new GameHandler();
+    private AI.KingCorp AI_kingCorp;
+    private AI.KingBishopCorp AI_kingBishopCorp;
+    private AI.QueensBishopCorp AI_queensBishopCorp;
+
+    /* Game Timer */
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+    boolean gameTimerRunning = false;
+
+    Timer gameTimer = new Timer();
+    TimerTask gameTimerTask;
 
     public mainGUI()
     {
@@ -124,10 +144,49 @@ public class mainGUI implements Initializable
     }
 
     @FXML
-    void endTurn(){
+    void endTurn() throws IOException {
         gameHandler.updatePlayerTurn(false);
+        AI_Turn();
+    }
+
+    void AI_Turn() throws IOException {
+
+        MoveHandler ai_KingCorpMove = AI_kingCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingCorpMove);
+        MoveHandler ai_KingBishopCorpMove = AI_kingBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingBishopCorpMove);
+        MoveHandler ai_QueensBishopCorpMove = AI_queensBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_QueensBishopCorpMove);
+
+
         displayPieces();
-        AI_turn();
+        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
+            piece.getCorp().setCorpCommandAvailability(true);
+        }
+        kingCCStatus.setText("Available");
+        kingCCStatus.setTextFill(availableColor);
+        rBishopCCStatus.setText("Available");
+        rBishopCCStatus.setTextFill(availableColor);
+        lBishopCCStatus.setText("Available");
+        lBishopCCStatus.setTextFill(availableColor);
+        gameHandler.updatePlayerTurn(true);
+        displayPieces();
+    }
+
+    void executeAIMove(MoveHandler aiMoves) throws IOException {
+
+        ArrayList<Piece> ai_pieces = (AI_kingCorp.getColor().equals("white"))
+                ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
+
+        for(Piece ai_piece : ai_pieces){
+            ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
+            for(MoveHandler move : moves){
+                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())){
+                    gameHandler.setBoard(move.executeMove());
+                    gameLog.appendText(ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                }
+            }
+        }
     }
 
     @FXML
@@ -156,36 +215,37 @@ public class mainGUI implements Initializable
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
-        // PUT TIMER HERE
-        displayPieces();
+        gameHandler.getBoard().resetCorpAvailability();
+        AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
 
-        if(!gameHandler.isPlayerTurn()){
-            AI_turn();
+        if (gameTimerRunning) {
+            gameTimerTask.cancel();
+            createTimerTask();
+        } else {
+            createTimerTask();
         }
 
+        gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
+
+        /* Resets game log text since new game generated */
+        gameLog.setText("");
+
+        displayPieces();
+        if(!gameHandler.isPlayerTurn()){
+            AI_Turn();
+        }
     }
 
     @FXML
     void quit(ActionEvent event)
     {
+        if (gameTimerRunning) {
+            gameTimerTask.cancel();
+        }
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
-    }
-
-    void AI_turn(){
-        gameHandler.AI_makeMove();
-        gameHandler.updatePlayerTurn(true);
-        displayPieces();
-
-        for(Piece piece : gameHandler.getBoard().getAlivePieces()){
-            piece.getCorp().setCorpCommandAvailability(true);
-        }
-        kingCCStatus.setText("Available");
-        kingCCStatus.setTextFill(availableColor);
-        rBishopCCStatus.setText("Available");
-        rBishopCCStatus.setTextFill(availableColor);
-        lBishopCCStatus.setText("Available");
-        lBishopCCStatus.setTextFill(availableColor);
     }
 
     /* Display the grid of the board. */
@@ -243,7 +303,7 @@ public class mainGUI implements Initializable
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
                     // TODO: once ai is working, make listener for only player pieces
-                    if(piece.getCorp().isCommandAvailable() && gameHandler.isPlayerTurn()){
+                    if(piece.getCorp().isCommandAvailable() && piece.isPlayerPiece()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
                             try {
@@ -278,7 +338,6 @@ public class mainGUI implements Initializable
     }
 
     private void released(Piece piece, ImageView image, int vertical, int horizontal) throws IOException {
-
         ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
         int moveX = Math.round((float)image.getX() / tileSize.width);
         int moveY = Math.round((float)image.getY() / tileSize.height);
@@ -286,7 +345,9 @@ public class mainGUI implements Initializable
         /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
         for(MoveHandler move : moves){
-            if(move.getDestination() ==  destinationCoordinates){
+            if(move.getDestination() ==  destinationCoordinates)
+            {
+                gameLog.appendText(piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
                 gameHandler.setBoard(move.executeMove());
 
                 piece.getCorp().switchCorpCommandAvailablity();
@@ -307,7 +368,6 @@ public class mainGUI implements Initializable
             }
         }
         displayPieces();
-
     }
     /** ---------------------------------------------------------------------- **/
     /** ---------------------------------------------------------------------- **/
@@ -316,5 +376,82 @@ public class mainGUI implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         displayBoard();
+    }
+
+    private String posToString(int value)
+    {
+        return rowLetter[value % 8] + String.valueOf((value / 8) + 1);
+    }
+
+    private void resetTimer()
+    {
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+        gameTimerRunning = false;
+        currentGameTime.setText("00:00:00");
+    }
+
+    private void createTimerTask()
+    {
+        resetTimer();
+        gameTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        String outputText = "";
+
+                        seconds++;
+                        if (seconds >= 60) {
+                            seconds = 0;
+                            minutes++;
+                        }
+
+                        if (minutes >= 60) {
+                            minutes = 0;
+                            hours++;
+                        }
+
+                        if (hours > 0) {
+                            if (hours < 10) {
+                                outputText = "0" + hours + ":";
+                            } else {
+                                outputText = hours + ":";
+                            }
+                        }
+
+                        if (minutes > 0) {
+                            if (hours > 0) {
+                                outputText += minutes + ":";
+                            } else {
+                                outputText = "00:" + minutes + ":";
+                            }
+                        }
+
+                        if (hours == 0 && minutes == 0) {
+                            if (seconds < 10) {
+                                outputText = "00:00:0" + seconds;
+                            } else {
+                                outputText = "00:00:" + seconds;
+                            }
+                        } else {
+                            if (seconds < 10) {
+                                outputText += "0" + seconds;
+                            } else {
+                                outputText += seconds;
+                            }
+                        }
+
+                        currentGameTime.setText(outputText);
+
+                        if (!gameTimerRunning) {
+                            gameTimerRunning = true;
+                        }
+                    }
+                });
+            }
+        };
     }
 }

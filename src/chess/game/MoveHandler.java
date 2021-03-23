@@ -23,12 +23,12 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+
 public abstract class MoveHandler
 {
     protected final Board board;
     protected final Piece movingPiece;
     protected final int destination;
-    private double moveRiskPercentage;
 
     private MoveHandler(final Board board, final Piece movingPiece, final int destination){
         this.board = board;
@@ -36,38 +36,43 @@ public abstract class MoveHandler
         this.destination = destination;
     }
 
-    public double getMoveRiskPercentage(){return moveRiskPercentage;}
+    public Piece getMovingPiece(){return this.movingPiece; }
+
     public int getDestination() {return this.destination; }
-    public abstract void calculateMoveRisk();
     public abstract Board executeMove() throws IOException;
 
+    public static final class EmptyMove extends MoveHandler{
+
+        EmptyMove(Board board, Piece movingPiece, int destination) {
+            super(board, movingPiece, destination);
+        }
+
+        @Override
+        public Board executeMove() throws IOException {
+            return board;
+        }
+    }
+
+    /**
+     * Allows each piece to create a list of Potential moves without actually taking the move.
+     *
+     * The piece will determine each move it can take and make a list of moves with set destination.
+     *  This move can then be called by the GUI or the AI and executed at a later time.
+     *
+     *  Each time a piece is moved, a new list of moves is then determined and stored in
+     *  advance for said piece.
+     */
     public static final class Move extends MoveHandler
     {
         private final Board.SetBoard setBoardMove = new Board.SetBoard();
-        private double kingRiskPercent;
-        private double kingsRookRP;
-        private double queensRookRP;
-        private ConquerSet conquerSet;
 
         public Move(Board board, Piece movingPiece, int destination) {
             super(board, movingPiece, destination);
         }
 
         @Override
-        public void calculateMoveRisk() {
-            /**
-             * 1: Kings Risk Value change (Will it go up or down with this move) up = bad
-             * 2: If piece destination is in enemy capture radius (between 0-1)
-             * 3: Core Commander risk value
-             */
-            super.moveRiskPercentage =  0.0;
-        }
-
-
-        @Override
         public Board executeMove() throws IOException {
             Tile destinationTile = this.board.getTile(destination);
-            calculateMoveRisk();
             if(!destinationTile.isOccupied()){
                 //Board.SetBoard setBoardMove = new Board.SetBoard();
                 for(Piece piece : this.board.getAlivePieces()){
@@ -96,7 +101,9 @@ public abstract class MoveHandler
 
                 /* ****************************************************** */
 
-                conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
+                ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
+
+                // TODO: Make dice roll implementation different for knight as it can attack multiple times
                 int diceRoll = diceDecision.getDiceNumber();
                 if(diceRoll > conquerSet.getConquerSet()){
 
