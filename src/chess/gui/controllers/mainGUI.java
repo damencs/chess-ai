@@ -34,6 +34,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.control.TextArea;
 
 import java.awt.*;
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class mainGUI implements Initializable
     private Label lBishopCCStatus;
     @FXML
     private Label rBishopCCStatus;
+    @FXML
+    private TextArea gameLog;
 
     /* Color Evaluation Grid for the Board */
     private final int[][] boardArray =
@@ -112,6 +115,8 @@ public class mainGUI implements Initializable
     private final Color availableColor = Color.rgb(123,255,123);
     private final Color unavailableColor = Color.rgb(255,97,97);
     private final Color capturedColor = Color.rgb(48,48,48);
+
+    private final char[] rowLetter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
     private GameHandler gameHandler = new GameHandler();
     private AI.KingCorp AI_kingCorp;
@@ -169,7 +174,7 @@ public class mainGUI implements Initializable
             for(MoveHandler move : moves){
                 if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())){
                     gameHandler.setBoard(move.executeMove());
-                    System.out.println(aiMoves.getMovingPiece().getName() + " " + aiMoves.getDestination());
+                    gameLog.appendText(ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
                 }
             }
         }
@@ -310,7 +315,6 @@ public class mainGUI implements Initializable
     }
 
     private void released(Piece piece, ImageView image, int vertical, int horizontal) throws IOException {
-
         ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
         int moveX = Math.round((float)image.getX() / tileSize.width);
         int moveY = Math.round((float)image.getY() / tileSize.height);
@@ -318,7 +322,10 @@ public class mainGUI implements Initializable
         /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
         for(MoveHandler move : moves){
-            if(move.getDestination() ==  destinationCoordinates){
+            if(move.getDestination() ==  destinationCoordinates)
+            {
+                gameLog.appendText(piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+
                 gameHandler.setBoard(move.executeMove());
 
                 piece.getCorp().switchCorpCommandAvailablity();
@@ -339,7 +346,6 @@ public class mainGUI implements Initializable
             }
         }
         displayPieces();
-
     }
     /** ---------------------------------------------------------------------- **/
     /** ---------------------------------------------------------------------- **/
@@ -348,5 +354,10 @@ public class mainGUI implements Initializable
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         displayBoard();
+    }
+
+    private String posToString(int value)
+    {
+        return rowLetter[value % 8] + String.valueOf((value / 8) + 1);
     }
 }
