@@ -13,6 +13,8 @@
 package chess.gui.controllers;
 
 import chess.game.*;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,6 +41,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class mainGUI implements Initializable
 {
@@ -109,6 +113,69 @@ public class mainGUI implements Initializable
 
     private GameHandler gameHandler = new GameHandler();
 
+    /* Game Timer */
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+
+    Timer gameTimer = new Timer();
+    TimerTask gameTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            Platform.runLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    String outputText = "";
+
+                    seconds++;
+                    if (seconds >= 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+
+                    if (minutes >= 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+
+                    if (hours > 0) {
+                        if (hours < 10) {
+                            outputText = "0" + hours + ":";
+                        } else {
+                            outputText = hours + ":";
+                        }
+                    }
+
+                    if (minutes > 0) {
+                        if (hours > 0) {
+                            outputText += minutes + ":";
+                        } else {
+                            outputText = "00:" + minutes + ":";
+                        }
+                    }
+
+                    if (hours == 0 && minutes == 0) {
+                        if (seconds < 10) {
+                            outputText = "00:00:0" + seconds;
+                        } else {
+                            outputText = "00:00:" + seconds;
+                        }
+                    } else {
+                        if (seconds < 10) {
+                            outputText += "0" + seconds;
+                        } else {
+                            outputText += seconds;
+                        }
+                    }
+
+                    currentGameTime.setText(outputText);
+                }
+            });
+        }
+    };
+
     public mainGUI()
     {
     }
@@ -147,9 +214,7 @@ public class mainGUI implements Initializable
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
 
-        ClockTimer time = new ClockTimer();
-        time.start();
-        currentGameTime.setText(time.toString());
+        gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
 
         displayPieces();
 
