@@ -123,6 +123,69 @@ public class mainGUI implements Initializable
     private AI.KingBishopCorp AI_kingBishopCorp;
     private AI.QueensBishopCorp AI_queensBishopCorp;
 
+    /* Game Timer */
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+
+    Timer gameTimer = new Timer();
+    TimerTask gameTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            Platform.runLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    String outputText = "";
+
+                    seconds++;
+                    if (seconds >= 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+
+                    if (minutes >= 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+
+                    if (hours > 0) {
+                        if (hours < 10) {
+                            outputText = "0" + hours + ":";
+                        } else {
+                            outputText = hours + ":";
+                        }
+                    }
+
+                    if (minutes > 0) {
+                        if (hours > 0) {
+                            outputText += minutes + ":";
+                        } else {
+                            outputText = "00:" + minutes + ":";
+                        }
+                    }
+
+                    if (hours == 0 && minutes == 0) {
+                        if (seconds < 10) {
+                            outputText = "00:00:0" + seconds;
+                        } else {
+                            outputText = "00:00:" + seconds;
+                        }
+                    } else {
+                        if (seconds < 10) {
+                            outputText += "0" + seconds;
+                        } else {
+                            outputText += seconds;
+                        }
+                    }
+
+                    currentGameTime.setText(outputText);
+                }
+            });
+        }
+    };
+
     public mainGUI()
     {
     }
@@ -209,8 +272,8 @@ public class mainGUI implements Initializable
         AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
-        // PUT TIMER HERE
 
+        gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
         displayPieces();
         if(!gameHandler.isPlayerTurn()){
             AI_Turn();
