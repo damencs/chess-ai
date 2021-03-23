@@ -5,6 +5,11 @@ import java.util.List;
 
 /**
  * Master AI CLASS that each commanding distributed AI will be a piece of
+ *
+ * Started with a parent AI class that then distributes the AI pieces into child classes
+ * according to their respective corps.
+ *
+ * Each child corp class take in the Commanding piece and the initial board.
  */
 public abstract class AI {
     private Piece corpCommander;
@@ -37,15 +42,31 @@ public abstract class AI {
         public MoveHandler calculateBestMove(Board board) {
             MoveHandler bestMove = null;
             double risk = 0;
+            /** Loop Through each of the pieces in the corp */
             for(Piece piece : super.corpSubordinates){
+
+                /** list of available moves to each individual piece**/
                 ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
+
+                /** Loops Through each move that the individual piece can make **/
                 for(MoveHandler move : pieceMoves){
+
+                    /** Get all the enemy pieces that can possibly attack said move destination **/
                     List<Piece> enemyPieces = (super.color.equals("black")) ? board.getBlackPieces() : board.getWhitePieces();
+
+                    /** Loops through each enemy that can attack said destination **/
                     for(Piece enemyPiece : enemyPieces){
                         for(MoveHandler enemyMoves : enemyPiece.determineMoves(board)){
                             if(move.getDestination() == enemyMoves.getDestination()){
+
+                                /** Looks at the dice roll from the enemies perspective to calculate a capture risk
+                                 * of moving to said tile. **/
                                 ConquerSet riskSet = new ConquerSet(enemyPiece, piece);
+
+                                /* Calculation is (6 - minimum value needed to capture)/ 6  */
                                 double moveTempRisk = ((double)(6 - riskSet.getConquerSet() / 6));
+                                /* The higher the rick value the better the move */
+                                /* This is  because the higher risk, the less enemy pieces can reach said location */
                                 if(moveTempRisk > risk){
                                     risk = moveTempRisk;
                                     bestMove = move;
@@ -55,6 +76,7 @@ public abstract class AI {
                     }
                 }
             }
+            /* Return the best move */
             return bestMove;
         }
 

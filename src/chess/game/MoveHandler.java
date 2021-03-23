@@ -22,8 +22,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public abstract class MoveHandler
 {
@@ -54,6 +53,15 @@ public abstract class MoveHandler
         }
     }
 
+    /**
+     * Allows each piece to create a list of Potential moves without actually taking the move.
+     *
+     * The piece will determine each move it can take and make a list of moves with set destination.
+     *  This move can then be called by the GUI or the AI and executed at a later time.
+     *
+     *  Each time a piece is moved, a new list of moves is then determined and stored in
+     *  advance for said piece.
+     */
     public static final class Move extends MoveHandler
     {
         private final Board.SetBoard setBoardMove = new Board.SetBoard();
@@ -94,6 +102,8 @@ public abstract class MoveHandler
                 /* ****************************************************** */
 
                 ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
+
+                // TODO: Make dice roll implementation different for knight as it can attack multiple times
                 int diceRoll = diceDecision.getDiceNumber();
                 if(diceRoll > conquerSet.getConquerSet()){
 

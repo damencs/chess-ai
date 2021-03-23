@@ -273,7 +273,7 @@ public class mainGUI implements Initializable
         AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
 
-        gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
+        //gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
         displayPieces();
         if(!gameHandler.isPlayerTurn()){
             AI_Turn();
@@ -388,7 +388,6 @@ public class mainGUI implements Initializable
             if(move.getDestination() ==  destinationCoordinates)
             {
                 gameLog.appendText(piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
-
                 gameHandler.setBoard(move.executeMove());
 
                 piece.getCorp().switchCorpCommandAvailablity();
