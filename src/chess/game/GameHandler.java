@@ -49,22 +49,6 @@ public class GameHandler
         return tiles;
     }
 
-    public Tile[][] getBoardTiles()
-    {
-        Tile[][] tiles = new Tile[8][8];
-        int index = 0;
-
-        for (int row = 0; row < tiles.length; row++)
-        {
-            for(int column = 0; column < tiles[row].length; column++)
-            {
-                tiles[row][column] = board.getTile(index);
-                index++;
-            }
-        }
-        return tiles;
-    }
-
     /* Return whether or not it is the player's turn. */
     public boolean isPlayerTurn()
     {
