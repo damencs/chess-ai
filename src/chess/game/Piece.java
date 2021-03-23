@@ -12,8 +12,9 @@ public abstract class Piece
     protected final String name;
     protected final int offsetMultiplier;
     protected final int pieceWeight;
+    protected final boolean isPlayerPiece;
 
-    Piece(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+    Piece(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean isPlayerPiece)
     {
         this.coordinates = coordinates;
         this.color = color;
@@ -21,11 +22,13 @@ public abstract class Piece
         this.name = name;
         this.offsetMultiplier = offsetMultiplier;
         this.pieceWeight = pieceWeight;
+        this.isPlayerPiece = isPlayerPiece;
     }
 
     public int getCoordinates(){ return this.coordinates; }
     public String getColor(){ return this.color; }
     public String getName(){ return this.name; }
+    public Boolean isPlayerPiece() { return this.isPlayerPiece; }
     public Corp getCorp(){return pieceCorp; }
     public Image getImage()
     {
@@ -44,14 +47,14 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Knight(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        Knight(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Knight(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new Knight(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -123,14 +126,14 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        King(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        King(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new King(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new King(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -195,14 +198,14 @@ public abstract class Piece
     {
         private final static int[] BISHOP_OFFSET = {7,8,9};
 
-        Bishop(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        Bishop(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Bishop(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new Bishop(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -247,14 +250,14 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Queen(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        Queen(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Queen(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new Queen(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -321,14 +324,14 @@ public abstract class Piece
         private final static int[] ROOK_ATK_OFFSET = {-27,-24,-21,-18,-16,-14,-3,-2,2,3,14,16,18,21,24,27};
 
 
-        Rook(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        Rook(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Rook(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new Rook(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -377,14 +380,14 @@ public abstract class Piece
         // TODO: Fix column exemption
         private final static int[] PAWN_OFFSET = {7,8,9};
 
-        Pawn(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight)
+        Pawn(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Pawn(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight);
+            return new Pawn(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
 

@@ -127,64 +127,10 @@ public class mainGUI implements Initializable
     int hours = 0;
     int minutes = 0;
     int seconds = 0;
+    boolean gameTimerRunning = false;
 
     Timer gameTimer = new Timer();
-    TimerTask gameTimerTask = new TimerTask() {
-        @Override
-        public void run() {
-            Platform.runLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    String outputText = "";
-
-                    seconds++;
-                    if (seconds >= 60) {
-                        seconds = 0;
-                        minutes++;
-                    }
-
-                    if (minutes >= 60) {
-                        minutes = 0;
-                        hours++;
-                    }
-
-                    if (hours > 0) {
-                        if (hours < 10) {
-                            outputText = "0" + hours + ":";
-                        } else {
-                            outputText = hours + ":";
-                        }
-                    }
-
-                    if (minutes > 0) {
-                        if (hours > 0) {
-                            outputText += minutes + ":";
-                        } else {
-                            outputText = "00:" + minutes + ":";
-                        }
-                    }
-
-                    if (hours == 0 && minutes == 0) {
-                        if (seconds < 10) {
-                            outputText = "00:00:0" + seconds;
-                        } else {
-                            outputText = "00:00:" + seconds;
-                        }
-                    } else {
-                        if (seconds < 10) {
-                            outputText += "0" + seconds;
-                        } else {
-                            outputText += seconds;
-                        }
-                    }
-
-                    currentGameTime.setText(outputText);
-                }
-            });
-        }
-    };
+    TimerTask gameTimerTask;
 
     public mainGUI()
     {
@@ -269,22 +215,35 @@ public class mainGUI implements Initializable
         gameHandler = new GameHandler();
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
+        gameHandler.getBoard().resetCorpAvailability();
         AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
 
-        // FIXME: Breaks the starting new game while game is running.
-        //gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
+        if (gameTimerRunning) {
+            gameTimerTask.cancel();
+            createTimerTask();
+        } else {
+            createTimerTask();
+        }
+
+        gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
+
+        /* Resets game log text since new game generated */
+        gameLog.setText("");
+
         displayPieces();
         if(!gameHandler.isPlayerTurn()){
             AI_Turn();
         }
-
     }
 
     @FXML
     void quit(ActionEvent event)
     {
+        if (gameTimerRunning) {
+            gameTimerTask.cancel();
+        }
         Stage stage = (Stage) quitBtn.getScene().getWindow();
         stage.close();
     }
@@ -344,7 +303,7 @@ public class mainGUI implements Initializable
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
                     // TODO: once ai is working, make listener for only player pieces
-                    if(piece.getCorp().isCommandAvailable()){
+                    if(piece.getCorp().isCommandAvailable() && piece.isPlayerPiece()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
                             try {
@@ -422,5 +381,77 @@ public class mainGUI implements Initializable
     private String posToString(int value)
     {
         return rowLetter[value % 8] + String.valueOf((value / 8) + 1);
+    }
+
+    private void resetTimer()
+    {
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+        gameTimerRunning = false;
+        currentGameTime.setText("00:00:00");
+    }
+
+    private void createTimerTask()
+    {
+        resetTimer();
+        gameTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        String outputText = "";
+
+                        seconds++;
+                        if (seconds >= 60) {
+                            seconds = 0;
+                            minutes++;
+                        }
+
+                        if (minutes >= 60) {
+                            minutes = 0;
+                            hours++;
+                        }
+
+                        if (hours > 0) {
+                            if (hours < 10) {
+                                outputText = "0" + hours + ":";
+                            } else {
+                                outputText = hours + ":";
+                            }
+                        }
+
+                        if (minutes > 0) {
+                            if (hours > 0) {
+                                outputText += minutes + ":";
+                            } else {
+                                outputText = "00:" + minutes + ":";
+                            }
+                        }
+
+                        if (hours == 0 && minutes == 0) {
+                            if (seconds < 10) {
+                                outputText = "00:00:0" + seconds;
+                            } else {
+                                outputText = "00:00:" + seconds;
+                            }
+                        } else {
+                            if (seconds < 10) {
+                                outputText += "0" + seconds;
+                            } else {
+                                outputText += seconds;
+                            }
+                        }
+
+                        currentGameTime.setText(outputText);
+
+                        if (!gameTimerRunning) {
+                            gameTimerRunning = true;
+                        }
+                    }
+                });
+            }
+        };
     }
 }

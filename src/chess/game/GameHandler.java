@@ -12,22 +12,8 @@
  */
 package chess.game;
 
-import chess.gui.controllers.DiceRoll;
-import chess.gui.controllers.coinflip;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
-
 public class GameHandler
 {
-    /* TODO: - Track the starting game time and compare it to current to display game time. */
-
     private Board board;
     private boolean isPlayerTurn;
     private boolean gameOver;
@@ -63,7 +49,4 @@ public class GameHandler
     {
         isPlayerTurn = update;
     }
-
-    /* TODO: - Implement AI That will make its moves as soon as player ends turn */
-
 }
