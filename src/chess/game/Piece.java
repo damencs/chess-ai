@@ -29,43 +29,6 @@ public abstract class Piece
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
-    public ArrayList getSurroundingTiles(Board board)
-    {
-        ArrayList<Integer> surroundingTiles = new ArrayList<Integer>(); //list of surrounding tiles
-        if(coordinates >=8)//top
-        {
-            surroundingTiles.add(coordinates - 8);
-            if (coordinates % 8 != 7) //top right
-            {
-                surroundingTiles.add(coordinates-7);
-            }
-            if (coordinates %8 != 0)//top left
-            {
-                surroundingTiles.add(coordinates-9);
-            }
-        }
-        if (coordinates <= 55)//bottom
-        {
-            surroundingTiles.add(coordinates+8);
-            if (coordinates % 8 != 7)//bottom right
-            {
-                surroundingTiles.add(coordinates+9);
-            }
-            if (coordinates % 8 != 0)//bottom left
-            {
-                surroundingTiles.add(coordinates+7);
-            }
-        }
-        if (coordinates % 8 !=0)//left
-        {
-            surroundingTiles.add(coordinates-1);
-        }
-        if (coordinates % 8 !=7)
-        {
-            surroundingTiles.add(coordinates+1);
-        }
-        return surroundingTiles;
-    }
 
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
