@@ -273,6 +273,7 @@ public class mainGUI implements Initializable
         AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
 
+        // FIXME: Breaks the starting new game while game is running.
         //gameTimer.scheduleAtFixedRate(gameTimerTask, 1000,1000);
         displayPieces();
         if(!gameHandler.isPlayerTurn()){
