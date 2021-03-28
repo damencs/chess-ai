@@ -15,6 +15,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.TitledPane?>
 <AnchorPane prefHeight="600.0" prefWidth="1200.0" styleClass="holderPane" stylesheets="@../css/styling.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.mainGUI">
    <children>
       <StackPane layoutX="750.0" layoutY="8.0" prefHeight="602.0" prefWidth="439.0">
@@ -124,30 +126,6 @@
                            <content>
                               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="461.0" prefWidth="357.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
-<<<<<<< HEAD
-                                    <TextArea editable="false" layoutX="11.0" layoutY="192.0" prefHeight="300.0" prefWidth="378.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="The &quot;armies&quot; of chess piece for command are divided into three &quot;corp&quot;:&#10;• The King and Bishops are corp commanders, each with one command authority that can be used in each turn.&#10;• Up to three actions may be taken in each turn, one by each corp. Corp command  actions ARE NOT required in any turn, so zero to three actions may be taken in a turn.&#10;• Command authority may not be transferred from one commander to another.&#10;• The &quot;left&quot; side Bishop commands the three left pawns and the left-side Knight.&#10;• The &quot;right&quot; side Bishop commands the three right pawns and the right-side Knight.&#10;• The King commands the Queen, the two rooks (archers), and the remaining two center pawns&#10;• The King may delegate any of its piece to be commanded by either Bishop&#10;• Each commander (King and Bishops) may command one action (move or capture) per turn, only for their commanded piece.&#10;• When a Bishop is captured, his commanded piece revert to the command of the King, but his command authority is lost (the army may make one fewer action per turn, a serious disadvantage).&#10;• The game ends when the King is captured &#10;" wrapText="true">
-                                       <font>
-                                          <Font name="Montserrat Black" size="10.0" />
-                                       </font>
-                                       <effect>
-                                       </effect>
-                                    </TextArea>
-                                    <TextArea layoutX="12.0" layoutY="42.0" prefHeight="112.0" prefWidth="376.0" styleClass="rulesTextArea" stylesheets="@../css/styling.css" text="The attacking player rolls a die to determine if a capture is successful. The die roll needed to capture a piece depends on the combination of the attacking piece and the defending piece.&#10;&#10;• When an attack is successful, the attacking piece moves into the square of the captured piece.&#10;&#10;• When an attack is unsuccessful, the attacking piece remains in the square it attacked from. " wrapText="true">
-                                       <font>
-                                          <Font name="Montserrat Black" size="10.0" />
-                                       </font>
-                                    </TextArea>
-                                    <Label layoutX="12.0" layoutY="18.0" text="Capturing Pieces" textFill="#ffc629">
-                                       <font>
-                                          <Font name="Montserrat Black" size="16.0" />
-                                       </font>
-                                    </Label>
-                                    <Label layoutX="13.0" layoutY="170.0" text="Game Process" textFill="#ffc629">
-                                       <font>
-                                          <Font name="Montserrat Black" size="16.0" />
-                                       </font>
-                                    </Label>
-=======
                                     <ScrollPane hbarPolicy="NEVER" layoutY="-2.0" pannable="true" prefHeight="514.0" prefWidth="399.0" styleClass="rulesScrollPane" stylesheets="@../css/styling.css" vbarPolicy="ALWAYS">
                                        <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="875.0" prefWidth="385.0" style="-fx-background-color: #3c3c3c;">
@@ -209,7 +187,6 @@
                                           </AnchorPane>
                                        </content>
                                     </ScrollPane>
->>>>>>> JamesNewBranch
                                  </children>
                               </AnchorPane>
                            </content>

@@ -37,10 +37,6 @@ public class GameHandler
         return tiles;
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> JamesNewBranch
     /* Return whether or not it is the player's turn. */
     public boolean isPlayerTurn()
     {

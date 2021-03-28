@@ -34,10 +34,7 @@ public abstract class Piece
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> JamesNewBranch
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
 
