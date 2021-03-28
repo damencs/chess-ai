@@ -37,7 +37,6 @@ public class GameHandler
         return tiles;
     }
 
-
     /* Return whether or not it is the player's turn. */
     public boolean isPlayerTurn()
     {
