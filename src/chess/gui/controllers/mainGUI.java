@@ -13,24 +13,17 @@
 package chess.gui.controllers;
 
 import chess.game.*;
-import javafx.animation.PathTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.CacheHint;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -38,14 +31,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.control.TextArea;
-import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.IOException;
@@ -113,11 +102,6 @@ public class mainGUI implements Initializable
             };
     private final GridPane boardGrid = new GridPane();
     private final GridPane piecesGrid = new GridPane();
-    private final ColorAdjust blackout = new ColorAdjust();
-    private final ColorAdjust color = new ColorAdjust();
-    private final Lighting lighting = new Lighting();
-    private final Lighting lightingCommander = new Lighting();
-
     // Dimesion of each tile so that it can be referenced later
     private final Dimension tileSize = new Dimension(71, 64);
 
@@ -128,19 +112,16 @@ public class mainGUI implements Initializable
     private final Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
     private final Image GREY = new Image(imagePath + "grey.png", 20,20,true, true);
     private final Image BLANK = new Image(imagePath + "blank.png", 20,20,true, true);
-    private final Image SELECT = new Image(imagePath + "MoveSelect.gif", 20,20,true, true);
     private final Color availableColor = Color.rgb(123,255,123);
     private final Color unavailableColor = Color.rgb(255,97,97);
     private final Color capturedColor = Color.rgb(48,48,48);
 
-    private boolean rBishopCaptured = false;
-    private boolean lBishopCaptured = false;
-    private boolean kingCaptured = false;
-
     private final char[] rowLetter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
     private GameHandler gameHandler = new GameHandler();
-    private AiBrain aiBrain;
+    private AI.KingCorp AI_kingCorp;
+    private AI.KingBishopCorp AI_kingBishopCorp;
+    private AI.QueensBishopCorp AI_queensBishopCorp;
 
     /* Game Timer */
     int hours = 0;
@@ -158,7 +139,7 @@ public class mainGUI implements Initializable
     @FXML
     void playDefault(ActionEvent event) throws IOException
     {
-        onOpenDialog();
+        onOpenDialog(event);
         tabs.getSelectionModel().select(gameTab);
     }
 
@@ -171,52 +152,48 @@ public class mainGUI implements Initializable
 
     void AI_Turn() throws IOException {
 
-        aiBrain.AI_turn(gameHandler.getBoard());
+        MoveHandler ai_KingCorpMove = AI_kingCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingCorpMove);
+        MoveHandler ai_KingBishopCorpMove = AI_kingBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_KingBishopCorpMove);
+        MoveHandler ai_QueensBishopCorpMove = AI_queensBishopCorp.calculateBestMove(gameHandler.getBoard());
+        executeAIMove(ai_QueensBishopCorpMove);
 
-        executeAIMove(aiBrain.executeKingCorp());
-        executeAIMove(aiBrain.executeKingBishopCorp());
-        executeAIMove(aiBrain.executeQueensBishopCorp());
 
+        displayPieces();
         for(Piece piece : gameHandler.getBoard().getAlivePieces()){
             piece.getCorp().setCorpCommandAvailability(true);
-            if(piece.isPlayerPiece())
-                switchCorpLabel(piece);
         }
+        kingCCStatus.setText("Available");
+        kingCCStatus.setTextFill(availableColor);
+        rBishopCCStatus.setText("Available");
+        rBishopCCStatus.setTextFill(availableColor);
+        lBishopCCStatus.setText("Available");
+        lBishopCCStatus.setTextFill(availableColor);
         gameHandler.updatePlayerTurn(true);
         gameLog.appendText("\tAI has ended their turn.\r\n");
         displayPieces();
     }
 
     void executeAIMove(MoveHandler aiMoves) throws IOException {
-        if(aiMoves != null){
-            ArrayList<Piece> ai_pieces = (aiBrain.getAiTeamColor().equals("white"))
-                    ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
 
-            for(Piece ai_piece : ai_pieces){
-                ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
-                for(MoveHandler move : moves){
-                    if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName()) &&
-                            move.getMovingPiece().getCoordinates() == aiMoves.getMovingPiece().getCoordinates()) {
+        ArrayList<Piece> ai_pieces = (AI_kingCorp.getColor().equals("white"))
+                ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
 
-                        gameHandler.setBoard(move.executeMove());
-
-                        if(move.isGameOver()){
-                            endGame(move);
-                        }
-
-                        if (!move.toString().equals("")) {
-                            gameLog.appendText(move.toString() + "\r\n");
-                        }
-                        if (!move.toString().contains("FAIL")) {
-                            gameLog.appendText("[AI] " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": "
-                                    + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
-                        }
-                        else
-                        {
-                            gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": "
-                                    + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
-                        }
-                        displayPieces();
+        for(Piece ai_piece : ai_pieces){
+            ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
+            for(MoveHandler move : moves){
+                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())) {
+                    gameHandler.setBoard(move.executeMove());
+                    if (move.toString() != "") {
+                        gameLog.appendText(move.toString() + "\r\n");
+                    }
+                    if (!move.toString().contains("FAIL")) {
+                        gameLog.appendText("[AI] " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                    }
+                    else
+                    {
+                        gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
                     }
                 }
             }
@@ -230,7 +207,7 @@ public class mainGUI implements Initializable
     }
 
     @FXML
-    void onOpenDialog() throws IOException
+    void onOpenDialog(ActionEvent event) throws IOException
     {
         FXMLLoader fxmlloader = new FXMLLoader();
         fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/coinflip.fxml"));
@@ -250,7 +227,9 @@ public class mainGUI implements Initializable
         gameHandler.updatePlayerTurn(teamController.getPlayerTurnChoice());
         gameHandler.setBoard();
         gameHandler.getBoard().resetCorpAvailability();
-        aiBrain = new AiBrain();
+        AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
 
         if (gameTimerRunning) {
             gameTimerTask.cancel();
@@ -265,9 +244,7 @@ public class mainGUI implements Initializable
         gameLog.setText("");
 
         displayPieces();
-
         if(!gameHandler.isPlayerTurn()){
-            aiBrain.AI_turn(gameHandler.getBoard());
             AI_Turn();
         }
     }
@@ -336,6 +313,7 @@ public class mainGUI implements Initializable
                     int horizontal = column;
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
+                    // TODO: once ai is working, make listener for only player pieces
                     if(piece.getCorp().isCommandAvailable() && piece.isPlayerPiece()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
@@ -345,19 +323,6 @@ public class mainGUI implements Initializable
                                 e.printStackTrace();
                             }
                         });
-                        gamestate[row][column].setOnMousePressed(mouseEvent -> { pressed(piece); });
-                    }
-                    /* Grays out unavailable corps */
-                    else if(!piece.getCorp().isCommandAvailable() && piece.isPlayerPiece())
-                    {
-                        if(piece.getColor().equals("black"))
-                            blackout.setBrightness(0.3);
-                        else
-                            blackout.setBrightness(-0.5);
-
-                        gamestate[vertical][horizontal].setEffect(blackout);
-                        gamestate[vertical][horizontal].setCache(true);
-                        gamestate[vertical][horizontal].setCacheHint(CacheHint.SPEED);
                     }
                 }
                 gamestate[row][column].setFitWidth(tileSize.getWidth());
@@ -370,64 +335,7 @@ public class mainGUI implements Initializable
     }
 
     /** -------- Following classes are for Mouse Event Listeners ----------- **/
-    private void pressed (Piece piece)
-    {
-        /* Visually show possible moves on Board */
-        ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
-        for (MoveHandler move : moves)
-        {
-            int row = move.getDestination() % 8;
-            int column = move.getDestination() / 8;
-
-            ImageView Selection = new ImageView(SELECT);
-            Selection.setFitWidth(tileSize.getWidth());
-            Selection.setFitHeight(tileSize.getHeight());
-
-            boardGrid.add(Selection, row, column);
-        }
-
-        /* Changes color of Corp while dragging */
-        ArrayList<Piece> corpPieces;
-        if (piece.getColor().equals("black"))
-            corpPieces = gameHandler.getBoard().getBlackCorpPieces(piece.getCorp().getCorpName());
-        else
-            corpPieces = gameHandler.getBoard().getWhiteCorpPieces(piece.getCorp().getCorpName());
-
-        for (Piece pieces : corpPieces)
-        {
-            if (pieces.getName().equals("Bishop") || pieces.getName().equals("King")) {
-                int column = pieces.getCoordinates() % 8;
-                int row = pieces.getCoordinates() / 8;
-                ImageView pieceImage = gamestate[row][column];
-                color.setBrightness(0.9);
-
-                lightingCommander.setDiffuseConstant(1.0);
-                lightingCommander.setSpecularConstant(0.0);
-                lightingCommander.setSpecularExponent(0.0);
-                lightingCommander.setSurfaceScale(0.0);
-                lightingCommander.setLight(new Light.Distant(45, 45, unavailableColor));
-
-                lightingCommander.setContentInput(color);
-                pieceImage.setEffect(lightingCommander);
-            } else {
-                int column1 = pieces.getCoordinates() % 8;
-                int row1 = pieces.getCoordinates() / 8;
-                ImageView pieceImage1 = gamestate[row1][column1];
-                color.setBrightness(0.9);
-
-                lighting.setDiffuseConstant(1.0);
-                lighting.setSpecularConstant(0.0);
-                lighting.setSpecularExponent(0.0);
-                lighting.setSurfaceScale(0.0);
-                lighting.setLight(new Light.Distant(45, 45, availableColor));
-
-                lighting.setContentInput(color);
-                pieceImage1.setEffect(lighting);
-            }
-        }
-    }
-
-    private void dragged(MouseEvent event, ImageView image)
+    private void dragged(MouseEvent event , ImageView image)
     {
         image.setX(event.getX() - (float)tileSize.width/2);
         image.setY(event.getY() - (float)tileSize.height/2);
@@ -451,7 +359,7 @@ public class mainGUI implements Initializable
             if(move.getDestination() ==  destinationCoordinates)
             {
                 gameHandler.setBoard(move.executeMove());
-                if (!move.toString().equals(""))
+                if (move.toString() != "")
                 {
                     gameLog.appendText(move.toString() + "\r\n");
                 }
@@ -465,9 +373,19 @@ public class mainGUI implements Initializable
                 }
 
                 piece.getCorp().switchCorpCommandAvailablity();
-                switchCorpLabel(piece);
-                if(move.isGameOver()){
-                    endGame(move);
+                switch (piece.getCorp().getCorpName()) {
+                    case "king" -> {
+                        kingCCStatus.setText("Unavailable");
+                        kingCCStatus.setTextFill(unavailableColor);
+                    }
+                    case "kingsBishop" -> {
+                        rBishopCCStatus.setText("Unavailable");
+                        rBishopCCStatus.setTextFill(unavailableColor);
+                    }
+                    case "queensBishop" -> {
+                        lBishopCCStatus.setText("Unavailable");
+                        lBishopCCStatus.setTextFill(unavailableColor);
+                    }
                 }
             }
         }
@@ -475,32 +393,6 @@ public class mainGUI implements Initializable
     }
     /** ---------------------------------------------------------------------- **/
     /** ---------------------------------------------------------------------- **/
-
-    private void endGame(MoveHandler move) throws IOException {
-        FXMLLoader GameOverfxmlloader = new FXMLLoader();
-        GameOverfxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/gameover.fxml"));
-        Parent parent = GameOverfxmlloader.load();
-        GameOver gameOver = GameOverfxmlloader.getController();
-        gameOver.setWinner(move.getWinner());
-        Scene gameOverScene = new Scene(parent, 390, 205);
-        gameOverScene.setFill(Color.TRANSPARENT);
-
-        Stage gameOverStage = new Stage();
-        gameOverStage.initStyle(StageStyle.TRANSPARENT);
-        gameOverStage.initModality(Modality.APPLICATION_MODAL);
-        gameOverStage.setScene(gameOverScene);
-        gameOverStage.showAndWait();
-
-        if(gameOver.getPlayerChoice() > 0){
-            if (gameTimerRunning) {
-                gameTimerTask.cancel();
-            }
-            Stage stage = (Stage) quitBtn.getScene().getWindow();
-            stage.close();
-        }else{
-            onOpenDialog();
-        }
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
@@ -511,77 +403,6 @@ public class mainGUI implements Initializable
     private String posToString(int value)
     {
         return rowLetter[value % 8] + String.valueOf((value / 8) + 1);
-    }
-
-    private void checkCaptured(){
-        ArrayList<Piece> pieces = (ArrayList<Piece>) gameHandler.getBoard().getPlayerPieces();
-        rBishopCaptured = true;
-        lBishopCaptured = true;
-        kingCaptured = true;
-        for(Piece piece : pieces){
-            if(piece.getName() == "Bishop"){
-                if(piece.getCorp().getCorpName() == "kingsBishop"){
-                    rBishopCaptured = false;
-                }
-                if(piece.getCorp().getCorpName() == "queensBishop"){
-                    lBishopCaptured = false;
-
-                }
-            }
-            if(piece.getName() == "King"){
-                kingCaptured = false;
-            }
-        }
-
-    }
-    private void switchCorpLabel(Piece piece)
-    {
-        boolean available = piece.getCorp().isCommandAvailable();
-        checkCaptured();
-        switch (piece.getCorp().getCorpName()) {
-            case "king" -> {
-                if (!available) {
-                    kingCCStatus.setText("Unavailable");
-                    kingCCStatus.setTextFill(unavailableColor);
-                } else {
-                    kingCCStatus.setText("Available");
-                    kingCCStatus.setTextFill(availableColor);
-                }
-            }
-            case "kingsBishop" -> {
-                if(!available) {
-                    rBishopCCStatus.setText("Unavailable");
-                    rBishopCCStatus.setTextFill(unavailableColor);
-                }
-                else{
-                    rBishopCCStatus.setText("Available");
-                    rBishopCCStatus.setTextFill(availableColor);
-                }
-            }
-            case "queensBishop" -> {
-                if(!available) {
-                    lBishopCCStatus.setText("Unavailable");
-                    lBishopCCStatus.setTextFill(unavailableColor);
-                }
-                else{
-                    lBishopCCStatus.setText("Available");
-                    lBishopCCStatus.setTextFill(availableColor);
-                }
-            }
-        }
-
-        if(kingCaptured) {
-            kingCCStatus.setText("Captured");
-            kingCCStatus.setTextFill(capturedColor);
-        }
-        if(rBishopCaptured){
-            rBishopCCStatus.setText("Captured");
-            rBishopCCStatus.setTextFill(capturedColor);
-        }
-        if(lBishopCaptured){
-            lBishopCCStatus.setText("Captured");
-            lBishopCCStatus.setTextFill(capturedColor);
-        }
     }
 
     private void resetTimer()
