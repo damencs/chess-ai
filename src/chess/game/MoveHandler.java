@@ -23,6 +23,7 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+
 public abstract class MoveHandler
 {
     protected final Board board;
@@ -35,10 +36,32 @@ public abstract class MoveHandler
         this.destination = destination;
     }
 
-    public int getDestination() {return this.destination; }
+    public Piece getMovingPiece(){return this.movingPiece; }
 
+    public int getDestination() {return this.destination; }
     public abstract Board executeMove() throws IOException;
 
+    public static final class EmptyMove extends MoveHandler{
+
+        EmptyMove(Board board, Piece movingPiece, int destination) {
+            super(board, movingPiece, destination);
+        }
+
+        @Override
+        public Board executeMove() throws IOException {
+            return board;
+        }
+    }
+
+    /**
+     * Allows each piece to create a list of Potential moves without actually taking the move.
+     *
+     * The piece will determine each move it can take and make a list of moves with set destination.
+     *  This move can then be called by the GUI or the AI and executed at a later time.
+     *
+     *  Each time a piece is moved, a new list of moves is then determined and stored in
+     *  advance for said piece.
+     */
     public static final class Move extends MoveHandler
     {
         private final Board.SetBoard setBoardMove = new Board.SetBoard();
@@ -50,7 +73,6 @@ public abstract class MoveHandler
         @Override
         public Board executeMove() throws IOException {
             Tile destinationTile = this.board.getTile(destination);
-
             if(!destinationTile.isOccupied()){
                 //Board.SetBoard setBoardMove = new Board.SetBoard();
                 for(Piece piece : this.board.getAlivePieces()){
@@ -61,6 +83,8 @@ public abstract class MoveHandler
                 setBoardMove.setPiece(movingPiece.movePiece(destination));
                 return(setBoardMove.build());
             }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
+
+                /* DICE ROLL */
                 FXMLLoader fxmlloader = new FXMLLoader();
                 fxmlloader.setLocation(getClass().getResource("/chess/gui/fxml/diceroll.fxml"));
                 Parent parent = fxmlloader.load();
@@ -75,9 +99,12 @@ public abstract class MoveHandler
                 stage.setScene(scene);
                 stage.showAndWait();
 
+                /* ****************************************************** */
+
                 ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
+
+                // TODO: Make dice roll implementation different for knight as it can attack multiple times
                 int diceRoll = diceDecision.getDiceNumber();
-                System.out.println(diceRoll + " ? " + conquerSet.getConquerSet());
                 if(diceRoll > conquerSet.getConquerSet()){
 
                     if(destinationTile.getPiece().getColor().equals("white")){

@@ -12,27 +12,15 @@
  */
 package chess.game;
 
-import chess.gui.controllers.DiceRoll;
-import chess.gui.controllers.coinflip;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.io.IOException;
-
 public class GameHandler
 {
-    /* TODO: - Track the starting game time and compare it to current to display game time.
-       TODO: - Implement AI That will make its moves as soon as player ends turn. */
-
     private Board board;
     private boolean isPlayerTurn;
+    private boolean gameOver;
 
-    public void setBoard(){ board = Board.createInitialBoard(isPlayerTurn()); }
+    public void setBoard(){
+        board = Board.createInitialBoard(isPlayerTurn());
+    }
     public void setBoard(Board board){ this.board = board;}
     /* Return instance of board*/
     public Board getBoard() { return board; }
@@ -49,6 +37,10 @@ public class GameHandler
         return tiles;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> JamesNewBranch
     /* Return whether or not it is the player's turn. */
     public boolean isPlayerTurn()
     {
@@ -60,7 +52,4 @@ public class GameHandler
     {
         isPlayerTurn = update;
     }
-
-    /* TODO: - Implement AI That will make its moves as soon as player ends turn */
-
 }

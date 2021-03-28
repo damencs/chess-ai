@@ -97,12 +97,14 @@
 
 .gameLog
 {
-    -fx-background: #231f20;
     -fx-border-radius: 5;
+    -fx-text-fill: #aba9a9;
+    -fx-font-size: 14;
 }
 
 .gameLog .content
 {
+    -fx-background-color: #231f20;
     -fx-border-radius: 5;
 }
 

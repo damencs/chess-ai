@@ -8,28 +8,36 @@ public abstract class Piece
 {
     protected final int coordinates;
     protected final String color;
-    protected final String pieceCorp;
+    protected final Corp pieceCorp;
     protected final String name;
     protected final int offsetMultiplier;
+    protected final int pieceWeight;
+    protected final boolean isPlayerPiece;
 
-    Piece(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+    Piece(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean isPlayerPiece)
     {
         this.coordinates = coordinates;
         this.color = color;
         this.pieceCorp = pieceCorp;
         this.name = name;
         this.offsetMultiplier = offsetMultiplier;
+        this.pieceWeight = pieceWeight;
+        this.isPlayerPiece = isPlayerPiece;
     }
 
     public int getCoordinates(){ return this.coordinates; }
     public String getColor(){ return this.color; }
     public String getName(){ return this.name; }
-  
+    public Boolean isPlayerPiece() { return this.isPlayerPiece; }
+    public Corp getCorp(){return pieceCorp; }
     public Image getImage()
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> JamesNewBranch
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
 
@@ -39,24 +47,24 @@ public abstract class Piece
     public static class Knight extends Piece
     {
         private final static int[] KNIGHT_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
-        private Stack<Tile> queueStack = new Stack<>();
-        private ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
-        private ArrayList<Tile> visitedTiles = new ArrayList<>();
+        private final Stack<Tile> queueStack = new Stack<>();
+        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Knight(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Knight(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Knight(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new Knight(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
-            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
-            int row = (int) Math.floor(this.coordinates/8);
+            ArrayList<MoveHandler> moves = new ArrayList<>();
+            int row = (int) Math.floor((double) this.coordinates/8);
             int column = this.coordinates % 8;
             findValidTiles(board, this.coordinates, row, column);
 
@@ -91,7 +99,7 @@ public abstract class Piece
             while(!queueStack.isEmpty()){
                 Tile temp = queueStack.pop();
                 visitedTiles.add(temp);
-                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destRow = (int) Math.floor((double) temp.getCoordinates()/8);
                 int destColumn = temp.getCoordinates() % 8;
                 if((initRow - destRow > 5 || initRow - destRow < -5) || (initCol - destColumn > 5 || initCol - destColumn < -5)){return;}
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
@@ -106,6 +114,7 @@ public abstract class Piece
             }
             return safe;
         }
+
     }
 
     /**
@@ -121,14 +130,14 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        King(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        King(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new King(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new King(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -183,6 +192,7 @@ public abstract class Piece
             }
             return safe;
         }
+
     }
 
     /**
@@ -192,14 +202,14 @@ public abstract class Piece
     {
         private final static int[] BISHOP_OFFSET = {7,8,9};
 
-        Bishop(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Bishop(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Bishop(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new Bishop(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -208,11 +218,25 @@ public abstract class Piece
             ArrayList<MoveHandler> moves = new ArrayList<>();
             for( int offset : BISHOP_OFFSET){
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
-                if(offsetDestination > 0 && offsetDestination < 63){
-                    moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                if(valid(offsetDestination)){
+                    if(offsetDestination > 0 && offsetDestination < 63 && !board.getTile(offsetDestination).isOccupied()){
+                        moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                    }else if(offsetDestination > 0 && offsetDestination < 63 && board.getTile(offsetDestination).isOccupied()){
+                        if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.getColor())){
+                            moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                        }
+                    }
                 }
             }
             return moves;
+        }
+
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates){
+                safe = true;
+            }
+            return safe;
         }
 
     }
@@ -230,14 +254,14 @@ public abstract class Piece
         private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
-        Queen(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Queen(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Queen(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new Queen(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -304,14 +328,14 @@ public abstract class Piece
         private final static int[] ROOK_ATK_OFFSET = {-27,-24,-21,-18,-16,-14,-3,-2,2,3,14,16,18,21,24,27};
 
 
-        Rook(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Rook(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Rook(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new Rook(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
         @Override
@@ -321,18 +345,34 @@ public abstract class Piece
             for(int offset : ROOK_OFFSET){
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
                 if(offsetDestination > 0 && offsetDestination < 63){
-                    moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                    if(board.getTile(offsetDestination).isOccupied()){
+                        if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.color)){
+                            moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                        }
+                    }else if(!board.getTile(offsetDestination).isOccupied()){
+                        moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                    }
                 }
             }
             for(int offset : ROOK_ATK_OFFSET){
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
                 if(offsetDestination > 0 && offsetDestination < 63){
                     if(board.getTile(offsetDestination).isOccupied()){
-                        moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                        if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.color)){
+                            moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                        }
                     }
                 }
             }
             return moves;
+        }
+
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates){
+                safe = true;
+            }
+            return safe;
         }
     }
 
@@ -341,30 +381,46 @@ public abstract class Piece
      */
     public static class Pawn extends Piece
     {
+        // TODO: Fix column exemption
         private final static int[] PAWN_OFFSET = {7,8,9};
 
-        Pawn(final int coordinates, final String color, final String pieceCorp, String name, int offsetMultiplier)
+        Pawn(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
         {
-            super(coordinates, color, pieceCorp, name, offsetMultiplier);
+            super(coordinates, color, pieceCorp, name, offsetMultiplier, pieceWeight, playerPiece);
         }
 
         @Override
         public Piece movePiece(int newCoordinates) {
-            return new Pawn(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier);
+            return new Pawn(newCoordinates, this.color, this.pieceCorp, this.name, this.offsetMultiplier, this.pieceWeight, this.isPlayerPiece);
         }
 
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board)
         {
-            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
-            for(int offset : PAWN_OFFSET){
+            ArrayList<MoveHandler> moves = new ArrayList<>();
+            for( int offset : PAWN_OFFSET){
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
-                if(offsetDestination > 0 && offsetDestination < 63){
-                    moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                if(valid(offsetDestination)){
+                    if(offsetDestination > 0 && offsetDestination < 63 && !board.getTile(offsetDestination).isOccupied()){
+                        moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                    }else if(offsetDestination > 0 && offsetDestination < 63 && board.getTile(offsetDestination).isOccupied()){
+                        if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.getColor())){
+                            moves.add(new MoveHandler.Move(board, this, offsetDestination));
+                        }
+                    }
                 }
             }
             return moves;
         }
+        private boolean valid(int coordinate){
+            boolean safe = false;
+            if(coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates){
+                safe = true;
+            }
+            return safe;
+        }
     }
+
+
 }
