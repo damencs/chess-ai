@@ -145,6 +145,7 @@ public class mainGUI implements Initializable
 
     @FXML
     void endTurn() throws IOException {
+        gameLog.appendText("\tPLAYER has ended their turn.\r\n");
         gameHandler.updatePlayerTurn(false);
         AI_Turn();
     }
@@ -170,6 +171,7 @@ public class mainGUI implements Initializable
         lBishopCCStatus.setText("Available");
         lBishopCCStatus.setTextFill(availableColor);
         gameHandler.updatePlayerTurn(true);
+        gameLog.appendText("\tAI has ended their turn.\r\n");
         displayPieces();
     }
 
@@ -181,9 +183,18 @@ public class mainGUI implements Initializable
         for(Piece ai_piece : ai_pieces){
             ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
             for(MoveHandler move : moves){
-                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())){
+                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())) {
                     gameHandler.setBoard(move.executeMove());
-                    gameLog.appendText(ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                    if (move.toString() != "") {
+                        gameLog.appendText(move.toString() + "\r\n");
+                    }
+                    if (!move.toString().contains("FAIL")) {
+                        gameLog.appendText("[AI] " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                    }
+                    else
+                    {
+                        gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                    }
                 }
             }
         }
@@ -347,8 +358,19 @@ public class mainGUI implements Initializable
         for(MoveHandler move : moves){
             if(move.getDestination() ==  destinationCoordinates)
             {
-                gameLog.appendText(piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
                 gameHandler.setBoard(move.executeMove());
+                if (move.toString() != "")
+                {
+                    gameLog.appendText(move.toString() + "\r\n");
+                }
+                if (!move.toString().contains("FAIL"))
+                {
+                    gameLog.appendText("[PL] " + piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                }
+                else
+                {
+                    gameLog.appendText("[PL] ATTEMPTED " + piece.getColor().toUpperCase() + " " + piece.getName() + ": " + posToString(piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                }
 
                 piece.getCorp().switchCorpCommandAvailablity();
                 switch (piece.getCorp().getCorpName()) {
