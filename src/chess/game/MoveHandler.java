@@ -65,9 +65,22 @@ public abstract class MoveHandler
     public static final class Move extends MoveHandler
     {
         private final Board.SetBoard setBoardMove = new Board.SetBoard();
+        public String eventText = "";
+        public boolean pieceMoved;
 
         public Move(Board board, Piece movingPiece, int destination) {
             super(board, movingPiece, destination);
+        }
+
+        public Boolean getPieceMoved()
+        {
+            return pieceMoved;
+        }
+
+        @Override
+        public String toString()
+        {
+            return eventText;
         }
 
         @Override
@@ -81,6 +94,7 @@ public abstract class MoveHandler
                     }
                 }
                 setBoardMove.setPiece(movingPiece.movePiece(destination));
+                pieceMoved = true;
                 return(setBoardMove.build());
             }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
 
@@ -105,7 +119,10 @@ public abstract class MoveHandler
 
                 // TODO: Make dice roll implementation different for knight as it can attack multiple times
                 int diceRoll = diceDecision.getDiceNumber();
-                if(diceRoll > conquerSet.getConquerSet()){
+                int requiredRolled = conquerSet.getConquerSet();
+                if(diceRoll > requiredRolled){
+                    pieceMoved = true;
+                    eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - SUCCESS";
 
                     if(destinationTile.getPiece().getColor().equals("white")){
                         board.getWhitePieces().remove(destinationTile.getPiece());
@@ -122,6 +139,8 @@ public abstract class MoveHandler
                     setBoardMove.setPiece(movingPiece.movePiece(destination));
                     return(setBoardMove.build());
                 }
+                pieceMoved = false;
+                eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - FAIL";
             }
             return(board);
         }
