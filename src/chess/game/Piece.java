@@ -214,6 +214,16 @@ public abstract class Piece
         {
             ArrayList<MoveHandler> moves = new ArrayList<>();
             for( int offset : BISHOP_OFFSET){
+                //created this variable to hold the calculations for the offset and multiplier
+                int calculatedOffset = this.offsetMultiplier*offset;
+
+
+                //fixes the way the pieces interact with the edge of the board.
+                if(this.coordinates %8 ==7 && calculatedOffset == 7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == 9)
+                    continue;
+
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
                 if(valid(offsetDestination)){
                     if(offsetDestination > 0 && offsetDestination < 63 && !board.getTile(offsetDestination).isOccupied()){
@@ -340,7 +350,25 @@ public abstract class Piece
 
             ArrayList<MoveHandler> moves = new ArrayList<>();
             for(int offset : ROOK_OFFSET){
-                int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
+                //created this variable to hold the calculations for the offset and multiplier
+                int calculatedOffset = this.offsetMultiplier*offset;
+
+                int offsetDestination = this.coordinates + (calculatedOffset);
+                //fixes the way the pieces interact with the edge of the board.
+
+                if(this.coordinates %8 ==7 && calculatedOffset == 1)
+                    continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == -7)
+                    continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == 9)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -1)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == 7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -9)
+                    continue;
+
                 if(offsetDestination > 0 && offsetDestination < 63){
                     if(board.getTile(offsetDestination).isOccupied()){
                         if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.color)){
@@ -363,6 +391,7 @@ public abstract class Piece
             }
             return moves;
         }
+
 
         private boolean valid(int coordinate){
             boolean safe = false;
@@ -396,9 +425,22 @@ public abstract class Piece
         public ArrayList<MoveHandler> determineMoves(Board board)
         {
             ArrayList<MoveHandler> moves = new ArrayList<>();
+
             for( int offset : PAWN_OFFSET){
-                int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
+                //created this variable to hold the calculations for the offset and multiplier
+                int calculatedOffset = this.offsetMultiplier*offset;
+
+
+                int offsetDestination = this.coordinates + (calculatedOffset);
+
+                //fixes the way the pieces interact with the edge of the board.
+                if(this.coordinates %8 ==7 && calculatedOffset == 7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == 9)
+                    continue;
+
                 if(valid(offsetDestination)){
+
                     if(offsetDestination > 0 && offsetDestination < 63 && !board.getTile(offsetDestination).isOccupied()){
                         moves.add(new MoveHandler.Move(board, this, offsetDestination));
                     }else if(offsetDestination > 0 && offsetDestination < 63 && board.getTile(offsetDestination).isOccupied()){
@@ -412,9 +454,12 @@ public abstract class Piece
         }
         private boolean valid(int coordinate){
             boolean safe = false;
-            if(coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates){
-                safe = true;
-            }
+
+                if (coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates) {
+
+                    safe = true;
+                }
+
             return safe;
         }
     }
