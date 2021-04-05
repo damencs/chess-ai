@@ -107,11 +107,13 @@ public class mainGUI implements Initializable
 
     private final ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
     private final ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
+    private final ImageView[][] moveImg = new ImageView[boardArray.length][boardArray[0].length];
 
     private final String imagePath = "chess/gui/images/";
     private final Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
     private final Image GREY = new Image(imagePath + "grey.png", 20,20,true, true);
     private final Image BLANK = new Image(imagePath + "blank.png", 20,20,true, true);
+    private final Image SELECT = new Image(imagePath + "MoveSelect.gif", 20,20,true, true);
     private final Color availableColor = Color.rgb(123,255,123);
     private final Color unavailableColor = Color.rgb(255,97,97);
     private final Color capturedColor = Color.rgb(48,48,48);
@@ -323,6 +325,7 @@ public class mainGUI implements Initializable
                                 e.printStackTrace();
                             }
                         });
+                        gamestate[row][column].setOnMousePressed(mouseEvent -> { pressed(piece); });
                     }
                 }
                 gamestate[row][column].setFitWidth(tileSize.getWidth());
@@ -335,6 +338,21 @@ public class mainGUI implements Initializable
     }
 
     /** -------- Following classes are for Mouse Event Listeners ----------- **/
+    private void pressed (Piece piece)
+    {
+        ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
+
+        for (MoveHandler move : moves){
+            int row = move.getDestination() % 8;
+            int column = move.getDestination() / 8;
+            ImageView Selection = new ImageView(SELECT);
+            Selection.setFitWidth(tileSize.getWidth());
+            Selection.setFitHeight(tileSize.getHeight());
+
+            boardGrid.add(Selection, row, column);
+        }
+    }
+
     private void dragged(MouseEvent event , ImageView image)
     {
         image.setX(event.getX() - (float)tileSize.width/2);
