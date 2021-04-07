@@ -64,6 +64,26 @@ public class Board
         return corpPieces;
     }
 
+    public ArrayList<Piece> getBlackCorpPieces(String name){
+        ArrayList<Piece> corpPieces = new ArrayList<>();
+        for(Piece piece : getBlackPieces()){
+            if(piece.getCorp().getCorpName().equals(name)){
+                corpPieces.add(piece);
+            }
+        }
+        return corpPieces;
+    }
+
+    public ArrayList<Piece> getWhiteCorpPieces(String name){
+        ArrayList<Piece> corpPieces = new ArrayList<>();
+        for(Piece piece : getWhitePieces()){
+            if(piece.getCorp().getCorpName().equals(name)){
+                corpPieces.add(piece);
+            }
+        }
+        return corpPieces;
+    }
+
     //TODO Make corp lists
 
     public List<Piece> getAlivePieces(){
