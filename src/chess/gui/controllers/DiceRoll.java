@@ -22,26 +22,18 @@ public class DiceRoll
 
     private int diceRoll;
     private PhongMaterial diceMat = new PhongMaterial();
-    private Image map = new Image("chess/gui/images/Dice_1.png");
+    private Image map = new Image("chess/gui/images/Dice_5.png");
 
     private void tossDice()
     {
         RotateTransition rollTransition = new RotateTransition(Duration.seconds(2), diceCube);
         rollTransition.setByAngle(3240);
-        diceRoll = (int)(Math.random()*6+1);
+        diceRoll = (int)(Math.random() * 6 + 1);
         rollTransition.play();
 
-        for (int i = 0; i <= 50; i++)
-        {
-            if (rollTransition.getCurrentTime() == Duration.seconds(2))
-            {
-                break;
-            }
-            map = new Image("chess/gui/images/Dice_" + (int)(Math.random() * 6 + 1) + ".png");
-            diceMat.setSelfIlluminationMap(map);
-            diceMat.setBumpMap(map);
-            diceCube.setMaterial(diceMat);
-        }
+        diceMat.setSelfIlluminationMap(map);
+        diceMat.setBumpMap(map);
+        diceCube.setMaterial(diceMat);
 
         rollTransition.setOnFinished(actionEvent ->
         {
