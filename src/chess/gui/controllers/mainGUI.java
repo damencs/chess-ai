@@ -18,12 +18,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.CacheHint;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -102,6 +104,10 @@ public class mainGUI implements Initializable
             };
     private final GridPane boardGrid = new GridPane();
     private final GridPane piecesGrid = new GridPane();
+    private final ColorAdjust blackout = new ColorAdjust();
+    private final ColorAdjust color = new ColorAdjust();
+    private final Lighting lighting = new Lighting();
+
     // Dimesion of each tile so that it can be referenced later
     private final Dimension tileSize = new Dimension(71, 64);
 
@@ -327,6 +333,18 @@ public class mainGUI implements Initializable
                         });
                         gamestate[row][column].setOnMousePressed(mouseEvent -> { pressed(piece); });
                     }
+                    /* Grays out unavailable corps */
+                    else if(!piece.getCorp().isCommandAvailable() && piece.isPlayerPiece())
+                    {
+                        if(piece.getColor() == "black")
+                            blackout.setBrightness(0.3);
+                        else
+                            blackout.setBrightness(-0.5);
+
+                        gamestate[vertical][horizontal].setEffect(blackout);
+                        gamestate[vertical][horizontal].setCache(true);
+                        gamestate[vertical][horizontal].setCacheHint(CacheHint.SPEED);
+                    }
                 }
                 gamestate[row][column].setFitWidth(tileSize.getWidth());
                 gamestate[row][column].setFitHeight(tileSize.getHeight());
@@ -340,20 +358,48 @@ public class mainGUI implements Initializable
     /** -------- Following classes are for Mouse Event Listeners ----------- **/
     private void pressed (Piece piece)
     {
+        /* Visually show possible moves on Board */
         ArrayList<MoveHandler> moves = piece.determineMoves(gameHandler.getBoard());
-
-        for (MoveHandler move : moves){
+        for (MoveHandler move : moves)
+        {
             int row = move.getDestination() % 8;
             int column = move.getDestination() / 8;
+
             ImageView Selection = new ImageView(SELECT);
             Selection.setFitWidth(tileSize.getWidth());
             Selection.setFitHeight(tileSize.getHeight());
 
             boardGrid.add(Selection, row, column);
         }
+
+        /* Changes color of Corp while dragging */
+        ArrayList<Piece> corpPieces;
+        if (piece.getColor() == "black")
+            corpPieces = gameHandler.getBoard().getBlackCorpPieces(piece.getCorp().getCorpName());
+        else
+            corpPieces = gameHandler.getBoard().getWhiteCorpPieces(piece.getCorp().getCorpName());
+
+        for (Piece p : corpPieces)
+        {
+            int column = p.getCoordinates() % 8;
+            int row = p.getCoordinates() / 8;
+
+            ImageView pieceImage = gamestate[row][column];
+
+            color.setBrightness(0.9);
+
+            lighting.setDiffuseConstant(1.0);
+            lighting.setSpecularConstant(0.0);
+            lighting.setSpecularExponent(0.0);
+            lighting.setSurfaceScale(0.0);
+            lighting.setLight(new Light.Distant(45, 45, Color.CORNFLOWERBLUE));
+
+            lighting.setContentInput(color);
+            pieceImage.setEffect(lighting);
+        }
     }
 
-    private void dragged(MouseEvent event , ImageView image)
+    private void dragged(MouseEvent event, ImageView image)
     {
         image.setX(event.getX() - (float)tileSize.width/2);
         image.setY(event.getY() - (float)tileSize.height/2);
