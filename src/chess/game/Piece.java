@@ -223,6 +223,10 @@ public abstract class Piece
                     continue;
                 if(this.coordinates %8 ==0 && calculatedOffset == 9)
                     continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == -7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -9)
+                    continue;
 
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
                 if(valid(offsetDestination)){
@@ -431,12 +435,16 @@ public abstract class Piece
                 int calculatedOffset = this.offsetMultiplier*offset;
 
 
-                int offsetDestination = this.coordinates + (calculatedOffset);
+                int offsetDestination = this.coordinates + (this.offsetMultiplier*offset);
 
                 //fixes the way the pieces interact with the edge of the board.
-                if(this.coordinates %8 ==7 && calculatedOffset == 7)
+                if((this.coordinates %8 ==7 && calculatedOffset == 7))
                     continue;
                 if(this.coordinates %8 ==0 && calculatedOffset == 9)
+                    continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == -7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -9)
                     continue;
 
                 if(valid(offsetDestination)){
