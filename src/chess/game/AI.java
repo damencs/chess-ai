@@ -1,5 +1,6 @@
 package chess.game;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,7 @@ public abstract class AI {
         this.corpCommander = corpCommander;
         this.board = board;
     }
-    public abstract MoveHandler calculateBestMove(Board board);
-    public void setboard(Board board){
-        this.board = board;
-    }
+    public abstract MoveHandler calculateBestMove(Board board) throws IOException;
     public String getColor(){return this.color;}
 
     /** KING CORP **/
@@ -39,7 +37,7 @@ public abstract class AI {
         }
 
         @Override
-        public MoveHandler calculateBestMove(Board board) {
+        public MoveHandler calculateBestMove(Board board) throws IOException {
             MoveHandler bestMove = null;
             double risk = 0;
             /** Loop Through each of the pieces in the corp */
@@ -93,10 +91,16 @@ public abstract class AI {
             super(corpCommander, board);
             getCorpMembers(board);
             super.color = corpCommander.getColor();
+            for(Piece piece: super.corpSubordinates){
+                if(piece.getName().equals("Knight")){
+                    piece.determineMoves(board);
+                    System.out.println("");
+                }
+            }
         }
 
         @Override
-        public MoveHandler calculateBestMove(Board board) {
+        public MoveHandler calculateBestMove(Board board) throws IOException {
             MoveHandler bestMove = null;
             double risk = 0;
             for(Piece piece : super.corpSubordinates){
@@ -137,7 +141,7 @@ public abstract class AI {
         }
 
         @Override
-        public MoveHandler calculateBestMove(Board board) {
+        public MoveHandler calculateBestMove(Board board) throws IOException {
             MoveHandler bestMove = null;
             double risk = 0;
             for(Piece piece : super.corpSubordinates){
@@ -158,7 +162,7 @@ public abstract class AI {
                     }
                 }
             }
-            return bestMove;
+             return bestMove;
         }
 
         public void getCorpMembers(Board board){

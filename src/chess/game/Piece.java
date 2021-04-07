@@ -8,11 +8,12 @@ public abstract class Piece
 {
     protected final int coordinates;
     protected final String color;
-    protected final Corp pieceCorp;
+    protected Corp pieceCorp;
     protected final String name;
     protected final int offsetMultiplier;
     protected final int pieceWeight;
     protected final boolean isPlayerPiece;
+    protected boolean isCaptured = false;
 
     Piece(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean isPlayerPiece)
     {
@@ -30,11 +31,18 @@ public abstract class Piece
     public String getName(){ return this.name; }
     public Boolean isPlayerPiece() { return this.isPlayerPiece; }
     public Corp getCorp(){return pieceCorp; }
+    public void setCorp(Corp corp){ this.pieceCorp = corp;}
+    public int getPieceWeight(){return this.pieceWeight;}
     public Image getImage()
     {
         return new Image("chess/gui/images/" + color + name + ".png", 60, 60, false, false);
     }
-
+    public boolean getCaptureStatus(){
+        return isCaptured;
+    }
+    public void changeCaptureStatus(){
+        isCaptured = !isCaptured;
+    }
     public abstract Piece movePiece(int newCoordinates);
     public abstract ArrayList<MoveHandler> determineMoves(final Board board);
 
@@ -87,10 +95,16 @@ public abstract class Piece
                             if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
                                 queueStack.add(board.getTile(tileCoordinates + offset));
                             }
-                        }else if(board.getTile(tileCoordinates+offset).isOccupied()){
+                        }
+                        if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+                                    queueStack.add(board.getTile(tileCoordinates + offset));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             while(!queueStack.isEmpty()){
@@ -222,6 +236,10 @@ public abstract class Piece
                 if(this.coordinates %8 ==7 && calculatedOffset == 7)
                     continue;
                 if(this.coordinates %8 ==0 && calculatedOffset == 9)
+                    continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == -7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -9)
                     continue;
 
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
@@ -380,7 +398,19 @@ public abstract class Piece
                 }
             }
             for(int offset : ROOK_ATK_OFFSET){
+                int calculatedOffset = this.offsetMultiplier*offset;
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
+
+                if((this.coordinates %8 ==6 || this.coordinates %8 ==7 ) && (calculatedOffset == 27 || calculatedOffset == 18
+                        || calculatedOffset == 3 || calculatedOffset == 2 || calculatedOffset == -14 || calculatedOffset == -21))
+                    continue;
+                if(this.coordinates %8 ==2 && (calculatedOffset == 21 || calculatedOffset == -3 || calculatedOffset == -27))
+                    continue;
+                if(this.coordinates %8 ==5 && (calculatedOffset == 27 || calculatedOffset == 3|| calculatedOffset == -21))
+                    continue;
+                if((this.coordinates %8 ==0 || this.coordinates %8 ==1) && (calculatedOffset == 21 || calculatedOffset == 14
+                        || calculatedOffset == -2 || calculatedOffset == -3 || calculatedOffset == -18 || calculatedOffset == -27 ))
+                    continue;
                 if(offsetDestination > 0 && offsetDestination < 63){
                     if(board.getTile(offsetDestination).isOccupied()){
                         if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.color)){
@@ -429,14 +459,16 @@ public abstract class Piece
             for( int offset : PAWN_OFFSET){
                 //created this variable to hold the calculations for the offset and multiplier
                 int calculatedOffset = this.offsetMultiplier*offset;
-
-
-                int offsetDestination = this.coordinates + (calculatedOffset);
+                int offsetDestination = this.coordinates + (this.offsetMultiplier*offset);
 
                 //fixes the way the pieces interact with the edge of the board.
-                if(this.coordinates %8 ==7 && calculatedOffset == 7)
+                if((this.coordinates %8 ==7 && calculatedOffset == 9))
                     continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == 9)
+                if(this.coordinates %8 ==0 && calculatedOffset == 7)
+                    continue;
+                if(this.coordinates %8 ==7 && calculatedOffset == -7)
+                    continue;
+                if(this.coordinates %8 ==0 && calculatedOffset == -9)
                     continue;
 
                 if(valid(offsetDestination)){
@@ -456,7 +488,6 @@ public abstract class Piece
             boolean safe = false;
 
                 if (coordinate >= 0 && coordinate <= 63 && coordinate != this.coordinates) {
-
                     safe = true;
                 }
 
