@@ -136,7 +136,13 @@ public abstract class MoveHandler
                             setBoardMove.setPiece(piece);
                         }
                     }
+                    if(movingPiece.name.equals("Rook"))
+                    {
+                        setBoardMove.setPiece(movingPiece.movePiece(movingPiece.coordinates));
+                    }
+                    else{
                     setBoardMove.setPiece(movingPiece.movePiece(destination));
+                    }
                     return(setBoardMove.build());
                 }
                 pieceMoved = false;
