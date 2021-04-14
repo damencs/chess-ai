@@ -219,13 +219,9 @@ public abstract class Piece
 
 
                 //fixes the way the pieces interact with the edge of the board.
-                if(this.coordinates %8 ==7 && calculatedOffset == 7)
+                if(this.coordinates %8 ==7 && (calculatedOffset == 7 || calculatedOffset == -7))
                     continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == 9)
-                    continue;
-                if(this.coordinates %8 ==7 && calculatedOffset == -7)
-                    continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == -9)
+                if(this.coordinates %8 ==0 && (calculatedOffset == 9 || calculatedOffset == -9))
                     continue;
 
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
@@ -360,17 +356,9 @@ public abstract class Piece
                 int offsetDestination = this.coordinates + (calculatedOffset);
                 //fixes the way the pieces interact with the edge of the board.
 
-                if(this.coordinates %8 ==7 && calculatedOffset == 1)
+                if(this.coordinates %8 ==7 && (calculatedOffset == 1 || calculatedOffset == -7|| calculatedOffset == 9))
                     continue;
-                if(this.coordinates %8 ==7 && calculatedOffset == -7)
-                    continue;
-                if(this.coordinates %8 ==7 && calculatedOffset == 9)
-                    continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == -1)
-                    continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == 7)
-                    continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == -9)
+                if(this.coordinates %8 ==0 && (calculatedOffset == -1 || calculatedOffset == 7|| calculatedOffset == -9))
                     continue;
 
                 if(offsetDestination > 0 && offsetDestination < 63){
@@ -384,7 +372,21 @@ public abstract class Piece
                 }
             }
             for(int offset : ROOK_ATK_OFFSET){
+                int calculatedOffset = this.offsetMultiplier*offset;
+
                 int offsetDestination = this.coordinates + (this.offsetMultiplier * offset);
+
+
+                if((this.coordinates %8 ==6 || this.coordinates %8 ==7 ) && (calculatedOffset == 27 || calculatedOffset == 18
+                        || calculatedOffset == 3 || calculatedOffset == 2 || calculatedOffset == -14 || calculatedOffset == -21))
+                    continue;
+                if(this.coordinates %8 ==2 && (calculatedOffset == 21 || calculatedOffset == -3 || calculatedOffset == -27))
+                    continue;
+                if(this.coordinates %8 ==5 && (calculatedOffset == 27 || calculatedOffset == 3|| calculatedOffset == -21))
+                    continue;
+                if((this.coordinates %8 ==0 || this.coordinates %8 ==1) && (calculatedOffset == 21 || calculatedOffset == 14
+                        || calculatedOffset == -2 || calculatedOffset == -3 || calculatedOffset == -18 || calculatedOffset == -27 ))
+                    continue;
                 if(offsetDestination > 0 && offsetDestination < 63){
                     if(board.getTile(offsetDestination).isOccupied()){
                         if(!board.getTile(offsetDestination).getPiece().getColor().equals(this.color)){
@@ -438,13 +440,9 @@ public abstract class Piece
                 int offsetDestination = this.coordinates + (this.offsetMultiplier*offset);
 
                 //fixes the way the pieces interact with the edge of the board.
-                if((this.coordinates %8 ==7 && calculatedOffset == 7))
+                if(this.coordinates %8 ==7 && (calculatedOffset == 7 || calculatedOffset == -7))
                     continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == 9)
-                    continue;
-                if(this.coordinates %8 ==7 && calculatedOffset == -7)
-                    continue;
-                if(this.coordinates %8 ==0 && calculatedOffset == -9)
+                if(this.coordinates %8 ==0 && (calculatedOffset == 9 || calculatedOffset == -9))
                     continue;
 
                 if(valid(offsetDestination)){
