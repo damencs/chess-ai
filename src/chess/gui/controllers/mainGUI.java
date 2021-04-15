@@ -14,11 +14,13 @@ package chess.gui.controllers;
 
 import chess.game.*;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -107,6 +109,7 @@ public class mainGUI implements Initializable
     private final ColorAdjust blackout = new ColorAdjust();
     private final ColorAdjust color = new ColorAdjust();
     private final Lighting lighting = new Lighting();
+    private final Lighting lightingCommander = new Lighting();
 
     // Dimesion of each tile so that it can be referenced later
     private final Dimension tileSize = new Dimension(71, 64);
@@ -372,6 +375,7 @@ public class mainGUI implements Initializable
             ImageView Selection = new ImageView(SELECT);
             Selection.setFitWidth(tileSize.getWidth());
             Selection.setFitHeight(tileSize.getHeight());
+            ObservableList<Node> grid = boardGrid.getChildren();
 
             boardGrid.add(Selection, row, column);
         }
@@ -385,21 +389,35 @@ public class mainGUI implements Initializable
 
         for (Piece pieces : corpPieces)
         {
-            int column = pieces.getCoordinates() % 8;
-            int row = pieces.getCoordinates() / 8;
+            if (pieces.getName().equals("Bishop") || pieces.getName().equals("King")) {
+                int column = pieces.getCoordinates() % 8;
+                int row = pieces.getCoordinates() / 8;
+                ImageView pieceImage = gamestate[row][column];
+                color.setBrightness(0.9);
 
-            ImageView pieceImage = gamestate[row][column];
+                lightingCommander.setDiffuseConstant(1.0);
+                lightingCommander.setSpecularConstant(0.0);
+                lightingCommander.setSpecularExponent(0.0);
+                lightingCommander.setSurfaceScale(0.0);
+                lightingCommander.setLight(new Light.Distant(45, 45, unavailableColor));
 
-            color.setBrightness(0.9);
+                lightingCommander.setContentInput(color);
+                pieceImage.setEffect(lightingCommander);
+            } else {
+                int column1 = pieces.getCoordinates() % 8;
+                int row1 = pieces.getCoordinates() / 8;
+                ImageView pieceImage1 = gamestate[row1][column1];
+                color.setBrightness(0.9);
 
-            lighting.setDiffuseConstant(1.0);
-            lighting.setSpecularConstant(0.0);
-            lighting.setSpecularExponent(0.0);
-            lighting.setSurfaceScale(0.0);
-            lighting.setLight(new Light.Distant(45, 45, Color.CORNFLOWERBLUE));
+                lighting.setDiffuseConstant(1.0);
+                lighting.setSpecularConstant(0.0);
+                lighting.setSpecularExponent(0.0);
+                lighting.setSurfaceScale(0.0);
+                lighting.setLight(new Light.Distant(45, 45, availableColor));
 
-            lighting.setContentInput(color);
-            pieceImage.setEffect(lighting);
+                lighting.setContentInput(color);
+                pieceImage1.setEffect(lighting);
+            }
         }
     }
 
