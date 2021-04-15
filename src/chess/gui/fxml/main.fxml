@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,9 +16,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.TitledPane?>
 <AnchorPane prefHeight="600.0" prefWidth="1200.0" styleClass="holderPane" stylesheets="@../css/styling.css" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.mainGUI">
    <children>
       <StackPane layoutX="750.0" layoutY="8.0" prefHeight="602.0" prefWidth="439.0">
@@ -29,14 +30,9 @@
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #3c3c3c;">
                                  <children>
-                                    <VBox layoutX="16.0" layoutY="205.0" prefHeight="299.0" prefWidth="368.0" style="-fx-spacing: 15;">
+                                    <VBox layoutX="16.0" layoutY="244.0" prefHeight="252.0" prefWidth="368.0" style="-fx-spacing: 15;">
                                        <children>
                                           <Button fx:id="playNowBtn" mnemonicParsing="false" onAction="#playDefault" prefHeight="54.0" prefWidth="368.0" stylesheets="@../css/styling.css" text="Player vs AI" textAlignment="CENTER">
-                                             <font>
-                                                <Font name="Montserrat Bold" size="23.0" />
-                                             </font>
-                                          </Button>
-                                          <Button fx:id="watchGameBtn" mnemonicParsing="false" prefHeight="62.0" prefWidth="468.0" stylesheets="@../css/styling.css" text="AI vs AI" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Montserrat Bold" size="23.0" />
                                              </font>
@@ -201,5 +197,85 @@
          </children>
       </StackPane>
       <StackPane fx:id="gameboardPane" layoutX="94.0" layoutY="46.0" prefHeight="514.0" prefWidth="570.0" />
+      <Text fill="#ffc629" layoutX="110.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="183.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="B">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="254.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="C">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="326.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="D">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="404.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="477.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="F">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="548.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="G">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="620.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="H">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="217.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="472.0" strokeType="OUTSIDE" strokeWidth="0.0" text="7">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
+      <Text fill="#ffc629" layoutX="60.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" text="8">
+         <font>
+            <Font name="Montserrat ExtraBold" size="25.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

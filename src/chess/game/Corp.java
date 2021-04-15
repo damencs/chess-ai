@@ -1,14 +1,24 @@
 package chess.game;
 
+import java.util.ArrayList;
+
 public class Corp {
 
     private final String corpName;
     private boolean corpCommandAvailability;
+    private Piece corpCommander;
+
 
     public Corp(String corpName, boolean corpCommandAvailability){
         this.corpName = corpName;
         this.corpCommandAvailability = corpCommandAvailability;
     }
+
+    public void setCorpCommander(Piece piece){
+        corpCommander = piece;
+    }
+
+    public Piece getCorpCommander(){return corpCommander;}
 
     public String getCorpName(){
         return corpName;
