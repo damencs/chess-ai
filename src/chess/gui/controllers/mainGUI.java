@@ -14,11 +14,13 @@ package chess.gui.controllers;
 
 import chess.game.*;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.CacheHint;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -107,6 +109,7 @@ public class mainGUI implements Initializable
     private final ColorAdjust blackout = new ColorAdjust();
     private final ColorAdjust color = new ColorAdjust();
     private final Lighting lighting = new Lighting();
+    private final Lighting lightingCommander = new Lighting();
 
     // Dimesion of each tile so that it can be referenced later
     private final Dimension tileSize = new Dimension(71, 64);
@@ -130,6 +133,7 @@ public class mainGUI implements Initializable
     private AI.KingCorp AI_kingCorp;
     private AI.KingBishopCorp AI_kingBishopCorp;
     private AI.QueensBishopCorp AI_queensBishopCorp;
+    private AiBrain aiBrain;
 
     /* Game Timer */
     int hours = 0;
@@ -160,15 +164,13 @@ public class mainGUI implements Initializable
 
     void AI_Turn() throws IOException {
 
-        MoveHandler ai_KingCorpMove = AI_kingCorp.calculateBestMove(gameHandler.getBoard());
-        executeAIMove(ai_KingCorpMove);
-        MoveHandler ai_KingBishopCorpMove = AI_kingBishopCorp.calculateBestMove(gameHandler.getBoard());
-        executeAIMove(ai_KingBishopCorpMove);
-        MoveHandler ai_QueensBishopCorpMove = AI_queensBishopCorp.calculateBestMove(gameHandler.getBoard());
-        executeAIMove(ai_QueensBishopCorpMove);
-
+        aiBrain.AI_turn(gameHandler.getBoard());
+        executeAIMove(aiBrain.executeKingCorp());
+        executeAIMove(aiBrain.executeKingBishopCorp());
+        executeAIMove(aiBrain.executeQueensBishopCorp());
 
         displayPieces();
+
         for(Piece piece : gameHandler.getBoard().getAlivePieces()){
             piece.getCorp().setCorpCommandAvailability(true);
         }
@@ -184,24 +186,28 @@ public class mainGUI implements Initializable
     }
 
     void executeAIMove(MoveHandler aiMoves) throws IOException {
+        if(aiMoves != null){
+            ArrayList<Piece> ai_pieces = (AI_kingCorp.getColor().equals("white"))
+                    ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
 
-        ArrayList<Piece> ai_pieces = (AI_kingCorp.getColor().equals("white"))
-                ? (ArrayList<Piece>) gameHandler.getBoard().getWhitePieces() : (ArrayList<Piece>) gameHandler.getBoard().getBlackPieces();
-
-        for(Piece ai_piece : ai_pieces){
-            ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
-            for(MoveHandler move : moves){
-                if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName())) {
-                    gameHandler.setBoard(move.executeMove());
-                    if (move.toString() != "") {
-                        gameLog.appendText(move.toString() + "\r\n");
-                    }
-                    if (!move.toString().contains("FAIL")) {
-                        gameLog.appendText("[AI] " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
-                    }
-                    else
-                    {
-                        gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": " + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+            for(Piece ai_piece : ai_pieces){
+                ArrayList<MoveHandler> moves = ai_piece.determineMoves(gameHandler.getBoard());
+                for(MoveHandler move : moves){
+                    if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName()) &&
+                            move.getMovingPiece().getCoordinates() == aiMoves.getMovingPiece().getCoordinates()) {
+                        gameHandler.setBoard(move.executeMove());
+                        if (!move.toString().equals("")) {
+                            gameLog.appendText(move.toString() + "\r\n");
+                        }
+                        if (!move.toString().contains("FAIL")) {
+                            gameLog.appendText("[AI] " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": "
+                                    + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                        }
+                        else
+                        {
+                            gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": "
+                                    + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
+                        }
                     }
                 }
             }
@@ -238,6 +244,7 @@ public class mainGUI implements Initializable
         AI_kingCorp = new AI.KingCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_kingBishopCorp = new AI.KingBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
         AI_queensBishopCorp = new AI.QueensBishopCorp(gameHandler.getBoard().getTile(3).getPiece(), gameHandler.getBoard());
+        aiBrain = new AiBrain();
 
         if (gameTimerRunning) {
             gameTimerTask.cancel();
@@ -368,34 +375,49 @@ public class mainGUI implements Initializable
             ImageView Selection = new ImageView(SELECT);
             Selection.setFitWidth(tileSize.getWidth());
             Selection.setFitHeight(tileSize.getHeight());
+            ObservableList<Node> grid = boardGrid.getChildren();
 
             boardGrid.add(Selection, row, column);
         }
 
         /* Changes color of Corp while dragging */
         ArrayList<Piece> corpPieces;
-        if (piece.getColor() == "black")
+        if (piece.getColor().equals("black"))
             corpPieces = gameHandler.getBoard().getBlackCorpPieces(piece.getCorp().getCorpName());
         else
             corpPieces = gameHandler.getBoard().getWhiteCorpPieces(piece.getCorp().getCorpName());
 
-        for (Piece p : corpPieces)
+        for (Piece pieces : corpPieces)
         {
-            int column = p.getCoordinates() % 8;
-            int row = p.getCoordinates() / 8;
+            if (pieces.getName().equals("Bishop") || pieces.getName().equals("King")) {
+                int column = pieces.getCoordinates() % 8;
+                int row = pieces.getCoordinates() / 8;
+                ImageView pieceImage = gamestate[row][column];
+                color.setBrightness(0.9);
 
-            ImageView pieceImage = gamestate[row][column];
+                lightingCommander.setDiffuseConstant(1.0);
+                lightingCommander.setSpecularConstant(0.0);
+                lightingCommander.setSpecularExponent(0.0);
+                lightingCommander.setSurfaceScale(0.0);
+                lightingCommander.setLight(new Light.Distant(45, 45, unavailableColor));
 
-            color.setBrightness(0.9);
+                lightingCommander.setContentInput(color);
+                pieceImage.setEffect(lightingCommander);
+            } else {
+                int column1 = pieces.getCoordinates() % 8;
+                int row1 = pieces.getCoordinates() / 8;
+                ImageView pieceImage1 = gamestate[row1][column1];
+                color.setBrightness(0.9);
 
-            lighting.setDiffuseConstant(1.0);
-            lighting.setSpecularConstant(0.0);
-            lighting.setSpecularExponent(0.0);
-            lighting.setSurfaceScale(0.0);
-            lighting.setLight(new Light.Distant(45, 45, Color.CORNFLOWERBLUE));
+                lighting.setDiffuseConstant(1.0);
+                lighting.setSpecularConstant(0.0);
+                lighting.setSpecularExponent(0.0);
+                lighting.setSurfaceScale(0.0);
+                lighting.setLight(new Light.Distant(45, 45, availableColor));
 
-            lighting.setContentInput(color);
-            pieceImage.setEffect(lighting);
+                lighting.setContentInput(color);
+                pieceImage1.setEffect(lighting);
+            }
         }
     }
 
