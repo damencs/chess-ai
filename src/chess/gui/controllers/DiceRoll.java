@@ -26,7 +26,7 @@ public class DiceRoll
 
     private void tossDice()
     {
-        RotateTransition rollTransition = new RotateTransition(Duration.seconds(2), diceCube);
+        RotateTransition rollTransition = new RotateTransition(Duration.seconds(1.5), diceCube);
         rollTransition.setByAngle(3240);
         diceRoll = (int)(Math.random() * 6 + 1);
         rollTransition.play();
@@ -42,7 +42,7 @@ public class DiceRoll
             diceMat.setBumpMap(map);
             diceCube.setMaterial(diceMat);
 
-            PauseTransition delay = new PauseTransition(Duration.seconds(2));
+            PauseTransition delay = new PauseTransition(Duration.seconds(1));
             Stage stage = (Stage) diceCube.getScene().getWindow();
             delay.setOnFinished(event -> stage.close());
             delay.play();
