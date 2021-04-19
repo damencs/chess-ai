@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public abstract class MoveHandler
@@ -128,6 +129,8 @@ public abstract class MoveHandler
                         board.getBlackPieces().remove(destinationTile.getPiece());
                     }
 
+                    reassignCorp(destinationTile.getPiece());
+
                     //Board.SetBoard setBoardMove = new Board.SetBoard();
                     for(Piece piece : this.board.getAlivePieces()){
                         if(!movingPiece.equals(piece)){
@@ -147,6 +150,31 @@ public abstract class MoveHandler
                 eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - FAIL";
             }
             return(board);
+        }
+
+        public void reassignCorp(Piece piece){
+            String pieceName = piece.getName();
+            String pieceCorp = piece.getCorp().getCorpName();
+
+            if(pieceName == "Bishop" || pieceName == "AIBishop")
+            {
+                ArrayList<Piece> corp = piece.getColor() == "black" ? this.board.getBlackCorpPieces(pieceCorp) : this.board.getWhiteCorpPieces(pieceCorp);
+
+                if (piece.isPlayerPiece())
+                {
+                    for(Piece pieces : corp)
+                    {
+                        pieces.setCorp(board.getPlayerKing().getCorp());
+                    }
+                }
+                else
+                {
+                    for(Piece pieces : corp)
+                    {
+                        pieces.setCorp(board.getAIKing().getCorp());
+                    }
+                }
+            }
         }
 
         public Board unExecuteMove(){
