@@ -116,7 +116,6 @@ public class mainGUI implements Initializable
 
     private final ImageView[][] boardImg = new ImageView[boardArray.length][boardArray[0].length];
     private final ImageView[][] gamestate = new ImageView[boardArray.length][boardArray[0].length];
-    private final ImageView[][] moveImg = new ImageView[boardArray.length][boardArray[0].length];
 
     private final String imagePath = "chess/gui/images/";
     private final Image GOLD = new Image(imagePath + "gold.png", 20,20,true, true);
@@ -126,6 +125,10 @@ public class mainGUI implements Initializable
     private final Color availableColor = Color.rgb(123,255,123);
     private final Color unavailableColor = Color.rgb(255,97,97);
     private final Color capturedColor = Color.rgb(48,48,48);
+
+    private boolean rBishopCaptured = false;
+    private boolean lBishopCaptured = false;
+    private boolean kingCaptured = false;
 
     private final char[] rowLetter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
@@ -173,13 +176,9 @@ public class mainGUI implements Initializable
 
         for(Piece piece : gameHandler.getBoard().getAlivePieces()){
             piece.getCorp().setCorpCommandAvailability(true);
+            if(piece.isPlayerPiece())
+                switchCorpLabel(piece);
         }
-        kingCCStatus.setText("Available");
-        kingCCStatus.setTextFill(availableColor);
-        rBishopCCStatus.setText("Available");
-        rBishopCCStatus.setTextFill(availableColor);
-        lBishopCCStatus.setText("Available");
-        lBishopCCStatus.setTextFill(availableColor);
         gameHandler.updatePlayerTurn(true);
         gameLog.appendText("\tAI has ended their turn.\r\n");
         displayPieces();
@@ -441,6 +440,7 @@ public class mainGUI implements Initializable
 
         /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
+        Piece destinationPiece = gameHandler.getBoard().getTile(destinationCoordinates).getPiece();
         for(MoveHandler move : moves){
             if(move.getDestination() ==  destinationCoordinates)
             {
@@ -459,20 +459,7 @@ public class mainGUI implements Initializable
                 }
 
                 piece.getCorp().switchCorpCommandAvailablity();
-                switch (piece.getCorp().getCorpName()) {
-                    case "king" -> {
-                        kingCCStatus.setText("Unavailable");
-                        kingCCStatus.setTextFill(unavailableColor);
-                    }
-                    case "kingsBishop" -> {
-                        rBishopCCStatus.setText("Unavailable");
-                        rBishopCCStatus.setTextFill(unavailableColor);
-                    }
-                    case "queensBishop" -> {
-                        lBishopCCStatus.setText("Unavailable");
-                        lBishopCCStatus.setTextFill(unavailableColor);
-                    }
-                }
+                switchCorpLabel(piece);
             }
         }
         displayPieces();
@@ -489,6 +476,79 @@ public class mainGUI implements Initializable
     private String posToString(int value)
     {
         return rowLetter[value % 8] + String.valueOf((value / 8) + 1);
+    }
+
+    private void checkCaptured(){
+        ArrayList<Piece> pieces = (ArrayList<Piece>) gameHandler.getBoard().getPlayerPieces();
+        rBishopCaptured = true;
+        lBishopCaptured = true;
+        kingCaptured = true;
+        for(Piece piece : pieces){
+            if(piece.getName() == "Bishop"){
+                if(piece.getCorp().getCorpName() == "kingsBishop"){
+                    rBishopCaptured = false;
+                    System.out.println("fdhsajkfhd");
+                }
+                if(piece.getCorp().getCorpName() == "queensBishop"){
+                    lBishopCaptured = false;
+                    System.out.println("fdhsajkfhd");
+
+                }
+            }
+            if(piece.getName() == "King"){
+                kingCaptured = false;
+            }
+        }
+
+    }
+    private void switchCorpLabel(Piece piece)
+    {
+        boolean available = piece.getCorp().isCommandAvailable();
+        checkCaptured();
+        switch (piece.getCorp().getCorpName()) {
+            case "king" -> {
+                if (!available) {
+                    kingCCStatus.setText("Unavailable");
+                    kingCCStatus.setTextFill(unavailableColor);
+                } else {
+                    kingCCStatus.setText("Available");
+                    kingCCStatus.setTextFill(availableColor);
+                }
+            }
+            case "kingsBishop" -> {
+                if(!available) {
+                    rBishopCCStatus.setText("Unavailable");
+                    rBishopCCStatus.setTextFill(unavailableColor);
+                }
+                else{
+                    rBishopCCStatus.setText("Available");
+                    rBishopCCStatus.setTextFill(availableColor);
+                }
+            }
+            case "queensBishop" -> {
+                if(!available) {
+                    lBishopCCStatus.setText("Unavailable");
+                    lBishopCCStatus.setTextFill(unavailableColor);
+                }
+                else{
+                    lBishopCCStatus.setText("Available");
+                    lBishopCCStatus.setTextFill(availableColor);
+                }
+            }
+        }
+
+        if(kingCaptured) {
+            kingCCStatus.setText("Captured");
+            kingCCStatus.setTextFill(capturedColor);
+        }
+        if(rBishopCaptured){
+            rBishopCCStatus.setText("Captured");
+            rBishopCCStatus.setTextFill(capturedColor);
+        }
+        if(lBishopCaptured){
+            lBishopCCStatus.setText("Captured");
+            lBishopCCStatus.setTextFill(capturedColor);
+        }
     }
 
     private void resetTimer()

@@ -22,19 +22,17 @@ public class Board
     private final Tile[][] tile = new Tile[8][8];
     private final List<Piece> whiteTeam;
     private final List<Piece> blackTeam;
-    private final List<Piece> whiteTeamCapturedPieces = new ArrayList<>();
-    private final List<Piece> blackTeamCapturedPieces = new ArrayList<>();;
     public ArrayList<Tile> chessBoard;
     private String AiTeamColor;
     private String PlayerColor;
 
-    private static final Corp kingCorp = new Corp("king", true, true);
-    private static final Corp kingsBishopCorp = new Corp("kingsBishop", true, true);
-    private static final Corp queensBishopCorp = new Corp("queensBishop", true, true);
+    private static final Corp kingCorp = new Corp("king", true);
+    private static final Corp kingsBishopCorp = new Corp("kingsBishop", true);
+    private static final Corp queensBishopCorp = new Corp("queensBishop", true);
 
-    private static final Corp AI_kingCorp = new Corp("AI_king", true, false);
-    private static final Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true, false);
-    private static final Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true, false);
+    private static final Corp AI_kingCorp = new Corp("AI_king", true);
+    private static final Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true);
+    private static final Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true);
 
     private Board(SetBoard setter){
         this.chessBoard = createBoard(setter);
@@ -42,14 +40,6 @@ public class Board
         this.blackTeam = getRemainingTeam(this.chessBoard, "black");
         setAICorpCommanders();
         getAiTeamColor();
-    }
-
-    public void addToBlackGraveyard(Piece piece){
-        blackTeamCapturedPieces.add(piece);
-    }
-
-    public void addToWhiteGraveyard(Piece piece){
-        whiteTeamCapturedPieces.add(piece);
     }
 
     private void setAICorpCommanders() {
@@ -110,7 +100,9 @@ public class Board
     public List<Piece> getAIPieces(){
         ArrayList<Piece> ai_Pieces = new ArrayList<>();
         for(Piece piece : getAlivePieces()){
-                if(!piece.getCorp().isPlayerCorp()){
+                if(piece.getCorp().getCorpName().equals("AI_king") ||
+                        piece.getCorp().getCorpName().equals("AI_kingsBishop") ||
+                        piece.getCorp().getCorpName().equals("AI_queensBishop")){
                     ai_Pieces.add(piece);
                 }
         }
@@ -188,26 +180,6 @@ public class Board
         ArrayList<Piece> corpPieces = new ArrayList<>();
         for(Piece piece : getWhitePieces()){
             if(piece.getCorp().getCorpName().equals(corpName)){
-                corpPieces.add(piece);
-            }
-        }
-        return corpPieces;
-    }
-
-    public ArrayList<Piece> getBlackCorpPieces(String name){
-        ArrayList<Piece> corpPieces = new ArrayList<>();
-        for(Piece piece : getBlackPieces()){
-            if(piece.getCorp().getCorpName().equals(name)){
-                corpPieces.add(piece);
-            }
-        }
-        return corpPieces;
-    }
-
-    public ArrayList<Piece> getWhiteCorpPieces(String name){
-        ArrayList<Piece> corpPieces = new ArrayList<>();
-        for(Piece piece : getWhitePieces()){
-            if(piece.getCorp().getCorpName().equals(name)){
                 corpPieces.add(piece);
             }
         }
