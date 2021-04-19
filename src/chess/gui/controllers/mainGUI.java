@@ -129,6 +129,9 @@ public class mainGUI implements Initializable
     private boolean rBishopCaptured = false;
     private boolean lBishopCaptured = false;
     private boolean kingCaptured = false;
+    private boolean AI_rBishopCaptured = false;
+    private boolean AI_lBishopCaptured = false;
+    private boolean AI_kingCaptured = false;
 
     private final char[] rowLetter = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
 
@@ -168,9 +171,12 @@ public class mainGUI implements Initializable
     void AI_Turn() throws IOException {
 
         aiBrain.AI_turn(gameHandler.getBoard());
-        executeAIMove(aiBrain.executeKingCorp());
-        executeAIMove(aiBrain.executeKingBishopCorp());
-        executeAIMove(aiBrain.executeQueensBishopCorp());
+        if(!AI_kingCaptured)
+            executeAIMove(aiBrain.executeKingCorp());
+        if(!AI_rBishopCaptured)
+            executeAIMove(aiBrain.executeKingBishopCorp());
+        if(!AI_lBishopCaptured)
+            executeAIMove(aiBrain.executeQueensBishopCorp());
 
         displayPieces();
 
@@ -440,7 +446,6 @@ public class mainGUI implements Initializable
 
         /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
-        Piece destinationPiece = gameHandler.getBoard().getTile(destinationCoordinates).getPiece();
         for(MoveHandler move : moves){
             if(move.getDestination() ==  destinationCoordinates)
             {
@@ -487,12 +492,9 @@ public class mainGUI implements Initializable
             if(piece.getName() == "Bishop"){
                 if(piece.getCorp().getCorpName() == "kingsBishop"){
                     rBishopCaptured = false;
-                    System.out.println("fdhsajkfhd");
                 }
                 if(piece.getCorp().getCorpName() == "queensBishop"){
                     lBishopCaptured = false;
-                    System.out.println("fdhsajkfhd");
-
                 }
             }
             if(piece.getName() == "King"){
@@ -500,7 +502,25 @@ public class mainGUI implements Initializable
             }
         }
 
+        ArrayList<Piece> AI_pieces = (ArrayList<Piece>) gameHandler.getBoard().getAIPieces();
+        AI_rBishopCaptured = true;
+        AI_lBishopCaptured = true;
+        AI_kingCaptured = true;
+        for(Piece AI_piece : AI_pieces){
+            if(AI_piece.getName() == "Bishop"){
+                if(AI_piece.getCorp().getCorpName() == "AI_kingsBishop"){
+                    AI_rBishopCaptured = false;
+                }
+                if(AI_piece.getCorp().getCorpName() == "AI_queensBishop"){
+                    AI_lBishopCaptured = false;
+                }
+            }
+            if(AI_piece.getName() == "King"){
+                AI_kingCaptured = false;
+            }
+        }
     }
+
     private void switchCorpLabel(Piece piece)
     {
         boolean available = piece.getCorp().isCommandAvailable();
