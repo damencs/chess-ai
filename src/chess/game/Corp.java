@@ -7,12 +7,15 @@ public class Corp {
     private final String corpName;
     private boolean corpCommandAvailability;
     private Piece corpCommander;
+    private final boolean playerCorp;
 
-
-    public Corp(String corpName, boolean corpCommandAvailability){
+    public Corp(String corpName, boolean corpCommandAvailability, boolean isPlayerCorp){
         this.corpName = corpName;
         this.corpCommandAvailability = corpCommandAvailability;
+        this.playerCorp = isPlayerCorp;
     }
+
+    public boolean isPlayerCorp(){return playerCorp; }
 
     public void setCorpCommander(Piece piece){
         corpCommander = piece;

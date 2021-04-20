@@ -30,6 +30,8 @@ public abstract class MoveHandler
     protected final Board board;
     protected final Piece movingPiece;
     protected final int destination;
+    private boolean gameOver = false;
+    private String winner;
 
     private MoveHandler(final Board board, final Piece movingPiece, final int destination){
         this.board = board;
@@ -37,11 +39,18 @@ public abstract class MoveHandler
         this.destination = destination;
     }
 
+    public boolean isGameOver() {return gameOver;}
+    public String getWinner(){
+        if(winner != null){
+            return winner;
+        }
+        return null;
+    }
     public Piece getMovingPiece(){return this.movingPiece; }
 
     public int getDestination() {return this.destination; }
     public abstract Board executeMove() throws IOException;
-    public abstract Board tempAIexecuteMove();
+
     public abstract Board unExecuteMove();
 
     /**
@@ -67,10 +76,11 @@ public abstract class MoveHandler
             this.originalDestination = movingPiece.getCoordinates();
         }
 
-        public Boolean getPieceMoved()
+        public boolean getPieceMoved()
         {
             return pieceMoved;
         }
+
 
         @Override
         public String toString()
@@ -115,14 +125,16 @@ public abstract class MoveHandler
                 // TODO: Make dice roll implementation different for knight as it can attack multiple times
                 int diceRoll = diceDecision.getDiceNumber();
                 int requiredRolled = conquerSet.getConquerSet();
-                if(diceRoll >= requiredRolled){
-
-                    // END GAME
+                if(diceRoll > requiredRolled){
 
                     pieceMoved = true;
                     destinationTile.getPiece().changeCaptureStatus();
                     eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - SUCCESS";
 
+                    if(destinationTile.getPiece().getName().equals("King")){
+                        super.gameOver = true;
+                        super.winner = (movingPiece.getCorp().isPlayerCorp()) ? "Player" : "AI";
+                    }
                     if(destinationTile.getPiece().getColor().equals("white")){
                         board.getWhitePieces().remove(destinationTile.getPiece());
                     }else{
@@ -146,6 +158,7 @@ public abstract class MoveHandler
                     }
                     return(setBoardMove.build());
                 }
+
                 pieceMoved = false;
                 eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - FAIL";
             }
@@ -185,48 +198,6 @@ public abstract class MoveHandler
             }
             setBoardMove.setPiece(movingPiece.movePiece(originalDestination));
             return(setBoardMove.build());
-        }
-
-        public Board tempAIexecuteMove(){
-            Board.SetBoard tempBoardsetter = new Board.SetBoard();
-            Tile destinationTile = this.board.getTile(destination);
-            if(!destinationTile.isOccupied()){
-                for(Piece piece : this.board.getAlivePieces()){
-                    if(!movingPiece.equals(piece)){
-                        tempBoardsetter.setPiece(piece);
-                    }
-                }
-                tempBoardsetter.setPiece(movingPiece.movePiece(destination));
-                pieceMoved = true;
-                return(tempBoardsetter.build());
-            }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
-
-
-                ConquerSet conquerSet = new ConquerSet(movingPiece, destinationTile.getPiece());
-
-                // TODO: Make dice roll implementation different for knight as it can attack multiple times
-                int diceRoll = (int)(Math.random() * 6 + 1);
-                int requiredRolled = conquerSet.getConquerSet();
-                if(diceRoll > requiredRolled){
-                    pieceMoved = true;
-
-                    if(destinationTile.getPiece().getColor().equals("white")){
-                        board.getWhitePieces().remove(destinationTile.getPiece());
-                    }else{
-                        board.getBlackPieces().remove(destinationTile.getPiece());
-                    }
-
-                    for(Piece piece : this.board.getAlivePieces()){
-                        if(!movingPiece.equals(piece)){
-                            tempBoardsetter.setPiece(piece);
-                        }
-                    }
-                    tempBoardsetter.setPiece(movingPiece.movePiece(destination));
-                    return(tempBoardsetter.build());
-                }
-                pieceMoved = false;
-            }
-            return(board);
         }
 
     }

@@ -11,9 +11,9 @@ public class AiBrain {
     private ArrayList<Piece> AI_kingCorp;
     private ArrayList<Piece> AI_kingsBishopCorp;
     private ArrayList<Piece> AI_queensBishopCorp;
-    private String kingCorpString = "";
-    private String kingBishopCorpString = "";
-    private String queenBishopCorpString = "";
+    private final String kingCorpString = "";
+    private final String kingBishopCorpString = "";
+    private final String queenBishopCorpString = "";
 
     public void AI_turn(Board board) throws IOException {
         this.board = board;
@@ -46,31 +46,47 @@ public class AiBrain {
 
     private MoveHandler determineBestMove(ArrayList<Piece> corp) throws IOException {
         HashMap<Integer, MoveHandler> moveList = new HashMap<>();
+        ArrayList<Integer> moveListKeys = new ArrayList<>();
 
         for(Piece piece : corp){
             ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
             for(MoveHandler moves: pieceMoves){
-
                 int movescore = evaluateBoard(board) + centerControlStatus(board) - checkKingStatus(board);
 
                 if(kingVulnerableDestinations.contains(moves.getDestination())){
                     movescore += 50;
                 }
 
+                if(moves.getMovingPiece().getName().equals("King")){
+                    movescore -= 10;
+                }
+
+                if(board.getTile(moves.getDestination()).isOccupied()){
+                    if(board.getTile(moves.getDestination()).getPiece().getName().equals("King")){
+                        movescore += 15;
+                    }
+                }
+
                 Random random = new Random();
                 int randomInt = random.nextInt(5 + 5);
                if(moveList.containsKey(movescore)){
                    moveList.put(movescore + randomInt, moves);
+                   moveListKeys.add(movescore);
                }
                else{
                    moveList.put(movescore + randomInt, moves);
+                   moveListKeys.add(movescore);
                }
             }
         }
         int bestMoves;
-        if(Collections.max(moveList.keySet()) != null){
-            bestMoves = Collections.max(moveList.keySet());
-            return moveList.get(bestMoves);
+        try{
+            if(Collections.max(moveList.keySet()) != null){
+                bestMoves = Collections.max(moveList.keySet());
+                return moveList.get(bestMoves);
+            }
+        }catch(Exception e){
+            return null;
         }
         return null;
     }
@@ -141,6 +157,9 @@ public class AiBrain {
                 board.getBlackCorpPieces("AI_queensBishop");
     }
 
+    public String getAiTeamColor(){
+        return aiTeamColor;
+    }
 
 
 }
