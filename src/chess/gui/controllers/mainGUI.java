@@ -13,9 +13,12 @@
 package chess.gui.controllers;
 
 import chess.game.*;
+import javafx.animation.PathTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,10 +38,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.control.TextArea;
+import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.IOException;
@@ -165,11 +172,10 @@ public class mainGUI implements Initializable
     void AI_Turn() throws IOException {
 
         aiBrain.AI_turn(gameHandler.getBoard());
+
         executeAIMove(aiBrain.executeKingCorp());
         executeAIMove(aiBrain.executeKingBishopCorp());
         executeAIMove(aiBrain.executeQueensBishopCorp());
-
-        displayPieces();
 
         for(Piece piece : gameHandler.getBoard().getAlivePieces()){
             piece.getCorp().setCorpCommandAvailability(true);
@@ -191,10 +197,10 @@ public class mainGUI implements Initializable
                 for(MoveHandler move : moves){
                     if(move.getDestination() == aiMoves.getDestination() && move.getMovingPiece().getName().equals(aiMoves.getMovingPiece().getName()) &&
                             move.getMovingPiece().getCoordinates() == aiMoves.getMovingPiece().getCoordinates()) {
+
                         gameHandler.setBoard(move.executeMove());
 
                         if(move.isGameOver()){
-                            System.out.println("THE WINNER IS " + move.getWinner());
                             endGame(move);
                         }
 
@@ -210,6 +216,7 @@ public class mainGUI implements Initializable
                             gameLog.appendText("[AI] ATTEMPTED " + ai_piece.getColor().toUpperCase() + " " + ai_piece.getName() + ": "
                                     + posToString(ai_piece.getCoordinates()) + " -> " + posToString(move.getDestination()) + "\r\n");
                         }
+                        displayPieces();
                     }
                 }
             }
@@ -375,7 +382,6 @@ public class mainGUI implements Initializable
             ImageView Selection = new ImageView(SELECT);
             Selection.setFitWidth(tileSize.getWidth());
             Selection.setFitHeight(tileSize.getHeight());
-            ObservableList<Node> grid = boardGrid.getChildren();
 
             boardGrid.add(Selection, row, column);
         }
@@ -441,12 +447,11 @@ public class mainGUI implements Initializable
 
         /* Determine if the coordinate the space is trying to move to is a valid move */
         int destinationCoordinates = (8 * (vertical+moveY)) + (horizontal+moveX);
-        Piece destinationPiece = gameHandler.getBoard().getTile(destinationCoordinates).getPiece();
         for(MoveHandler move : moves){
             if(move.getDestination() ==  destinationCoordinates)
             {
                 gameHandler.setBoard(move.executeMove());
-                if (move.toString() != "")
+                if (!move.toString().equals(""))
                 {
                     gameLog.appendText(move.toString() + "\r\n");
                 }
@@ -462,7 +467,6 @@ public class mainGUI implements Initializable
                 piece.getCorp().switchCorpCommandAvailablity();
                 switchCorpLabel(piece);
                 if(move.isGameOver()){
-                    System.out.println("THE WINNER IS " + move.getWinner());
                     endGame(move);
                 }
             }

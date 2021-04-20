@@ -51,19 +51,18 @@ public class AiBrain {
         for(Piece piece : corp){
             ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
             for(MoveHandler moves: pieceMoves){
-                int movescore = evaluateBoard(board) + centerControlStatus(board) - checkKingStatus(board);
+                // Move Score is equal to (AI Team Score - Player Team Score) + Center Control Score - Kings Vulnerability
+                int movescore = (evaluateBoard(board) + centerControlStatus(board)) * checkKingStatus(board);
 
                 if(kingVulnerableDestinations.contains(moves.getDestination())){
                     movescore += 50;
                 }
-
                 if(moves.getMovingPiece().getName().equals("King")){
-                    movescore -= 10;
+                    movescore -= 2;
                 }
-
                 if(board.getTile(moves.getDestination()).isOccupied()){
                     if(board.getTile(moves.getDestination()).getPiece().getName().equals("King")){
-                        movescore += 15;
+                        movescore += 1;
                     }
                 }
 

@@ -99,7 +99,9 @@ public abstract class Piece
                         if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    queueStack.add(board.getTile(tileCoordinates + offset));
+                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
+                                        queueStack.add(board.getTile(tileCoordinates + offset));
+                                    }
                                 }
                             }
                         }
@@ -116,6 +118,18 @@ public abstract class Piece
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean checkDestinationSurrounding(Board board, int destination){
+            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
+            for(int offset : offsets){
+                if(valid(destination + offset)){
+                    if(!board.getTile(destination + offset).isOccupied()){
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private boolean valid(int coordinate){
@@ -182,7 +196,8 @@ public abstract class Piece
                         else if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
+                                        queueStack.add(board.getTile(tileCoordinates + offset));}}}}}}
             }
 
             while(!queueStack.isEmpty()){
@@ -194,6 +209,18 @@ public abstract class Piece
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean checkDestinationSurrounding(Board board, int destination){
+            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
+            for(int offset : offsets){
+                if(valid(destination + offset)){
+                    if(!board.getTile(destination + offset).isOccupied()){
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private boolean valid(int coordinate){
@@ -316,7 +343,8 @@ public abstract class Piece
                         else if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    queueStack.add(board.getTile(tileCoordinates + offset));}}}}}
+                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
+                                        queueStack.add(board.getTile(tileCoordinates + offset)); }}}}}}
             }
 
             while(!queueStack.isEmpty()){
@@ -328,6 +356,18 @@ public abstract class Piece
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
+        }
+
+        private boolean checkDestinationSurrounding(Board board, int destination){
+            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
+            for(int offset : offsets){
+                if(valid(destination + offset)){
+                    if(!board.getTile(destination + offset).isOccupied()){
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private boolean valid(int coordinate){
