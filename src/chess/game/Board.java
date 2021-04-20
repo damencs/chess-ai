@@ -26,13 +26,13 @@ public class Board
     private String AiTeamColor;
     private String PlayerColor;
 
-    private static final Corp kingCorp = new Corp("king", true);
-    private static final Corp kingsBishopCorp = new Corp("kingsBishop", true);
-    private static final Corp queensBishopCorp = new Corp("queensBishop", true);
+    private static final Corp kingCorp = new Corp("king", true, true);
+    private static final Corp kingsBishopCorp = new Corp("kingsBishop", true, true);
+    private static final Corp queensBishopCorp = new Corp("queensBishop", true, true);
 
-    private static final Corp AI_kingCorp = new Corp("AI_king", true);
-    private static final Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true);
-    private static final Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true);
+    private static final Corp AI_kingCorp = new Corp("AI_king", true, false);
+    private static final Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true, false);
+    private static final Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true, false);
 
     private Board(SetBoard setter){
         this.chessBoard = createBoard(setter);
@@ -100,9 +100,7 @@ public class Board
     public List<Piece> getAIPieces(){
         ArrayList<Piece> ai_Pieces = new ArrayList<>();
         for(Piece piece : getAlivePieces()){
-                if(piece.getCorp().getCorpName().equals("AI_king") ||
-                        piece.getCorp().getCorpName().equals("AI_kingsBishop") ||
-                        piece.getCorp().getCorpName().equals("AI_queensBishop")){
+                if(!piece.getCorp().isPlayerCorp()){
                     ai_Pieces.add(piece);
                 }
         }

@@ -15,25 +15,14 @@ public class GameOver {
     @FXML
     private Button quitGameBtn;
     @FXML
-    private Label playerWins;
-    @FXML
-    private Label aiWins;
+    private Label winnerText;
 
     private String winner;
     private int PlayerChoice;
 
     public void setWinner(String winner){
         this.winner = winner;
-        if (winner == "Player")
-        {
-            playerWins.setDisable(false);
-            playerWins.setOpacity(1.0);
-        }
-        else if (winner == "AI")
-        {
-            aiWins.setDisable(false);
-            aiWins.setOpacity(1.0);
-        }
+        winnerText.setText(winner + " Wins");
     }
 
     @FXML
