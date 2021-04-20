@@ -129,7 +129,7 @@ public abstract class MoveHandler
 
                     pieceMoved = true;
                     destinationTile.getPiece().changeCaptureStatus();
-                    eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - SUCCESS";
+                    eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled+1 + ") - SUCCESS";
 
                     if(destinationTile.getPiece().getName().equals("King")){
                         super.gameOver = true;
@@ -160,7 +160,7 @@ public abstract class MoveHandler
                 }
 
                 pieceMoved = false;
-                eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - FAIL";
+                eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled+1 + ") - FAIL";
             }
             return(board);
         }
