@@ -267,6 +267,7 @@ public class mainGUI implements Initializable
         displayPieces();
 
         if(!gameHandler.isPlayerTurn()){
+            aiBrain.AI_turn(gameHandler.getBoard());
             AI_Turn();
         }
     }
@@ -335,7 +336,6 @@ public class mainGUI implements Initializable
                     int horizontal = column;
                     Piece piece = tiles[row][column].getPiece();
                     gamestate[row][column] = new ImageView(piece.getImage());
-                    // TODO: once ai is working, make listener for only player pieces
                     if(piece.getCorp().isCommandAvailable() && piece.isPlayerPiece()){
                         gamestate[row][column].setOnMouseDragged(mouseEvent -> { dragged(mouseEvent, gamestate[vertical][horizontal]); });
                         gamestate[row][column].setOnMouseReleased(mouseEvent -> {
@@ -350,7 +350,7 @@ public class mainGUI implements Initializable
                     /* Grays out unavailable corps */
                     else if(!piece.getCorp().isCommandAvailable() && piece.isPlayerPiece())
                     {
-                        if(piece.getColor() == "black")
+                        if(piece.getColor().equals("black"))
                             blackout.setBrightness(0.3);
                         else
                             blackout.setBrightness(-0.5);
