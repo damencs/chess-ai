@@ -22,6 +22,8 @@ public class Board
     private final Tile[][] tile = new Tile[8][8];
     private final List<Piece> whiteTeam;
     private final List<Piece> blackTeam;
+    private final List<Piece> whiteTeamCapturedPieces = new ArrayList<>();
+    private final List<Piece> blackTeamCapturedPieces = new ArrayList<>();;
     public ArrayList<Tile> chessBoard;
     private String AiTeamColor;
     private String PlayerColor;
@@ -40,6 +42,14 @@ public class Board
         this.blackTeam = getRemainingTeam(this.chessBoard, "black");
         setAICorpCommanders();
         getAiTeamColor();
+    }
+
+    public void addToBlackGraveyard(Piece piece){
+        blackTeamCapturedPieces.add(piece);
+    }
+
+    public void addToWhiteGraveyard(Piece piece){
+        whiteTeamCapturedPieces.add(piece);
     }
 
     private void setAICorpCommanders() {

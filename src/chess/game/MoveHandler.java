@@ -50,8 +50,8 @@ public abstract class MoveHandler
 
     public int getDestination() {return this.destination; }
     public abstract Board executeMove() throws IOException;
-
-    public abstract Board unExecuteMove();
+    public abstract Board unexecuteMove();
+    public abstract Board temporaryExecuteMove();
 
     /**
      * Allows each piece to create a list of Potential moves without actually taking the move.
@@ -64,7 +64,7 @@ public abstract class MoveHandler
      */
     public static final class Move extends MoveHandler
     {
-        private final Board.SetBoard setBoardMove = new Board.SetBoard();
+        private Board.SetBoard setBoardMove = new Board.SetBoard();
         public String eventText = "";
         public boolean pieceMoved;
         private int originalDestination;
@@ -129,7 +129,7 @@ public abstract class MoveHandler
 
                     pieceMoved = true;
                     destinationTile.getPiece().changeCaptureStatus();
-                    eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled+1 + ") - SUCCESS";
+                    eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - SUCCESS";
 
                     if(destinationTile.getPiece().getName().equals("King")){
                         super.gameOver = true;
@@ -137,8 +137,10 @@ public abstract class MoveHandler
                     }
                     if(destinationTile.getPiece().getColor().equals("white")){
                         board.getWhitePieces().remove(destinationTile.getPiece());
+                        board.addToBlackGraveyard(destinationTile.getPiece());
                     }else{
                         board.getBlackPieces().remove(destinationTile.getPiece());
+                        board.addToWhiteGraveyard(destinationTile.getPiece());
                     }
 
                     reassignCorp(destinationTile.getPiece());
@@ -160,18 +162,70 @@ public abstract class MoveHandler
                 }
 
                 pieceMoved = false;
-                eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled+1 + ") - FAIL";
+                eventText = (movingPiece.isPlayerPiece() ? "[PL]" : "[AI]") + " ROLLED: " + diceRoll + " (REQ. " + requiredRolled + ") - FAIL";
             }
             return(board);
         }
+
+        @Override
+        public Board unexecuteMove() {
+            setBoardMove = new Board.SetBoard();
+            this.originalBoard.getAlivePieces().forEach(setBoardMove::setPiece);
+            return setBoardMove.build();
+        }
+
+        @Override
+        public Board temporaryExecuteMove() {
+            Tile destinationTile = this.board.getTile(destination);
+            if(!destinationTile.isOccupied()){
+
+                for(Piece piece : this.board.getAlivePieces()){
+                    if(!movingPiece.equals(piece)){
+                        setBoardMove.setPiece(piece);
+                    }
+                }
+                setBoardMove.setPiece(movingPiece.movePiece(destination));
+                pieceMoved = true;
+                return(setBoardMove.build());
+            }else if(!destinationTile.getPiece().getColor().equals(movingPiece.getColor())){
+
+                pieceMoved = true;
+                destinationTile.getPiece().changeCaptureStatus();
+                if(destinationTile.getPiece().getName().equals("King")){
+
+                }
+
+                if(destinationTile.getPiece().getColor().equals("white")){
+                    board.getWhitePieces().remove(destinationTile.getPiece());
+                }else{
+                    board.getBlackPieces().remove(destinationTile.getPiece());
+                }
+
+                for(Piece piece : this.board.getAlivePieces()){
+                    if(!movingPiece.equals(piece)){
+                        setBoardMove.setPiece(piece);
+                    }
+                }
+                if(movingPiece.name.equals("Rook"))
+                {
+                    setBoardMove.setPiece(movingPiece.movePiece(movingPiece.coordinates));
+                }
+                else{
+                    setBoardMove.setPiece(movingPiece.movePiece(destination));
+                }
+                return(setBoardMove.build());
+            }
+            return(board);
+        }
+
 
         public void reassignCorp(Piece piece){
             String pieceName = piece.getName();
             String pieceCorp = piece.getCorp().getCorpName();
 
-            if(pieceName == "Bishop" || pieceName == "AIBishop")
+            if(pieceName.equals("Bishop") || pieceName.equals("AIBishop"))
             {
-                ArrayList<Piece> corp = piece.getColor() == "black" ? this.board.getBlackCorpPieces(pieceCorp) : this.board.getWhiteCorpPieces(pieceCorp);
+                ArrayList<Piece> corp = piece.getColor().equals("black") ? this.board.getBlackCorpPieces(pieceCorp) : this.board.getWhiteCorpPieces(pieceCorp);
 
                 if (piece.isPlayerPiece())
                 {
@@ -188,16 +242,6 @@ public abstract class MoveHandler
                     }
                 }
             }
-        }
-
-        public Board unExecuteMove(){
-            for(Piece piece : this.board.getAlivePieces()){
-                if(!movingPiece.equals(piece)){
-                    setBoardMove.setPiece(piece);
-                }
-            }
-            setBoardMove.setPiece(movingPiece.movePiece(originalDestination));
-            return(setBoardMove.build());
         }
 
     }

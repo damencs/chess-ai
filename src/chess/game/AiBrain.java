@@ -21,17 +21,14 @@ public class AiBrain {
         checkKingStatus(board); // Get the kings vulnerability score
         checkCorpCommandersStatus(); // See if all commanders are still on the board
         setupCorps();
-        centerControlStatus(board);
-        evaluateBoard(board);
     }
 
     // Evaluate board
-    private int evaluateBoard(Board board){
+    private int evaluateBoard(final Board board, final Board movedBoard){
         // Negative score if AI is losing. Positive Score if winning
-        int boardScore = (aiTeamColor.equals("white")) ?
-                (board.getWhiteTeamScore() - board.getBlackTeamScore()) :
-                (board.getBlackTeamScore() - board.getWhiteTeamScore());
-        return boardScore;
+        return (aiTeamColor.equals("white")) ? ((board.getWhiteTeamScore() - board.getBlackTeamScore()) -
+                (movedBoard.getWhiteTeamScore() - movedBoard.getBlackTeamScore())) :
+                ((board.getBlackTeamScore() - board.getWhiteTeamScore()) - (movedBoard.getBlackTeamScore() - movedBoard.getWhiteTeamScore()));
     }
 
     public MoveHandler executeKingCorp() throws IOException {
@@ -50,21 +47,31 @@ public class AiBrain {
 
         for(Piece piece : corp){
             ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
+            if(piece.getName().equals("King")){
+                System.out.println(pieceMoves.size());
+            }
+            int movescore;
             for(MoveHandler moves: pieceMoves){
-                // Move Score is equal to (AI Team Score - Player Team Score) + Center Control Score - Kings Vulnerability
-                int movescore = (evaluateBoard(board) + centerControlStatus(board)) * checkKingStatus(board);
+                final Board boardHolder = board;
+                board = moves.temporaryExecuteMove();
 
+                // Move Score is equal to (AI Team Score - Player Team Score) + Center Control Score - Kings Vulnerability
+                movescore = evaluateBoard(board, boardHolder);
+                movescore += centerControlStatus(board);
+
+                // If the kings vulnerable locations are in range, increase location importance
                 if(kingVulnerableDestinations.contains(moves.getDestination())){
-                    movescore += 50;
+                    movescore += 75;
                 }
+                // Make moving the king have to be more important
                 if(moves.getMovingPiece().getName().equals("King")){
-                    movescore -= 2;
+                    movescore -= 50;
                 }
-                if(board.getTile(moves.getDestination()).isOccupied()){
-                    if(board.getTile(moves.getDestination()).getPiece().getName().equals("King")){
-                        movescore += 1;
-                    }
-                }
+
+
+                //movescore += KingImmediateSurrounding();
+
+                board = moves.unexecuteMove();
 
                 Random random = new Random();
                 int randomInt = random.nextInt(5 + 5);
@@ -76,6 +83,8 @@ public class AiBrain {
                    moveList.put(movescore + randomInt, moves);
                    moveListKeys.add(movescore);
                }
+
+               System.out.println(piece.getName() + " " + movescore);
             }
         }
         int bestMoves;
@@ -92,17 +101,17 @@ public class AiBrain {
 
     // Calculate Kings Vulnerability Score
     // If score is > 30% pieces need to move to protect
-    private int checkKingStatus(Board board){
-        kingVulnerableDestinations = new ArrayList<Integer>();
-        kingVulnerableScore = 0;
+    private int checkKingStatus(final Board board){
+        kingVulnerableDestinations = new ArrayList<>();
         Piece king = board.getAIKing();
+        kingVulnerableScore = 0;
         List<Piece> playerTeam = (aiTeamColor.equals("white")) ? board.getBlackPieces() : board.getWhitePieces();
         for(Piece piece : playerTeam){
             ConquerSet vulnerabilityScore = new ConquerSet(piece, king);
             for(MoveHandler enemyPieceMoves : piece.determineMoves(board)){
                 if(enemyPieceMoves.getDestination() == king.getCoordinates()){
                     kingVulnerableDestinations.add(piece.getCoordinates());
-                    double value = ((double)(6 - vulnerabilityScore.getConquerSet()) / 6)*100;
+                    double value = ((double)(6 - vulnerabilityScore.getConquerSet()) / 6);
                     kingVulnerableScore += (int) value;
                 }
             }
@@ -112,19 +121,19 @@ public class AiBrain {
 
     // Score for center control
     // If the score is negative, the AI does not have control
-    private int centerControlStatus(Board board){
+    private int centerControlStatus(final Board board){
         int playerControl = 0;
         int aiControl = 0;
         for(Piece piece : board.getPlayerPieces()){
-            if(piece.getCoordinates() >= 23 && piece.getCoordinates() <= 28 ||
-                    piece.getCoordinates() >= 31 && piece.getCoordinates() <= 36){
-                playerControl += piece.getPieceWeight();
+            if(piece.getCoordinates() >= 25 && piece.getCoordinates() <= 30 ||
+                    piece.getCoordinates() >= 33 && piece.getCoordinates() <= 38){
+                playerControl += 15;
             }
         }
         for(Piece piece : board.getAIPieces()){
-            if(piece.getCoordinates() >= 23 && piece.getCoordinates() <= 28 ||
-                    piece.getCoordinates() >= 31 && piece.getCoordinates() <= 36){
-                aiControl += piece.getPieceWeight();
+            if(piece.getCoordinates() >= 25 && piece.getCoordinates() <= 30 ||
+                    piece.getCoordinates() >= 33 && piece.getCoordinates() <= 38){
+                aiControl += 15;
             }
         }
         return aiControl - playerControl;
@@ -140,6 +149,20 @@ public class AiBrain {
                 System.out.println("Command of Corp reverted to king");
             }
         }
+    }
+
+    private int KingImmediateSurrounding(){
+        int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
+        Piece king = board.getAIKing();
+        int kingSafetyScore = 0;
+        for(int offset : offsets){
+            if(king.getCoordinates() + offset >= 0 && king.getCoordinates() + offset <= 63){
+                if(!board.getTile(king.getCoordinates() + offset).isOccupied()){
+                    kingSafetyScore = kingSafetyScore - 50;
+                }
+            }
+        }
+        return kingSafetyScore;
     }
 
     // King may delegate subordinates to be commanded by either of bishops

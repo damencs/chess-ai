@@ -53,7 +53,7 @@ public abstract class Piece
     {
         private final static int[] KNIGHT_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
         private final Stack<Tile> queueStack = new Stack<>();
-        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private  ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         Knight(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
@@ -68,6 +68,8 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
+            visitedTiles.clear();
+            validMovesCoordinates.clear();
             ArrayList<MoveHandler> moves = new ArrayList<>();
             int row = (int) Math.floor((double) this.coordinates/8);
             int column = this.coordinates % 8;
@@ -87,7 +89,6 @@ public abstract class Piece
          * @param initCol initial column of the knight
          */
         private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
-
             if(valid(tileCoordinates)){
                 for(int offset : KNIGHT_OFFSET){
                     if(valid(tileCoordinates + offset)){
@@ -99,8 +100,8 @@ public abstract class Piece
                         if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
-                                        queueStack.add(board.getTile(tileCoordinates + offset));
+                                    if(!validMovesCoordinates.contains(tileCoordinates + offset)){
+                                        validMovesCoordinates.add(tileCoordinates + offset);
                                     }
                                 }
                             }
@@ -118,18 +119,6 @@ public abstract class Piece
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
-        }
-
-        private boolean checkDestinationSurrounding(Board board, int destination){
-            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
-            for(int offset : offsets){
-                if(valid(destination + offset)){
-                    if(!board.getTile(destination + offset).isOccupied()){
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         private boolean valid(int coordinate){
@@ -152,7 +141,7 @@ public abstract class Piece
     {
         private final static int[] KING_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
         private final Stack<Tile> queueStack = new Stack<>();
-        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private ArrayList<Integer> validMovesCoordinates= new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         King(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
@@ -167,6 +156,8 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
+            visitedTiles.clear();
+            validMovesCoordinates.clear();
             ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
             int row = (int) Math.floor(this.coordinates/8);
             int column = this.coordinates % 8;
@@ -186,41 +177,36 @@ public abstract class Piece
          * @param initCol initial column of the knight
          */
         private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
-
             if(valid(tileCoordinates)){
                 for(int offset : KING_OFFSET){
                     if(valid(tileCoordinates + offset)){
                         if(!board.getTile(tileCoordinates + offset).isOccupied()){
                             if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                queueStack.add(board.getTile(tileCoordinates + offset)); }}
-                        else if(board.getTile(tileCoordinates+offset).isOccupied()){
+                                queueStack.add(board.getTile(tileCoordinates + offset));
+                            }
+                        }
+                        if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
-                                        queueStack.add(board.getTile(tileCoordinates + offset));}}}}}}
+                                    if(!validMovesCoordinates.contains(tileCoordinates + offset)){
+                                        validMovesCoordinates.add(tileCoordinates + offset);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             while(!queueStack.isEmpty()){
                 Tile temp = queueStack.pop();
                 visitedTiles.add(temp);
-                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destRow = (int) Math.floor((double)temp.getCoordinates()/8);
                 int destColumn = temp.getCoordinates() % 8;
                 if((initRow - destRow > 3 || initRow - destRow < -3) || (initCol - destColumn > 3 || initCol - destColumn < -3)){return;}
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
-        }
-
-        private boolean checkDestinationSurrounding(Board board, int destination){
-            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
-            for(int offset : offsets){
-                if(valid(destination + offset)){
-                    if(!board.getTile(destination + offset).isOccupied()){
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         private boolean valid(int coordinate){
@@ -299,7 +285,7 @@ public abstract class Piece
     {
         private final static int[] QUEEN_OFFSET = {-1,-9,-8,-7, 1, 9, 8, 7};
         private final Stack<Tile> queueStack = new Stack<>();
-        private final ArrayList<Integer> validMovesCoordinates = new ArrayList<>();
+        private ArrayList<Integer> validMovesCoordinates= new ArrayList<>();
         private final ArrayList<Tile> visitedTiles = new ArrayList<>();
 
         Queen(final int coordinates, final String color, final Corp pieceCorp, String name, int offsetMultiplier, int pieceWeight, boolean playerPiece)
@@ -314,8 +300,10 @@ public abstract class Piece
 
         @Override
         public ArrayList<MoveHandler> determineMoves(Board board) {
-            ArrayList<MoveHandler> moves = new ArrayList<MoveHandler>();
-            int row = (int) Math.floor(this.coordinates/8);
+            visitedTiles.clear();
+            validMovesCoordinates.clear();
+            ArrayList<MoveHandler> moves = new ArrayList<>();
+            int row = (int) Math.floor((double) this.coordinates/8);
             int column = this.coordinates % 8;
             findValidTiles(board, this.coordinates, row, column);
 
@@ -334,6 +322,7 @@ public abstract class Piece
          */
         private void findValidTiles(Board board, int tileCoordinates, int initRow, int initCol){
 
+
             if(valid(tileCoordinates)){
                 for(int offset : QUEEN_OFFSET){
                     if(valid(tileCoordinates + offset)){
@@ -343,31 +332,20 @@ public abstract class Piece
                         else if(board.getTile(tileCoordinates+offset).isOccupied()){
                             if(!board.getTile(tileCoordinates + offset).getPiece().getColor().equals(this.color)){
                                 if(!visitedTiles.contains(board.getTile(tileCoordinates + offset))){
-                                    if(checkDestinationSurrounding(board, tileCoordinates + offset)){
-                                        queueStack.add(board.getTile(tileCoordinates + offset)); }}}}}}
+                                    if(!validMovesCoordinates.contains(tileCoordinates + offset)){
+                                        validMovesCoordinates.add(tileCoordinates + offset);
+                                    }}}}}}
             }
 
             while(!queueStack.isEmpty()){
                 Tile temp = queueStack.pop();
                 visitedTiles.add(temp);
-                int destRow = (int) Math.floor(temp.getCoordinates()/8);
+                int destRow = (int) Math.floor((double)temp.getCoordinates()/8);
                 int destColumn = temp.getCoordinates() % 8;
                 if((initRow - destRow > 3 || initRow - destRow < -3) || (initCol - destColumn > 3 || initCol - destColumn < -3)){return;}
                 else if(!validMovesCoordinates.contains(temp.getCoordinates())){
                     validMovesCoordinates.add(temp.getCoordinates());
                     findValidTiles(board, temp.getCoordinates(), initRow, initCol);}}
-        }
-
-        private boolean checkDestinationSurrounding(Board board, int destination){
-            int[] offsets = {-1,-9,-8,-7, 1, 9, 8, 7};
-            for(int offset : offsets){
-                if(valid(destination + offset)){
-                    if(!board.getTile(destination + offset).isOccupied()){
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         private boolean valid(int coordinate){
