@@ -83,8 +83,6 @@ public class AiBrain {
                    moveList.put(movescore + randomInt, moves);
                    moveListKeys.add(movescore);
                }
-
-               System.out.println(piece.getName() + " " + movescore);
             }
         }
         int bestMoves;
