@@ -172,10 +172,16 @@ public class mainGUI implements Initializable
     void AI_Turn() throws IOException {
 
         aiBrain.AI_turn(gameHandler.getBoard());
+        executeAIMove(aiBrain.getAiMove());
 
-        executeAIMove(aiBrain.executeKingCorp());
-        executeAIMove(aiBrain.executeKingBishopCorp());
-        executeAIMove(aiBrain.executeQueensBishopCorp());
+        aiBrain.AI_turn(gameHandler.getBoard());
+        executeAIMove(aiBrain.getAiMove());
+
+        aiBrain.AI_turn(gameHandler.getBoard());
+        executeAIMove(aiBrain.getAiMove());
+        //executeAIMove(aiBrain.executeKingCorp());
+        //executeAIMove(aiBrain.executeKingBishopCorp());
+        //executeAIMove(aiBrain.executeQueensBishopCorp());
 
         for(Piece piece : gameHandler.getBoard().getAlivePieces()){
             piece.getCorp().setCorpCommandAvailability(true);

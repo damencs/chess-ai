@@ -44,6 +44,26 @@ public class Board
         getAiTeamColor();
     }
 
+    public boolean getAIKingCorpAvailability(){
+        return AI_kingCorp.isCommandAvailable();
+    }
+    public boolean getAIKingBishopAvailability(){
+        return AI_kingsBishopCorp.isCommandAvailable();
+    }
+    public boolean getAIQueensBishopAvailability(){
+        return AI_queensBishopCorp.isCommandAvailable();
+    }
+
+    public void switchAIKingCorpCommand(){
+        AI_kingCorp.switchCorpCommandAvailablity();
+    }
+    public void switchAIKingBishopCorpCommand(){
+        AI_kingsBishopCorp.switchCorpCommandAvailablity();
+    }
+    public void switchAIQueenBishopCorpCommand(){
+        AI_queensBishopCorp.switchCorpCommandAvailablity();
+    }
+
     public void addToBlackGraveyard(Piece piece){
         blackTeamCapturedPieces.add(piece);
     }
