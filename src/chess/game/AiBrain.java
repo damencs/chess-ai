@@ -41,9 +41,104 @@ public class AiBrain {
         return determineBestMove(AI_queensBishopCorp);
     }
 
+    public MoveHandler getAiMove() throws IOException {
+        int kingScore = Integer.MIN_VALUE;
+        int kingBishopScore = Integer.MIN_VALUE;
+        int queenBishopScore = Integer.MIN_VALUE;
+
+
+        HashMap<Integer, MoveHandler> kingMoves = determineBestCorpMove(AI_kingCorp);
+        if(board.getAIKingCorpAvailability()){
+            if(Collections.max(kingMoves.keySet()) != null){
+                if(Collections.max(kingMoves.keySet()) > kingScore){
+                    kingScore = Collections.max(kingMoves.keySet());
+                }
+            }
+        }
+
+        HashMap<Integer, MoveHandler> kingBishopMoves = determineBestCorpMove(AI_kingsBishopCorp);
+        if(board.getAIKingBishopAvailability()){
+            if(Collections.max(kingBishopMoves.keySet()) != null){
+                if(Collections.max(kingBishopMoves.keySet()) > kingBishopScore){
+                    kingBishopScore = Collections.max(kingBishopMoves.keySet());
+                }
+            }
+        }
+
+        HashMap<Integer, MoveHandler> queenBishopMoves = determineBestCorpMove(AI_queensBishopCorp);
+        if(board.getAIQueensBishopAvailability()){
+            if(Collections.max(queenBishopMoves.keySet()) != null){
+                if(Collections.max(queenBishopMoves.keySet()) > queenBishopScore){
+                    queenBishopScore = Collections.max(queenBishopMoves.keySet());
+                }
+            }
+        }
+
+        if(board.getAIKingCorpAvailability()){
+            if(kingScore >= kingBishopScore && kingScore >= queenBishopScore){
+                board.switchAIKingCorpCommand();
+                System.out.println("AI KING MOVING");
+                return kingMoves.get(kingScore);
+            }
+        }
+
+        // Determine If King Bishop Corp has the best Move
+        if(board.getAIKingBishopAvailability()){
+            // Check for king Delegation of King piece for current turn
+            if(!board.getAIKingCorpAvailability()){
+                HashMap<Integer, MoveHandler> kingDelegation = determineBestCorpMove(AI_kingCorp);
+                if(Collections.max(kingDelegation.keySet())!=null){
+                    if(kingBishopScore < Collections.max(kingDelegation.keySet()) &&
+                            kingBishopScore != Collections.max(kingDelegation.keySet())){
+                        board.switchAIKingBishopCorpCommand();
+                        System.out.println("AI KING DELEGATION MOVING");
+                        return kingDelegation.get(Collections.max(kingDelegation.keySet()));
+                    }
+                }
+            }
+            // return best King Bishop Move
+            if(kingBishopScore >= kingScore && kingBishopScore >= queenBishopScore){
+                board.switchAIKingBishopCorpCommand();
+                System.out.println("AI KING BISHOP MOVING");
+                return kingBishopMoves.get(kingBishopScore);
+            }
+        }
+
+        // Determing if the Queens Bishop has the best Move
+        if(board.getAIQueensBishopAvailability()){
+            // Check for king Delegation of King piece for current turn
+            if(!board.getAIKingCorpAvailability()){
+                HashMap<Integer, MoveHandler> kingDelegation = determineBestCorpMove(AI_kingCorp);
+                if(Collections.max(kingDelegation.keySet())!=null){
+                    if(Collections.max(kingDelegation.keySet()) > queenBishopScore &&
+                            Collections.max(kingDelegation.keySet()) != queenBishopScore){
+                        board.switchAIQueenBishopCorpCommand();
+                        System.out.println("AI KING DELEGATION MOVING");
+                        return kingDelegation.get(Collections.max(kingDelegation.keySet()));
+                    }
+                }
+            }
+            // return best Queens Bishop Move
+            if(queenBishopScore >= kingScore && queenBishopScore >= kingBishopScore){
+                board.switchAIQueenBishopCorpCommand();
+                System.out.println("AI QUEEN BISHOP MOVING");
+                return queenBishopMoves.get(queenBishopScore);
+            }
+        }
+
+        return null;
+    }
+
+    private HashMap<Integer, MoveHandler> checkForKingDelegation() throws IOException {
+        HashMap<Integer, MoveHandler> kingMoves = determineBestCorpMove(AI_kingCorp);
+        if(Collections.max(kingMoves.keySet()) != null){
+            return kingMoves;
+        }
+        return null;
+    }
+
     private MoveHandler determineBestMove(ArrayList<Piece> corp) throws IOException {
         HashMap<Integer, MoveHandler> moveList = new HashMap<>();
-        ArrayList<Integer> moveListKeys = new ArrayList<>();
 
         for(Piece piece : corp){
             ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
@@ -77,11 +172,9 @@ public class AiBrain {
                 int randomInt = random.nextInt(5 + 5);
                if(moveList.containsKey(movescore)){
                    moveList.put(movescore + randomInt, moves);
-                   moveListKeys.add(movescore);
                }
                else{
                    moveList.put(movescore + randomInt, moves);
-                   moveListKeys.add(movescore);
                }
             }
         }
@@ -95,6 +188,47 @@ public class AiBrain {
             return null;
         }
         return null;
+    }
+
+    private HashMap<Integer, MoveHandler> determineBestCorpMove(ArrayList<Piece> corp) throws IOException {
+        HashMap<Integer, MoveHandler> moveList = new HashMap<>();
+
+        for(Piece piece : corp){
+            ArrayList<MoveHandler> pieceMoves  = piece.determineMoves(board);
+            if(piece.getName().equals("King")){
+                System.out.println(pieceMoves.size());
+            }
+            int movescore;
+            for(MoveHandler moves: pieceMoves){
+                final Board boardHolder = board;
+                board = moves.temporaryExecuteMove();
+
+                // Move Score is equal to (AI Team Score - Player Team Score) + Center Control Score - Kings Vulnerability
+                movescore = evaluateBoard(board, boardHolder);
+                movescore += centerControlStatus(board);
+
+                // If the kings vulnerable locations are in range, increase location importance
+                if(kingVulnerableDestinations.contains(moves.getDestination())){
+                    movescore += 75;
+                }
+                // Make moving the king have to be more important
+                if(moves.getMovingPiece().getName().equals("King")){
+                    movescore -= 50;
+                }
+
+                board = moves.unexecuteMove();
+
+                Random random = new Random();
+                int randomInt = random.nextInt(5 + 5);
+                if(moveList.containsKey(movescore)){
+                    moveList.put(movescore + randomInt, moves);
+                }
+                else{
+                    moveList.put(movescore + randomInt, moves);
+                }
+            }
+        }
+        return moveList;
     }
 
     // Calculate Kings Vulnerability Score
