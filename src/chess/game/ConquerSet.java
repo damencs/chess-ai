@@ -9,7 +9,7 @@ public class ConquerSet {
     private final Map<String, Integer> conquerSet = new HashMap<String, Integer>();
     private final Piece defendingPiece;
 
-    ConquerSet(final Piece attackingPiece, final Piece defendingPiece){
+    public ConquerSet(final Piece attackingPiece, final Piece defendingPiece){
         setConquerSet(attackingPiece);
         this.defendingPiece = defendingPiece;
     }

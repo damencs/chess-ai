@@ -22,20 +22,65 @@ public class Board
     private final Tile[][] tile = new Tile[8][8];
     private final List<Piece> whiteTeam;
     private final List<Piece> blackTeam;
+    private final List<Piece> whiteTeamCapturedPieces = new ArrayList<>();
+    private final List<Piece> blackTeamCapturedPieces = new ArrayList<>();;
     public ArrayList<Tile> chessBoard;
+    private String AiTeamColor;
+    private String PlayerColor;
 
-    private static Corp kingCorp = new Corp("king", true);
-    private static Corp kingsBishopCorp = new Corp("kingsBishop", true);
-    private static Corp queensBishopCorp = new Corp("queensBishop", true);
+    private static final Corp kingCorp = new Corp("king", true, true);
+    private static final Corp kingsBishopCorp = new Corp("kingsBishop", true, true);
+    private static final Corp queensBishopCorp = new Corp("queensBishop", true, true);
 
-    private static Corp AI_kingCorp = new Corp("AI_king", true);
-    private static Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true);
-    private static Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true);
+    private static final Corp AI_kingCorp = new Corp("AI_king", true, false);
+    private static final Corp AI_kingsBishopCorp = new Corp("AI_kingsBishop", true, false);
+    private static final Corp AI_queensBishopCorp = new Corp("AI_queensBishop", true, false);
 
     private Board(SetBoard setter){
         this.chessBoard = createBoard(setter);
         this.whiteTeam = getRemainingTeam(this.chessBoard, "white");
         this.blackTeam = getRemainingTeam(this.chessBoard, "black");
+        setAICorpCommanders();
+        getAiTeamColor();
+    }
+
+    public void addToBlackGraveyard(Piece piece){
+        blackTeamCapturedPieces.add(piece);
+    }
+
+    public void addToWhiteGraveyard(Piece piece){
+        whiteTeamCapturedPieces.add(piece);
+    }
+
+    private void setAICorpCommanders() {
+        for(Piece piece : getAIPieces()){
+            if(piece.getName().equals("Bishop")){
+                switch (piece.getCorp().getCorpName()) {
+                    case "AI_kingsBishop" -> AI_kingsBishopCorp.setCorpCommander(piece);
+                    case "AI_queensBishop" -> AI_queensBishopCorp.setCorpCommander(piece);
+                }
+            }
+            if(piece.getName().equals("King")){
+                AI_kingCorp.setCorpCommander(piece);
+            }
+        }
+    }
+
+    public String getAiTeamColor(){
+        if(getAIPieces().get(0).getColor().equals("white")){
+            AiTeamColor = "white";
+            PlayerColor = "black";
+            return "white";
+        }
+        AiTeamColor = "black";
+        PlayerColor = "white";
+        return "black";
+    }
+
+    public void revertCommand(Corp corp){
+        for(Piece piece : getCorpPieces(corp.getCorpName())){
+            piece.setCorp(AI_kingCorp);
+        }
     }
 
     public List<Piece> getBlackPieces() {
@@ -46,18 +91,103 @@ public class Board
         return this.whiteTeam;
     }
 
-    private List<Piece> getAIPieces(){
+    public int getBlackTeamScore(){
+        int blackTeamScore = 0;
+        for(Piece piece : blackTeam){
+            blackTeamScore += piece.getPieceWeight();
+        }
+        return blackTeamScore;
+    }
+
+    public int getWhiteTeamScore(){
+        int whiteTeamScore = 0;
+        for(Piece piece : whiteTeam){
+            whiteTeamScore += piece.getPieceWeight();
+        }
+        return whiteTeamScore;
+    }
+
+    public List<Piece> getAIPieces(){
         ArrayList<Piece> ai_Pieces = new ArrayList<>();
-        for(final Tile tile : this.chessBoard.subList(0, 16)){
-            ai_Pieces.add(tile.getPiece());
+        for(Piece piece : getAlivePieces()){
+                if(!piece.getCorp().isPlayerCorp()){
+                    ai_Pieces.add(piece);
+                }
         }
         return ai_Pieces;
+    }
+
+    public List<Piece> getPlayerPieces(){
+        ArrayList<Piece> playerPieces = new ArrayList<>();
+        for(Piece piece : getAlivePieces()){
+                if(piece.getCorp().getCorpName().equals("king") ||
+                        piece.getCorp().getCorpName().equals("kingsBishop") ||
+                        piece.getCorp().getCorpName().equals("queensBishop")){
+                    playerPieces.add(piece);
+                }
+        }
+        return playerPieces;
+    }
+
+    public ArrayList<Corp> getAICorps(){
+        ArrayList<Corp> aiCorps = new ArrayList<>();
+        aiCorps.add(AI_kingCorp);
+        aiCorps.add(AI_kingsBishopCorp);
+        aiCorps.add(AI_queensBishopCorp);
+        return aiCorps;
+    }
+
+    public ArrayList<Piece> getAICorpCommanders(){
+        ArrayList<Piece> aiCorps = new ArrayList<>();
+        aiCorps.add(AI_kingsBishopCorp.getCorpCommander());
+        aiCorps.add(AI_queensBishopCorp.getCorpCommander());
+        return aiCorps;
+    }
+
+    public Piece getAIKing(){
+        List<Piece> aiteam = (AiTeamColor.equals("white")) ? getWhitePieces() : getBlackPieces();
+        for(Piece piece : aiteam){
+            if(piece.getName().equals("King")){
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    public Piece getPlayerKing(){
+        List<Piece> playerTeam = (PlayerColor.equals("white")) ? getWhitePieces() : getBlackPieces();
+        for(Piece piece : playerTeam){
+            if(piece.getName().equals("King")){
+                return piece;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Piece> getCorpPieces(String name){
         ArrayList<Piece> corpPieces = new ArrayList<>();
         for(Piece piece : getAIPieces()){
             if(piece.getCorp().getCorpName().equals(name)){
+                corpPieces.add(piece);
+            }
+        }
+        return corpPieces;
+    }
+
+    public ArrayList<Piece> getBlackCorpPieces(String corpName){
+        ArrayList<Piece> corpPieces = new ArrayList<>();
+        for(Piece piece : getBlackPieces()){
+            if(piece.getCorp().getCorpName().equals(corpName)){
+                corpPieces.add(piece);
+            }
+        }
+        return corpPieces;
+    }
+
+    public ArrayList<Piece> getWhiteCorpPieces(String corpName){
+        ArrayList<Piece> corpPieces = new ArrayList<>();
+        for(Piece piece : getWhitePieces()){
+            if(piece.getCorp().getCorpName().equals(corpName)){
                 corpPieces.add(piece);
             }
         }
@@ -109,45 +239,48 @@ public class Board
         final SetBoard setter = new SetBoard();
         String top = "black";
         String bottom = "white";
-        if (!isPlayerTurn) {top = "white"; bottom = "black";}
+        if (!isPlayerTurn) {
+            top = "white";
+            bottom = "black";
+        }
 
         /* AI Pieces on the top of the board */
-        setter.setPiece( new Piece.Rook(0, top, AI_kingCorp, "Rook", 1,3, false));
-        setter.setPiece( new Piece.Knight(1, top, AI_kingsBishopCorp, "Knight", 1,5, false));
-        setter.setPiece( new Piece.Bishop(2, top, AI_kingsBishopCorp, "Bishop", 1,8, false));
-        setter.setPiece( new Piece.King(3, top, AI_kingCorp, "King", 1,50, false));
-        setter.setPiece( new Piece.Queen(4, top, AI_kingCorp, "Queen", 1,3, false));
-        setter.setPiece( new Piece.Rook(7, top, AI_kingCorp, "Rook", 1,3, false));
-        setter.setPiece( new Piece.Knight(6, top, AI_queensBishopCorp, "Knight", 1,5, false));
-        setter.setPiece( new Piece.Bishop(5, top, AI_queensBishopCorp, "Bishop", 1,8, false));
+        setter.setPiece( new Piece.Rook(0, top, AI_kingCorp, "Rook", 1,50, false));
+        setter.setPiece( new Piece.Knight(1, top, AI_kingsBishopCorp, "Knight", 1,30, false));
+        setter.setPiece( new Piece.Bishop(2, top, AI_kingsBishopCorp, "Bishop", 1,80, false));
+        setter.setPiece( new Piece.King(3, top, AI_kingCorp, "King", 1,500, false));
+        setter.setPiece( new Piece.Queen(4, top, AI_kingCorp, "Queen", 1,30, false));
+        setter.setPiece( new Piece.Rook(7, top, AI_kingCorp, "Rook", 1,50, false));
+        setter.setPiece( new Piece.Knight(6, top, AI_queensBishopCorp, "Knight", 1,30, false));
+        setter.setPiece( new Piece.Bishop(5, top, AI_queensBishopCorp, "Bishop", 1,80, false));
 
-        setter.setPiece(new Piece.Pawn(8, top, AI_kingsBishopCorp, "Pawn", 1,1, false));
-        setter.setPiece(new Piece.Pawn(9, top, AI_kingsBishopCorp, "Pawn", 1,1, false));
-        setter.setPiece(new Piece.Pawn(10, top, AI_kingsBishopCorp, "Pawn", 1,1, false));
-        setter.setPiece(new Piece.Pawn(11, top, AI_kingCorp, "Pawn", 1,1, false));
-        setter.setPiece(new Piece.Pawn(12, top, AI_kingCorp, "Pawn", 1,1, false));
-        setter.setPiece( new Piece.Pawn(13, top, AI_queensBishopCorp, "Pawn", 1,1, false));
-        setter.setPiece( new Piece.Pawn(14, top, AI_queensBishopCorp, "Pawn", 1,1, false));
-        setter.setPiece( new Piece.Pawn(15, top, AI_queensBishopCorp, "Pawn", 1,1, false));
+        setter.setPiece(new Piece.Pawn(8, top, AI_kingsBishopCorp, "Pawn", 1,10, false));
+        setter.setPiece(new Piece.Pawn(9, top, AI_kingsBishopCorp, "Pawn", 1,10, false));
+        setter.setPiece(new Piece.Pawn(10, top, AI_kingsBishopCorp, "Pawn", 1,10, false));
+        setter.setPiece(new Piece.Pawn(11, top, AI_kingCorp, "Pawn", 1,10, false));
+        setter.setPiece(new Piece.Pawn(12, top, AI_kingCorp, "Pawn", 1,10, false));
+        setter.setPiece( new Piece.Pawn(13, top, AI_queensBishopCorp, "Pawn", 1,10, false));
+        setter.setPiece( new Piece.Pawn(14, top, AI_queensBishopCorp, "Pawn", 1,10, false));
+        setter.setPiece( new Piece.Pawn(15, top, AI_queensBishopCorp, "Pawn", 1,10, false));
 
         /* Player Pieces on the bottom of the board */
-        setter.setPiece( new Piece.Pawn(48, bottom, queensBishopCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(49, bottom, queensBishopCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(50, bottom, queensBishopCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(51, bottom, kingCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(52, bottom, kingCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(53, bottom, kingsBishopCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(54, bottom, kingsBishopCorp, "Pawn", -1,1, true));
-        setter.setPiece( new Piece.Pawn(55, bottom, kingsBishopCorp, "Pawn", -1,1, true));
+        setter.setPiece( new Piece.Pawn(48, bottom, queensBishopCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(49, bottom, queensBishopCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(50, bottom, queensBishopCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(51, bottom, kingCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(52, bottom, kingCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(53, bottom, kingsBishopCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(54, bottom, kingsBishopCorp, "Pawn", -1,10, true));
+        setter.setPiece( new Piece.Pawn(55, bottom, kingsBishopCorp, "Pawn", -1,10, true));
 
-        setter.setPiece( new Piece.Rook(56, bottom, kingCorp, "Rook", -1,3, true));
-        setter.setPiece( new Piece.Knight(57, bottom, queensBishopCorp, "Knight", -1,5, true));
-        setter.setPiece( new Piece.Bishop(58, bottom, queensBishopCorp, "Bishop", -1,8, true));
-        setter.setPiece( new Piece.King(59, bottom, kingCorp, "King", -1,50, true));
-        setter.setPiece( new Piece.Queen(60, bottom, kingCorp, "Queen", -1,3, true));
-        setter.setPiece( new Piece.Rook(63, bottom, kingCorp, "Rook", -1,3, true));
-        setter.setPiece( new Piece.Knight(62, bottom, kingsBishopCorp, "Knight", -1,5, true));
-        setter.setPiece( new Piece.Bishop(61, bottom, kingsBishopCorp, "Bishop", -1,8, true));
+        setter.setPiece( new Piece.Rook(56, bottom, kingCorp, "Rook", -1,50, true));
+        setter.setPiece( new Piece.Knight(57, bottom, queensBishopCorp, "Knight", -1,30, true));
+        setter.setPiece( new Piece.Bishop(58, bottom, queensBishopCorp, "Bishop", -1,80, true));
+        setter.setPiece( new Piece.King(59, bottom, kingCorp, "King", -1,500, true));
+        setter.setPiece( new Piece.Queen(60, bottom, kingCorp, "Queen", -1,30, true));
+        setter.setPiece( new Piece.Rook(63, bottom, kingCorp, "Rook", -1,50, true));
+        setter.setPiece( new Piece.Knight(62, bottom, kingsBishopCorp, "Knight", -1,30, true));
+        setter.setPiece( new Piece.Bishop(61, bottom, kingsBishopCorp, "Bishop", -1,80, true));
 
         return setter.build();
     }
@@ -184,13 +317,13 @@ public class Board
 
     public void resetCorpAvailability()
     {
-        kingCorp = new Corp("king", true);
-        kingsBishopCorp = new Corp("kingsBishop", true);
-        queensBishopCorp = new Corp("queensBishop", true);
+        kingCorp.setCorpCommandAvailability(true);
+        kingsBishopCorp.setCorpCommandAvailability(true);
+        queensBishopCorp.setCorpCommandAvailability(true);
 
-        AI_kingCorp = new Corp("AI_king", true);
-        AI_kingsBishopCorp = new Corp("AI_kingsBishop", true);
-        AI_queensBishopCorp = new Corp("AI_queensBishop", true);
+        AI_kingCorp.setCorpCommandAvailability(true);
+        AI_kingsBishopCorp.setCorpCommandAvailability(true);
+        AI_queensBishopCorp.setCorpCommandAvailability(true);
     }
 
 }

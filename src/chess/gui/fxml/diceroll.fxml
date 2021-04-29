@@ -15,7 +15,7 @@
             <Image url="@../images/whitePawn.png" />
          </image>
       </ImageView>
-      <Label layoutX="90.0" layoutY="27.0" text="is attacking!" textFill="WHITE">
+      <Label layoutX="110.0" layoutY="27.0" text="is attacking" textFill="WHITE">
          <font>
             <Font name="Montserrat SemiBold" size="19.0" />
          </font>
