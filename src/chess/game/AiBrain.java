@@ -81,50 +81,19 @@ public class AiBrain {
                 return kingMoves.get(kingScore);
             }
         }
-
-        // Determine If King Bishop Corp has the best Move
-        if(board.getAIKingBishopAvailability()){
-            // Check for king Delegation of King piece for current turn
-            if(!board.getAIKingCorpAvailability()){
-                HashMap<Integer, MoveHandler> kingDelegation = determineBestCorpMove(AI_kingCorp);
-                if(Collections.max(kingDelegation.keySet())!=null){
-                    if(kingBishopScore < Collections.max(kingDelegation.keySet()) &&
-                            kingBishopScore != Collections.max(kingDelegation.keySet())){
-                        board.switchAIKingBishopCorpCommand();
-                        System.out.println("AI KING DELEGATION MOVING");
-                        return kingDelegation.get(Collections.max(kingDelegation.keySet()));
-                    }
-                }
-            }
-            // return best King Bishop Move
-            if(kingBishopScore >= kingScore && kingBishopScore >= queenBishopScore){
-                board.switchAIKingBishopCorpCommand();
-                System.out.println("AI KING BISHOP MOVING");
-                return kingBishopMoves.get(kingBishopScore);
-            }
+        // return best King Bishop Move
+        if(kingBishopScore >= kingScore && kingBishopScore >= queenBishopScore){
+            board.switchAIKingBishopCorpCommand();
+            System.out.println("AI KING BISHOP MOVING");
+            return kingBishopMoves.get(kingBishopScore);
+        }
+        // return best Queens Bishop Move
+        if(queenBishopScore >= kingScore && queenBishopScore >= kingBishopScore){
+            board.switchAIQueenBishopCorpCommand();
+            System.out.println("AI QUEEN BISHOP MOVING");
+            return queenBishopMoves.get(queenBishopScore);
         }
 
-        // Determing if the Queens Bishop has the best Move
-        if(board.getAIQueensBishopAvailability()){
-            // Check for king Delegation of King piece for current turn
-            if(!board.getAIKingCorpAvailability()){
-                HashMap<Integer, MoveHandler> kingDelegation = determineBestCorpMove(AI_kingCorp);
-                if(Collections.max(kingDelegation.keySet())!=null){
-                    if(Collections.max(kingDelegation.keySet()) > queenBishopScore &&
-                            Collections.max(kingDelegation.keySet()) != queenBishopScore){
-                        board.switchAIQueenBishopCorpCommand();
-                        System.out.println("AI KING DELEGATION MOVING");
-                        return kingDelegation.get(Collections.max(kingDelegation.keySet()));
-                    }
-                }
-            }
-            // return best Queens Bishop Move
-            if(queenBishopScore >= kingScore && queenBishopScore >= kingBishopScore){
-                board.switchAIQueenBishopCorpCommand();
-                System.out.println("AI QUEEN BISHOP MOVING");
-                return queenBishopMoves.get(queenBishopScore);
-            }
-        }
 
         return null;
     }
