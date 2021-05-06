@@ -16,7 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class coinflip
+public class Coinflip
 {
     private Boolean isPlayerTurn = false;
 
@@ -29,10 +29,7 @@ public class coinflip
         {
             case "playerWhite" -> isPlayerTurn = true;
             case "playerBlack" -> isPlayerTurn = false;
-            case "playerRand" -> {
-                isPlayerTurn = (Math.random() < 0.5 ? true : false);
-                System.out.println("Decided: " + (isPlayerTurn ? "true" : "false"));
-            }
+            case "playerRand" -> isPlayerTurn = (Math.random() < 0.5 ? true : false);
         }
 
         closeStage(event);

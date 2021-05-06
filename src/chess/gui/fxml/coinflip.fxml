@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane prefHeight="122.0" prefWidth="250.0" style="-fx-background-color: #292828; -fx-border-radius: 10; -fx-border-width: 2; -fx-border-color: #ffc629; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.coinflip">
+<AnchorPane prefHeight="122.0" prefWidth="250.0" style="-fx-background-color: #292828; -fx-border-radius: 10; -fx-border-width: 2; -fx-border-color: #ffc629; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chess.gui.controllers.Coinflip">
    <children>
       <ImageView fx:id="playerWhite" fitHeight="53.0" fitWidth="53.0" layoutX="24.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true" onMouseReleased="#imageClicked">
          <image>

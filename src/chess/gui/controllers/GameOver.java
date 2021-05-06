@@ -1,29 +1,35 @@
+/*
+    Group Names:
+        - Damen DeBerry (@basicDamen)
+        - James Grady (@JaymeAlann)
+        - Tyra Buadoo (@misstj555)
+        - Ashlei Williams (@AshW-2018)
+        - Mahad Farah (@mfarah-ksu)
+        - Mandela Issa-Boube (@aliamaza)
+        - Shivank Rao (@shivankrao)
+    Project: Chess with AI Agent
+    Class: CS4850 - Senior Project
+ */
 package chess.gui.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-public class GameOver {
-
-
-    @FXML
-    private Button playAgainBtn;
-    @FXML
-    private Button quitGameBtn;
+public class GameOver
+{
     @FXML
     private Label playerWins;
+
     @FXML
     private Label aiWins;
 
-    private String winner;
     private int PlayerChoice;
 
-    public void setWinner(String winner){
-        this.winner = winner;
+    public void setWinner(String winner)
+    {
         if (winner == "Player")
         {
             playerWins.setDisable(false);
@@ -37,16 +43,16 @@ public class GameOver {
     }
 
     @FXML
-    void playAgain(ActionEvent event){
+    void playAgain(ActionEvent event)
+    {
         PlayerChoice = -1;
-        System.out.println(PlayerChoice);
         closeStage(event);
     }
 
     @FXML
-    void endGame(ActionEvent event){
+    void endGame(ActionEvent event)
+    {
         PlayerChoice = 1;
-        System.out.println(PlayerChoice);
         closeStage(event);
     }
 
@@ -57,8 +63,8 @@ public class GameOver {
         stage.close();
     }
 
-    public int getPlayerChoice(){
+    public int getPlayerChoice()
+    {
         return PlayerChoice;
     }
-
 }

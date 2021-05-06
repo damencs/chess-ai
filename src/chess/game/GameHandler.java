@@ -18,22 +18,38 @@ public class GameHandler
     private boolean isPlayerTurn;
     private boolean gameOver;
 
-    public void setBoard(){
+    public void setBoard()
+    {
         board = Board.createInitialBoard(isPlayerTurn());
     }
-    public void setBoard(Board board){ this.board = board;}
-    /* Return instance of board*/
-    public Board getBoard() { return board; }
 
-    public Tile[][] getBoardTiles(){
+    public void setBoard(Board board)
+    {
+        this.board = board;
+
+    }
+
+    /* Return instance of board. */
+    public Board getBoard()
+    {
+        return board;
+    }
+
+    /* Return tile collection from board. */
+    public Tile[][] getBoardTiles()
+    {
         Tile[][] tiles = new Tile[8][8];
         int index = 0;
-        for(int row = 0; row < tiles.length; row++){
-            for(int column = 0; column < tiles[row].length; column++){
+
+        for (int row = 0; row < tiles.length; row++)
+        {
+            for (int column = 0; column < tiles[row].length; column++)
+            {
                 tiles[row][column] = board.getTile(index);
                 index++;
             }
         }
+
         return tiles;
     }
 
